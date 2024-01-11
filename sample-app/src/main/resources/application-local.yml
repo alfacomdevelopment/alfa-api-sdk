@@ -1,0 +1,3 @@
+sdk-sample-app:
+  base-url: http://backend-url
+  access-token: place-here-your-access-token

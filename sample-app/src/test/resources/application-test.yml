@@ -1,0 +1,3 @@
+sdk-sample-app:
+  base-url: http://localhost:18089
+  access-token: test
