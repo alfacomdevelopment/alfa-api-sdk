@@ -1,6 +1,6 @@
 import io.freefair.gradle.plugins.lombok.tasks.Delombok
 
-version = "0.1.0"
+version = "0.2.0"
 
 plugins {
     java
@@ -63,8 +63,6 @@ publishing {
 }
 
 dependencies {
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.16.0")
-
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
 }
