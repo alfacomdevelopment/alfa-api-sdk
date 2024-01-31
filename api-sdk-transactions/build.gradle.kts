@@ -1,6 +1,6 @@
 import io.freefair.gradle.plugins.lombok.tasks.Delombok
 
-version = "0.1.0"
+version = "0.2.0"
 
 plugins {
     `java-library`
@@ -64,7 +64,12 @@ publishing {
 dependencies {
     api(project(":api-sdk-core"))
 
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.16.0")
+    implementation(platform("com.fasterxml.jackson:jackson-bom:2.15.3"))
+
+    implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
+    implementation("com.fasterxml.jackson.module:jackson-module-jaxb-annotations")
+    implementation("javax.xml.bind:jaxb-api:2.3.1")
 
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")

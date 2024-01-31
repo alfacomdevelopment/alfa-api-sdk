@@ -1,3 +1,3 @@
 sdk-sample-app:
-  base-url: http://backend-url
+  base-url: http://localhost:9999 # local wiremock url. See: stubs folder
   access-token: place-here-your-access-token

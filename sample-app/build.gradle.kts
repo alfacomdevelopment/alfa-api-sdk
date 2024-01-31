@@ -1,5 +1,5 @@
 plugins {
-    id("org.springframework.boot") version "3.2.1"
+    id("org.springframework.boot") version "3.2.2"
     kotlin("jvm") version "1.9.22"
     kotlin("kapt") version "1.9.22"
     id("org.jetbrains.kotlin.plugin.spring") version "1.9.22"
@@ -14,8 +14,10 @@ tasks.withType<Test> {
 }
 
 dependencies {
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:3.2.2"))
+
     implementation(project(":api-sdk-all"))
-    implementation(platform("org.springframework.boot:spring-boot-dependencies:3.2.1"))
+
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.22")
     implementation("org.mapstruct:mapstruct:1.5.5.Final")

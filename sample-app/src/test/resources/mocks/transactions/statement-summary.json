@@ -1,0 +1,39 @@
+{
+  "composedDateTime": "2018-12-31",
+  "lastMovementDate": "2018-12-31",
+  "openingRate": null,
+  "openingBalance": {
+    "amount": 10000.55,
+    "currencyName": "RUR"
+  },
+  "openingBalanceRub": {
+    "amount": 10000.55,
+    "currencyName": "RUR"
+  },
+  "closingBalance": {
+    "amount": 25000.3,
+    "currencyName": "RUR"
+  },
+  "closingBalanceRub": {
+    "amount": 25000.3,
+    "currencyName": "RUR"
+  },
+  "debitTurnover": {
+    "amount": 10000,
+    "currencyName": "RUR"
+  },
+  "debitTurnoverRub": {
+    "amount": 10000,
+    "currencyName": "RUR"
+  },
+  "debitTransactionsNumber": 10,
+  "creditTurnover": {
+    "amount": 24999.75,
+    "currencyName": "RUR"
+  },
+  "creditTurnoverRub": {
+    "amount": 24999.75,
+    "currencyName": "RUR"
+  },
+  "creditTransactionsNumber": 10
+}

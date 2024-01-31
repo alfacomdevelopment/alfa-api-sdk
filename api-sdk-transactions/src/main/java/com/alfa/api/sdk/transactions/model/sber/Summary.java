@@ -1,4 +1,4 @@
-package com.alfa.api.sdk.transactions.model;
+package com.alfa.api.sdk.transactions.model.sber;
 
 import lombok.Data;
 

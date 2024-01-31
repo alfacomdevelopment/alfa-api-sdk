@@ -1,0 +1,12 @@
+name: alfa-api-sdk-stubs
+services:
+  wiremock:
+    image: holomekc/wiremock-gui
+    ports:
+      - 9999:8080
+    volumes:
+      - ./wiremock:/tmp/wiremock
+    environment:
+      WIREMOCK_OPTIONS: "--verbose,--disable-gzip,--local-response-templating,--root-dir=/tmp/wiremock"
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "http://wiremock:9999/" ]
