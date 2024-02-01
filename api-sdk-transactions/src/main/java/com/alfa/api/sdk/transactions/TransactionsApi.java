@@ -1,6 +1,7 @@
 package com.alfa.api.sdk.transactions;
 
 import com.alfa.api.sdk.client.ApiHttpClient;
+import com.alfa.api.sdk.client.constants.HttpHeaders;
 import com.alfa.api.sdk.client.dto.ApiResponse;
 import com.alfa.api.sdk.client.dto.Method;
 import com.alfa.api.sdk.common.exceptions.SdkException;
@@ -70,13 +71,17 @@ public class TransactionsApi {
      */
     public Statement getStatement(String accountNumber, LocalDate statementDate, Integer page, CurFormat curFormat) {
         try {
+            Map<String, String> headers = new HashMap<>();
+            headers.put(HttpHeaders.ACCEPT, HttpHeaders.Accept.APPLICATION_JSON);
+
             Map<String, String> queryParams = new HashMap<>();
             queryParams.put("accountNumber", accountNumber);
             queryParams.put("statementDate", statementDate.toString());
             queryParams.put("page", page.toString());
             queryParams.put("curFormat", curFormat.toString());
+
             String url = String.format("%s/statement/transactions", contextPath);
-            ApiResponse apiResponse = apiHttpClient.send(Method.GET, url, queryParams, null, null);
+            ApiResponse apiResponse = apiHttpClient.send(Method.GET, url, queryParams, headers, null);
             return jsonMapper.readValue(apiResponse.getResponse(), Statement.class);
         } catch (Exception e) {
             throw new SdkException("Error occurred while receiving statement", e);
@@ -92,11 +97,15 @@ public class TransactionsApi {
      */
     public Summary getSummary(String accountNumber, LocalDate statementDate) {
         try {
+            Map<String, String> headers = new HashMap<>();
+            headers.put(HttpHeaders.ACCEPT, HttpHeaders.Accept.APPLICATION_JSON);
+
             Map<String, String> queryParams = new HashMap<>();
             queryParams.put("accountNumber", accountNumber);
             queryParams.put("statementDate", statementDate.toString());
+
             String url = String.format("%s/statement/summary", contextPath);
-            ApiResponse apiResponse = apiHttpClient.send(Method.GET, url, queryParams, null, null);
+            ApiResponse apiResponse = apiHttpClient.send(Method.GET, url, queryParams, headers, null);
             return jsonMapper.readValue(apiResponse.getResponse(), Summary.class);
         } catch (Exception e) {
             throw new SdkException("Error occurred while receiving account summary", e);
@@ -114,12 +123,16 @@ public class TransactionsApi {
      */
     public Statement1c getStatement1C(String accountNumber, LocalDate executeDate, Integer limit, Integer offset) {
         try {
+            Map<String, String> headers = new HashMap<>();
+            headers.put(HttpHeaders.ACCEPT, HttpHeaders.Accept.APPLICATION_XML);
+
             Map<String, String> queryParams = new HashMap<>();
             queryParams.put("executeDate", executeDate.toString());
             queryParams.put("limit", limit.toString());
             queryParams.put("offset", offset.toString());
+
             String url = String.format("%s/accounts/%s/transactions/1C", contextPath, accountNumber);
-            ApiResponse apiResponse = apiHttpClient.send(Method.GET, url, queryParams, null, null);
+            ApiResponse apiResponse = apiHttpClient.send(Method.GET, url, queryParams, headers, null);
             return xmlMapper.readValue(apiResponse.getResponse(), Statement1c.class);
         } catch (Exception e) {
             throw new SdkException("Error occurred while receiving statement in 1C format", e);
@@ -137,12 +150,16 @@ public class TransactionsApi {
      */
     public String getStatementMT940(String accountNumber, LocalDate executeDate, Integer limit, Integer offset) {
         try {
+            Map<String, String> headers = new HashMap<>();
+            headers.put(HttpHeaders.ACCEPT, HttpHeaders.Accept.TEXT_PLAIN);
+
             Map<String, String> queryParams = new HashMap<>();
             queryParams.put("executeDate", executeDate.toString());
             queryParams.put("limit", limit.toString());
             queryParams.put("offset", offset.toString());
+
             String url = String.format("%s/accounts/%s/transactions/MT940", contextPath, accountNumber);
-            ApiResponse apiResponse = apiHttpClient.send(Method.GET, url, queryParams, null, null);
+            ApiResponse apiResponse = apiHttpClient.send(Method.GET, url, queryParams, headers, null);
             return new String(apiResponse.getResponse(), StandardCharsets.UTF_8);
         } catch (Exception e) {
             throw new SdkException("Error occurred while receiving statement in MT940 format", e);
