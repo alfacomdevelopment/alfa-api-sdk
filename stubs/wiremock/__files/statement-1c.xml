@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:Response xmlns:ns2="http://directbank.1c.ru/XMLSchema">
+    <Pagination>
+        <Offset>0</Offset>
+        <Limit>10</Limit>
+        <TotalCount>2</TotalCount>
+    </Pagination>
+    <Statement id="032b9048-f970-5840-6ff6-73baf1b4819f" formatVersion="2.3.2" creationDate="2024-01-25T15:08:31.294">
+        <Sender bic="012525593" name="АО &quot;ТЕСТ-БАНК&quot;"/>
+        <Recipient id="40702810801300006319" name="Полное наименование Орг № 72862" inn="0122030587" kpp="012368152"/>
+        <Data>
+            <StatementType>0</StatementType>
+            <DateFrom>2023-11-09T00:00:00.000</DateFrom>
+            <DateTo>2023-11-09T23:59:59.999</DateTo>
+            <Account>40702810801300006319</Account>
+            <Bank>
+                <BIC>012525593</BIC>
+                <Name>АО "ТЕСТ-БАНК"</Name>
+            </Bank>
+            <OpeningBalance>999.90</OpeningBalance>
+            <TotalDebits>0.02</TotalDebits>
+            <TotalCredits>0.00</TotalCredits>
+            <ClosingBalance>999.88</ClosingBalance>
+            <OperationInfo>
+                <PayDoc id="1231109MOCOWSLK 08013" docKind="16">
+                    <MemOrder>
+                        <DocNo>8014</DocNo>
+                        <DocDate>2023-11-09</DocDate>
+                        <Sum>0.01</Sum>
+                        <Payer>
+                            <Name>Полное наименование Орг № 72862</Name>
+                            <INN>0122030587</INN>
+                            <KPP>012368152</KPP>
+                            <Account>40702810801300006319</Account>
+                            <Bank>
+                                <BIC>012525593</BIC>
+                                <Name>АО "ТЕСТ-БАНК"</Name>
+                            </Bank>
+                        </Payer>
+                        <Payee>
+                            <Name>Полное наименование Орг № 72862</Name>
+                            <INN>0122030587</INN>
+                            <KPP>012368152</KPP>
+                            <Account>40702810901300006316</Account>
+                            <Bank>
+                                <BIC>012525593</BIC>
+                                <Name>АО "ТЕСТ-БАНК"</Name>
+                            </Bank>
+                        </Payee>
+                        <PaymentKind>электронно</PaymentKind>
+                        <TransitionKind>09</TransitionKind>
+                    </MemOrder>
+                </PayDoc>
+                <Date>2023-11-09</Date>
+                <DC>1</DC>
+                <Stamp>
+                    <BIC>012525593</BIC>
+                    <Name>АО "ТЕСТ-БАНК"</Name>
+                    <Status>
+                        <Code>02</Code>
+                        <Name>Исполнен</Name>
+                    </Status>
+                </Stamp>
+            </OperationInfo>
+            <OperationInfo>
+                <PayDoc id="1231109MOCOWSLK 08007" docKind="16">
+                    <MemOrder>
+                        <DocNo>8008</DocNo>
+                        <DocDate>2023-11-09</DocDate>
+                        <Sum>0.01</Sum>
+                        <Payer>
+                            <Name>Полное наименование Орг № 72862</Name>
+                            <INN>0122030587</INN>
+                            <KPP>012368152</KPP>
+                            <Account>40702810801300006319</Account>
+                            <Bank>
+                                <BIC>012525593</BIC>
+                                <Name>АО "ТЕСТ-БАНК"</Name>
+                            </Bank>
+                        </Payer>
+                        <Payee>
+                            <Name>Полное наименование Орг № 72862</Name>
+                            <INN>0122030587</INN>
+                            <KPP>012368152</KPP>
+                            <Account>40702810901300006316</Account>
+                            <Bank>
+                                <BIC>012525593</BIC>
+                                <Name>АО "ТЕСТ-БАНК"</Name>
+                            </Bank>
+                        </Payee>
+                        <PaymentKind>электронно</PaymentKind>
+                        <TransitionKind>09</TransitionKind>
+                    </MemOrder>
+                </PayDoc>
+                <Date>2023-11-09</Date>
+                <DC>1</DC>
+                <Stamp>
+                    <BIC>012525593</BIC>
+                    <Name>АО "ТЕСТ-БАНК"</Name>
+                    <Status>
+                        <Code>02</Code>
+                        <Name>Исполнен</Name>
+                    </Status>
+                </Stamp>
+            </OperationInfo>
+            <Stamp>
+                <BIC>012525593</BIC>
+                <Name>АО "ТЕСТ-БАНК"</Name>
+            </Stamp>
+        </Data>
+    </Statement>
+</ns2:Response>

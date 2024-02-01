@@ -1,0 +1,56 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/api/statement/transactions(.+)"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "bodyFileName": "statement.json"
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/api/statement/summary(.+)"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "bodyFileName": "statement-summary.json"
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/api/accounts/(.+)/transactions/1C(.+)"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/xml"
+        },
+        "bodyFileName": "statement-1c.xml"
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPattern": "/api/accounts/(.+)/transactions/MT940(.+)"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "text/plain"
+        },
+        "bodyFileName": "statement-mt940.txt"
+      }
+    }
+  ]
+}

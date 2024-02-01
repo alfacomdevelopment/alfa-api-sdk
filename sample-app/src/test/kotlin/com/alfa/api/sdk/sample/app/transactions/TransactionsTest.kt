@@ -20,8 +20,11 @@ class TransactionsTest : ParentIntegrationTest() {
         mockGetStatementEndpoint()
         //when
         val result = mockMvc.perform(
-            get("/sdk/transactions").param("account", "40702810323180001677").param("date", "2023-01-30")
-                .param("page", "1").param("curFormat", "curTransfer")
+            get("/sdk/transactions")
+                .param("account", "40702810323180001677")
+                .param("date", "2023-01-30")
+                .param("page", "1")
+                .param("curFormat", "curTransfer")
         )
 
         // then
@@ -100,7 +103,7 @@ class TransactionsTest : ParentIntegrationTest() {
             .andExpect(jsonPath("$.transactions[0].curTransfer.beneficiaryBankOption").value("D"))
             .andExpect(jsonPath("$.transactions[0].curTransfer.remittanceInformation").value("PAYMENT ACC AGREEMENT 1 DD 29.11.2018 FOR WATCHES"))
             .andExpect(jsonPath("$.transactions[0].curTransfer.beneficiaryCustomerAccount").value("40702810701300000761"))
-            .andExpect(jsonPath("$.transactions[0].curTransfer.payerBankBic").value("044525593"))
+            .andExpect(jsonPath("$.transactions[0].curTransfer.payerBankBic").value("012525593"))
             .andExpect(jsonPath("$.transactions[0].curTransfer.payeeInn").value("7720000971"))
             .andExpect(jsonPath("$.transactions[0].curTransfer.receiverCharges").value("receiverCharges"))
             .andExpect(jsonPath("$.transactions[0].swiftTransfer.bankOperationCode").value("CRED"))
@@ -170,7 +173,7 @@ class TransactionsTest : ParentIntegrationTest() {
             .andExpect(jsonPath("$.transactions[0].rurTransfer.payeeName").value("Наименование получателя"))
             .andExpect(jsonPath("$.transactions[0].rurTransfer.payeeBankName").value("АО \"ТЕСТ-БАНК\""))
             .andExpect(jsonPath("$.transactions[0].rurTransfer.payeeBankBic").value("9611925"))
-            .andExpect(jsonPath("$.transactions[0].rurTransfer.payerBankBic").value("044525593"))
+            .andExpect(jsonPath("$.transactions[0].rurTransfer.payerBankBic").value("012525593"))
             .andExpect(jsonPath("$.transactions[0].rurTransfer.purposeCode").value("1"))
             .andExpect(jsonPath("$.transactions[0].rurTransfer.payeeInn").value("7720000971"))
             .andExpect(jsonPath("$.transactions[0].rurTransfer.payerName").value("Гаврилов Добрыня Петрович"))
@@ -185,8 +188,11 @@ class TransactionsTest : ParentIntegrationTest() {
     fun negativeError404() {
         //when
         val result = mockMvc.perform(
-            get("/sdk/transactions").param("account", "40702810323180001677").param("date", "2023-01-30")
-                .param("page", "1").param("curFormat", "curTransfer")
+            get("/sdk/transactions")
+                .param("account", "40702810323180001677")
+                .param("date", "2023-01-30")
+                .param("page", "1")
+                .param("curFormat", "curTransfer")
         )
 
         // then
@@ -202,12 +208,15 @@ class TransactionsTest : ParentIntegrationTest() {
 
     @Test
     fun negativeError500() {
-        mockGetStatementEndpointWithInternalError()
+        mockGetEndpointWithInternalError("/api/statement/transactions(.+)")
 
         //when
         val result = mockMvc.perform(
-            get("/sdk/transactions").param("account", "40702810323180001677").param("date", "2023-01-30")
-                .param("page", "1").param("curFormat", "curTransfer")
+            get("/sdk/transactions")
+                .param("account", "40702810323180001677")
+                .param("date", "2023-01-30")
+                .param("page", "1")
+                .param("curFormat", "curTransfer")
         )
 
         // then
@@ -222,27 +231,18 @@ class TransactionsTest : ParentIntegrationTest() {
         }.andReturn()
     }
 
-    private fun mockGetStatementEndpointWithInternalError() {
-        wiremock.stubFor(
-            WireMock.get(WireMock.urlMatching("/api/statement/transactions(.+)")).willReturn(
-                WireMock.aResponse().withStatus(500)
-                    .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .withBody(
-                        """
-                        {"error": "Internal Server Error"}
-                    """.trimIndent()
-                    )
-            )
-        )
-    }
-
     private fun mockGetStatementEndpoint() {
         wiremock.stubFor(
-            WireMock.get(WireMock.urlMatching("/api/statement/transactions(.+)")).willReturn(
-                WireMock.aResponse().withStatus(200)
-                    .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .withBody(getMockBodyFromResources("mocks/transactions/statement.json"))
-            )
+            WireMock.get(WireMock.urlMatching("/api/statement/transactions(.+)"))
+                .withQueryParam("accountNumber", WireMock.equalTo("40702810323180001677"))
+                .withQueryParam("statementDate", WireMock.equalTo("2023-01-30"))
+                .withQueryParam("page", WireMock.equalTo("1"))
+                .withQueryParam("curFormat", WireMock.equalTo("curTransfer"))
+                .willReturn(
+                    WireMock.aResponse().withStatus(200)
+                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .withBody(getMockBodyFromResources("mocks/transactions/statement.json"))
+                )
         )
     }
 }

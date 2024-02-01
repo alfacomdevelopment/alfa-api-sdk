@@ -42,8 +42,8 @@ public class ApiSyncHttpClient implements ApiHttpClient {
     /**
      * Constructs a new instance of {@link ApiSyncHttpClient} with a specified base URL and a provider for API credentials.
      *
-     * @param baseUrl             the base URL for all API calls
-     * @param credentialProvider  the provider for API credentials
+     * @param baseUrl            the base URL for all API calls
+     * @param credentialProvider the provider for API credentials
      */
     public ApiSyncHttpClient(String baseUrl, CredentialProvider credentialProvider) {
         this.baseUrl = processBaseUrl(baseUrl);
@@ -53,8 +53,8 @@ public class ApiSyncHttpClient implements ApiHttpClient {
     /**
      * Constructs a new instance of {@link ApiSyncHttpClient} with a specified base URL and a provider for transport security settings.
      *
-     * @param baseUrl                    the base URL for all API calls
-     * @param transportSecurityProvider  the provider for transport security settings
+     * @param baseUrl                   the base URL for all API calls
+     * @param transportSecurityProvider the provider for transport security settings
      */
     public ApiSyncHttpClient(String baseUrl, TransportSecurityProvider transportSecurityProvider) {
         this.baseUrl = processBaseUrl(baseUrl);
@@ -65,9 +65,9 @@ public class ApiSyncHttpClient implements ApiHttpClient {
      * Constructs a new instance of {@link ApiSyncHttpClient} with a specified base URL,
      * a provider for API credentials,and a provider for transport security settings.
      *
-     * @param baseUrl                     the base URL for all API calls
-     * @param transportSecurityProvider   the provider for transport security settings
-     * @param credentialProvider          the provider for API credentials
+     * @param baseUrl                   the base URL for all API calls
+     * @param transportSecurityProvider the provider for transport security settings
+     * @param credentialProvider        the provider for API credentials
      */
     public ApiSyncHttpClient(String baseUrl, TransportSecurityProvider transportSecurityProvider, CredentialProvider credentialProvider) {
         this.baseUrl = processBaseUrl(baseUrl);
@@ -156,7 +156,9 @@ public class ApiSyncHttpClient implements ApiHttpClient {
         if (queryParams != null && !queryParams.isEmpty()) {
             urlBuilder.append("?");
             for (Map.Entry<String, String> entry : queryParams.entrySet()) {
-                urlBuilder.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+                if (entry.getValue() != null && !entry.getValue().isEmpty()) {
+                    urlBuilder.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+                }
             }
             urlBuilder.deleteCharAt(urlBuilder.length() - 1);
         }
