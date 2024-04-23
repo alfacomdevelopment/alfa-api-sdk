@@ -9,7 +9,7 @@ data class ApplicationProperties(
     var tlsProperties: TlsProperties?,
     var accessToken: String,
     var transactions: TransactionsProperties?,
-    var signature: SignatureProperties?,
+    var signature: SignatureProperties,
 ) {
     data class TransactionsProperties(
         var contextPath: String
@@ -24,6 +24,6 @@ data class ApplicationProperties(
     )
 
     data class SignatureProperties(
-        var rsa: KeyStoreParameters?
+        var rsa: KeyStoreParameters
     )
 }

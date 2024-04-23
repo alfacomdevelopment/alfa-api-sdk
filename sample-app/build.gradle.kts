@@ -25,4 +25,6 @@ dependencies {
 
     testImplementation("org.wiremock:wiremock-standalone:3.3.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.bouncycastle:bcprov-jdk18on:1.78")
+    testImplementation("org.bouncycastle:bcpkix-jdk18on:1.78")
 }

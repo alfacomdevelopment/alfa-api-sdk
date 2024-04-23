@@ -1,7 +1,8 @@
 package com.alfa.api.sdk.sample.app.controller
 
-import com.alfa.api.sdk.crypto.impl.CmsSignatureServiceImpl
-import com.alfa.api.sdk.crypto.impl.JwsSignatureServiceImpl
+import com.alfa.api.sdk.crypto.CmsSignatureService
+import com.alfa.api.sdk.crypto.JwsSignatureService
+import com.alfa.api.sdk.crypto.XmlSignatureService
 import org.apache.tomcat.util.codec.binary.Base64
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
@@ -14,8 +15,9 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/sdk/crypto")
 class CryptoController(
-    private val cmsSignatureService: CmsSignatureServiceImpl,
-    private val jwsSignatureService: JwsSignatureServiceImpl
+    private val cmsSignatureService: CmsSignatureService,
+    private val jwsSignatureService: JwsSignatureService,
+    private val xmlSignatureService: XmlSignatureService
 ) {
     @PostMapping("/sign/rsa/cms", consumes = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
     fun signRsaCms(@RequestBody data: ByteArray, @RequestParam attached: Boolean): ByteArray {
@@ -53,5 +55,16 @@ class CryptoController(
     @PostMapping("/verify/rsa/detached/jws", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun verifyRsaDetachedJws(@RequestBody data: String, @RequestHeader jwsWithoutData: String): Boolean {
         return jwsSignatureService.verifyDetached(data, jwsWithoutData)
+    }
+
+    @PostMapping("/sign/rsa/xml", consumes = [MediaType.APPLICATION_XML_VALUE])
+    fun signRsaXml(@RequestBody data: String): String {
+        return xmlSignatureService.sign(data)
+
+    }
+
+    @PostMapping("/verify/rsa/xml", consumes = [MediaType.APPLICATION_XML_VALUE])
+    fun verifyRsaAttachedXml(@RequestBody jwsWithData: String): Boolean {
+        return xmlSignatureService.verify(jwsWithData)
     }
 }
