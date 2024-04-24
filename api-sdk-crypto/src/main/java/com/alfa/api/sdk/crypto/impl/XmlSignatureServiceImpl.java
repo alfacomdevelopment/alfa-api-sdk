@@ -10,6 +10,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.crypto.AlgorithmMethod;
 import javax.xml.crypto.KeySelector;
 import javax.xml.crypto.KeySelectorException;
@@ -82,6 +83,7 @@ public class XmlSignatureServiceImpl extends AbstractSignatureService implements
             }
 
             DOMValidateContext validateContext = new DOMValidateContext(new X509KeySelector(), nodeList.item(0));
+            validateContext.setProperty("org.jcp.xml.dsig.secureValidation", Boolean.TRUE);
             XMLSignatureFactory xmlSignatureFactory = XMLSignatureFactory.getInstance("DOM");
             XMLSignature signature = xmlSignatureFactory.unmarshalXMLSignature(validateContext);
             return signature.validate(validateContext);
@@ -92,6 +94,9 @@ public class XmlSignatureServiceImpl extends AbstractSignatureService implements
 
     private String serializeXml(Document document) throws TransformerException {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
         Transformer transformer = transformerFactory.newTransformer();
         StringWriter stringWriter = new StringWriter();
         transformer.transform(new DOMSource(document), new StreamResult(stringWriter));
@@ -134,6 +139,11 @@ public class XmlSignatureServiceImpl extends AbstractSignatureService implements
     private Document parseXmlDocument(String data) throws SAXException, IOException, ParserConfigurationException {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
+        documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        documentBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        documentBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
         return documentBuilderFactory.newDocumentBuilder().parse(new InputSource(new StringReader(data)));
     }
 
