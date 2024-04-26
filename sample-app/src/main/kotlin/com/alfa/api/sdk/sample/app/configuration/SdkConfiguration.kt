@@ -1,13 +1,17 @@
 package com.alfa.api.sdk.sample.app.configuration
 
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import com.alfa.api.sdk.client.ApiHttpClient
 import com.alfa.api.sdk.client.ApiSyncHttpClient
 import com.alfa.api.sdk.client.security.BearerTokenProvider
 import com.alfa.api.sdk.client.security.TlsProvider
+import com.alfa.api.sdk.crypto.AbstractSignatureService
+import com.alfa.api.sdk.crypto.impl.CmsSignatureServiceImpl
+import com.alfa.api.sdk.crypto.impl.JwsSignatureServiceImpl
+import com.alfa.api.sdk.crypto.impl.XmlSignatureServiceImpl
 import com.alfa.api.sdk.sample.app.mapper.SslPropertiesMapper
 import com.alfa.api.sdk.transactions.TransactionsApi
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 
 @Configuration
 class SdkConfiguration(
@@ -25,4 +29,26 @@ class SdkConfiguration(
     @Bean
     fun createTransactionsApi(apiHttpClient: ApiHttpClient): TransactionsApi =
         TransactionsApi(apiHttpClient, properties.transactions?.contextPath)
+
+    @Bean
+    fun createRsaCmsSignatureService() =
+        CmsSignatureServiceImpl(
+            properties.signature.rsa,
+            AbstractSignatureService.SignatureAlgorithm.RSA
+        )
+
+
+    @Bean
+    fun createRsaJwsSignatureService() =
+        JwsSignatureServiceImpl(
+            properties.signature.rsa,
+            AbstractSignatureService.SignatureAlgorithm.RSA
+        )
+
+    @Bean
+    fun createRsaXmlSignatureService() =
+        XmlSignatureServiceImpl(
+            properties.signature.rsa,
+            AbstractSignatureService.SignatureAlgorithm.RSA
+        )
 }

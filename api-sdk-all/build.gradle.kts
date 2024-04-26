@@ -1,4 +1,4 @@
-version = "0.2.0"
+version = "0.3.0"
 
 plugins{
     `java-library`
@@ -25,4 +25,5 @@ publishing {
 
 dependencies {
     api(project(":api-sdk-transactions"))
+    api(project(":api-sdk-crypto"))
 }

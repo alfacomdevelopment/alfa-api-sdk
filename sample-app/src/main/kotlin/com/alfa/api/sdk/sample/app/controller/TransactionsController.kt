@@ -24,8 +24,7 @@ class TransactionsController(private val transactionsApi: TransactionsApi) {
         return transactionsApi.getStatement(account, date, page, CurFormat.fromValue(curFormat))
     }
 
-    @GetMapping
-    @RequestMapping("/summary")
+    @GetMapping("/summary")
     fun getSummary(
         @RequestParam account: String,
         @RequestParam date: LocalDate
@@ -33,8 +32,7 @@ class TransactionsController(private val transactionsApi: TransactionsApi) {
         return transactionsApi.getSummary(account, date)
     }
 
-    @GetMapping
-    @RequestMapping("/1C")
+    @GetMapping("/1C")
     fun getTransactions1C(
         @RequestParam account: String,
         @RequestParam date: LocalDate,
@@ -44,8 +42,7 @@ class TransactionsController(private val transactionsApi: TransactionsApi) {
         return transactionsApi.getStatement1C(account, date, limit, offset)
     }
 
-    @GetMapping
-    @RequestMapping("/MT940")
+    @GetMapping("/MT940")
     fun getTransactionsMT940(
         @RequestParam account: String,
         @RequestParam date: LocalDate,

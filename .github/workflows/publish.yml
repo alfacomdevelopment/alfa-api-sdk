@@ -10,6 +10,7 @@ on:
           - "api-sdk-all"
           - "api-sdk-core"
           - "api-sdk-transactions"
+          - "api-sdk-crypto"
           - "PUBLISH ALL SUBMODULES"
 jobs:
   publish:
