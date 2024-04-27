@@ -3,6 +3,7 @@
 - **api-sdk-all** - library that contains all other modules
 - **api-sdk-core** - SDK core, contains client and common classes
 - **api-sdk-transactions** - library for integration with TransactionsApi
+- **api-sdk-crypto** - utility library for cryptography operations
 
 ## Prerequisites
 Java JDK 8 or higher
