@@ -1,6 +1,5 @@
 package com.alfa.api.sdk.sample.app.configuration
 
-import com.alfa.api.sdk.crypto.model.KeyStoreParameters
 import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties(prefix = "sdk-sample-app")
@@ -24,6 +23,29 @@ data class ApplicationProperties(
     )
 
     data class SignatureProperties(
-        var rsa: KeyStoreParameters
-    )
+        var rsa: KeyStoreProperties
+    ) {
+        data class KeyStoreProperties(
+            var path: String,
+            var type: KeyStoreType,
+            var password: String,
+            var privateKey: PrivateKeyProperties,
+            var certificate: CertificateProperties
+        ) {
+            enum class KeyStoreType {
+                JKS,
+                JCEKS,
+                PKCS12
+            }
+
+            data class PrivateKeyProperties(
+                var alias: String,
+                var password: String
+            )
+
+            data class CertificateProperties(
+                var alias: String
+            )
+        }
+    }
 }

@@ -8,6 +8,7 @@ import com.alfa.api.sdk.crypto.AbstractSignatureService
 import com.alfa.api.sdk.crypto.impl.CmsSignatureServiceImpl
 import com.alfa.api.sdk.crypto.impl.JwsSignatureServiceImpl
 import com.alfa.api.sdk.crypto.impl.XmlSignatureServiceImpl
+import com.alfa.api.sdk.sample.app.mapper.SignaturePropertiesMapper
 import com.alfa.api.sdk.sample.app.mapper.SslPropertiesMapper
 import com.alfa.api.sdk.transactions.TransactionsApi
 import org.springframework.context.annotation.Bean
@@ -16,7 +17,8 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class SdkConfiguration(
     private val properties: ApplicationProperties,
-    private val sslPropertiesMapper: SslPropertiesMapper
+    private val sslPropertiesMapper: SslPropertiesMapper,
+    private val signaturePropertiesMapper: SignaturePropertiesMapper
 ) {
     @Bean
     fun createApiHttpClient(): ApiHttpClient =
@@ -33,7 +35,7 @@ class SdkConfiguration(
     @Bean
     fun createRsaCmsSignatureService() =
         CmsSignatureServiceImpl(
-            properties.signature.rsa,
+            signaturePropertiesMapper.map(properties.signature.rsa),
             AbstractSignatureService.SignatureAlgorithm.RSA
         )
 
@@ -41,14 +43,14 @@ class SdkConfiguration(
     @Bean
     fun createRsaJwsSignatureService() =
         JwsSignatureServiceImpl(
-            properties.signature.rsa,
+            signaturePropertiesMapper.map(properties.signature.rsa),
             AbstractSignatureService.SignatureAlgorithm.RSA
         )
 
     @Bean
     fun createRsaXmlSignatureService() =
         XmlSignatureServiceImpl(
-            properties.signature.rsa,
+            signaturePropertiesMapper.map(properties.signature.rsa),
             AbstractSignatureService.SignatureAlgorithm.RSA
         )
 }
