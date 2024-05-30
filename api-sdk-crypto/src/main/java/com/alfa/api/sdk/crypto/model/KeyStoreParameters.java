@@ -1,10 +1,10 @@
 package com.alfa.api.sdk.crypto.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
+@Builder
 public class KeyStoreParameters {
     /**
      * The path to the key store.
@@ -31,8 +31,8 @@ public class KeyStoreParameters {
      */
     private CertificateParameters certificate;
 
-    @Getter
-    @Setter
+    @Data
+    @Builder
     public static class PrivateKeyParameters {
         /**
          * Private key alias.
@@ -44,8 +44,8 @@ public class KeyStoreParameters {
         private String password;
     }
 
-    @Getter
-    @Setter
+    @Data
+    @Builder
     public static class CertificateParameters {
         /**
          * Certificate alias.
