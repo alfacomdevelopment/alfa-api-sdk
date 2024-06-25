@@ -86,15 +86,39 @@ Similarly, for `JwsSignatureService` and `XmlSignatureService`
 * `signAttached(byte[] data)` - this method signs the provided data with an attached signature. It takes the data to be signed as input and returns the data along with the signature, encapsulated in a single byte array.
 * `verifyAttached(byte[] dataWithSignature)` - this method verifies an attached signature against the provided data that includes the signature. It takes the data with the attached signature as input and returns true if the signature is valid, and false otherwise.
 
+*Example:*
+```java
+byte[] detachedSignature = cmsSignatureService.signDetached("some data to be signed".getBytes(StandardCharsets.UTF_8));
+boolean verificationResult = cmsSignatureService.verifyDetached("some data to be signed".getBytes(StandardCharsets.UTF_8), detachedSignature);
+
+byte[] attachedSignature = cmsSignatureService.signAttached("some data to be signed".getBytes(StandardCharsets.UTF_8));
+boolean verificationResult = cmsSignatureService.verifyAttached(attachedSignature);
+```
+
 #### JwsSignatureService methods
 * `signDetached(String data)` - generates a JWS signature for the given data without including the data itself in the signature. Returns the signature as a string.
 * `verifyDetached(String data, String jwsWithoutData)` - validates a detached JWS signature against the original data. Returns true if the signature is valid and the data hasn't been altered; otherwise, returns false.
 * `signAttached(String data)` - creates a JWS signature that embeds the given data within the signature itself. Returns the combined signature and data as a string.
 * `verifyAttached(String jwsWithData)` - checks the validity of a JWS signature that contains embedded data. Returns true if the signature is valid and the embedded data is unmodified; otherwise, returns false.
 
+*Example:*
+```java
+byte[] jwsWithoutData = jwsSignatureService.signDetached("{\"some\":\"json\"}");
+boolean verificationResult = jwsSignatureService.verifyDetached("{\"some\":\"json\"}", jwsWithoutData);
+
+byte[] jwsWithData = jwsSignatureService.signAttached("{\"some\":\"json\"}");
+boolean verificationResult = jwsSignatureService.verifyAttached(jwsWithData);
+```
+
 #### XmlSignatureService methods
 * `sign(String data)` - this method takes an XML string (data) as input and returns a new string where the original XML content is digitally signed. The returned string includes both the original XML content and the embedded signature.
 * `verify(String dataWithSignature)` - this method accepts an XML string (dataWithSignature) that contains an embedded signature. It verifies the signature against the expected signature and returns true if the signature is valid, or false if it is not.
+
+*Example:*
+```java
+byte[] signedXml = xmlSignatureService.sign("<Some>Xml</Some>");
+boolean verificationResult = xmlSignatureService.verify(signedXml);
+```
 
 ## Usage example
 You can check out an example of how to use the SDK in a [test Spring Boot 3 application](https://github.com/alfacomdevelopment/alfa-api-sdk/tree/main/sample-app).
