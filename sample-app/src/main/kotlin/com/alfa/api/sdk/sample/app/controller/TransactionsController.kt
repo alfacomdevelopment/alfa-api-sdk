@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import com.alfa.api.sdk.transactions.TransactionsApi
 import com.alfa.api.sdk.transactions.model.odins.Statement1c
-import com.alfa.api.sdk.transactions.model.sber.CurFormat
-import com.alfa.api.sdk.transactions.model.sber.Statement
-import com.alfa.api.sdk.transactions.model.sber.Summary
+import com.alfa.api.sdk.transactions.model.statement.CurFormat
+import com.alfa.api.sdk.transactions.model.statement.Statement
+import com.alfa.api.sdk.transactions.model.statement.Summary
 import java.time.LocalDate
 
 @RestController

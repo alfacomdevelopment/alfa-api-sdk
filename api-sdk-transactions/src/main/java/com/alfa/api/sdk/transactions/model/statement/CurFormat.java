@@ -1,4 +1,4 @@
-package com.alfa.api.sdk.transactions.model.sber;
+package com.alfa.api.sdk.transactions.model.statement;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
