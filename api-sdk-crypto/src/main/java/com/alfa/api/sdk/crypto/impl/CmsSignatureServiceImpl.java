@@ -32,9 +32,16 @@ import java.util.Collections;
 @SuppressWarnings("java:S5164")
 public class CmsSignatureServiceImpl extends AbstractSignatureService implements CmsSignatureService {
     private final ThreadLocal<CMSSignedDataGenerator> cmsSignedDataGeneratorThreadLocal = new ThreadLocal<>();
+    private final String signedDataEncoding;
 
     public CmsSignatureServiceImpl(KeyStoreParameters parameters, SignatureAlgorithm signatureAlgorithm) {
         super(parameters, signatureAlgorithm);
+        this.signedDataEncoding = null;
+    }
+
+    public CmsSignatureServiceImpl(KeyStoreParameters parameters, SignatureAlgorithm signatureAlgorithm, String signedDataEncoding) {
+        super(parameters, signatureAlgorithm);
+        this.signedDataEncoding = signedDataEncoding;
     }
 
     @Override
@@ -49,9 +56,11 @@ public class CmsSignatureServiceImpl extends AbstractSignatureService implements
 
     private byte[] sign(byte[] data, boolean attached) {
         try {
-            return getCmsSignedDataGeneratorThreadLocal()
-                    .generate(new CMSProcessableByteArray(data), attached)
-                    .getEncoded();
+            CMSSignedData signedData = getCmsSignedDataGeneratorThreadLocal()
+                    .generate(new CMSProcessableByteArray(data), attached);
+            return (signedDataEncoding != null) ?
+                    signedData.getEncoded(signedDataEncoding) :
+                    signedData.getEncoded();
         } catch (CMSException | OperatorCreationException |
                  CertificateEncodingException | IOException e) {
             throw new CryptoRuntimeException("An error occurred during the signing process", e);
