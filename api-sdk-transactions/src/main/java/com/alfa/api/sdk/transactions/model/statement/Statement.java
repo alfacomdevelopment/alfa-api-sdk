@@ -16,7 +16,8 @@ public class Statement {
     @JsonProperty("transactions")
     private List<Transaction> transactions;
 
-    private static class Transaction {
+    @Data
+    public static class Transaction {
         @JsonProperty("amount")
         private Amount amount;
 
