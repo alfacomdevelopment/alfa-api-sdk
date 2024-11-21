@@ -44,6 +44,17 @@ public class CmsSignatureServiceImpl extends AbstractSignatureService implements
         this.signedDataEncoding = signedDataEncoding;
     }
 
+    public CmsSignatureServiceImpl(KeyStoreParameters parameters, SignatureAlgorithm signatureAlgorithm, SignedDataEncoding signedDataEncoding) {
+        super(parameters, signatureAlgorithm);
+        this.signedDataEncoding = signedDataEncoding.name();
+    }
+
+    public enum SignedDataEncoding {
+        DER,
+        BER,
+        DL
+    }
+
     @Override
     public byte[] signDetached(byte[] data) {
         return sign(data, false);
