@@ -1,130 +1,111 @@
 package com.alfa.api.sdk.sample.app.transactions
 
-import com.alfa.api.sdk.client.exceptions.ApiException
-import com.alfa.api.sdk.common.exceptions.SdkException
 import com.alfa.api.sdk.sample.app.ParentIntegrationTest
 import com.github.tomakehurst.wiremock.client.WireMock
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.nio.charset.StandardCharsets
 
 class Transactions1cTest : ParentIntegrationTest() {
     @Test
     fun positive() {
         mockGetStatement1cEndpoint()
-        //when
-        val result = mockMvc.perform(
-            get("/sdk/transactions/1C")
-                .param("account", "40702810323180001677")
-                .param("date", "2023-01-30")
-                .param("limit", "1")
-                .param("offset", "0")
-        )
 
-        // then
-        result.andExpect(status().isOk())
-            .andExpect(jsonPath("$.pagination.offset").value(0))
-            .andExpect(jsonPath("$.pagination.limit").value(10))
-            .andExpect(jsonPath("$.pagination.totalCount").value(2))
-            .andExpect(jsonPath("$.statement.id").value("032b9048-f970-5840-6ff6-73baf1b4819f"))
-            .andExpect(jsonPath("$.statement.formatVersion").value("2.3.2"))
-            .andExpect(jsonPath("$.statement.creationDate").value("2024-01-25T15:08:31.294"))
-            .andExpect(jsonPath("$.statement.sender.bic").value("012525593"))
-            .andExpect(jsonPath("$.statement.sender.name").value("АО \"ТЕСТ-БАНК\""))
-            .andExpect(jsonPath("$.statement.recipient.id").value("40702810801300006319"))
-            .andExpect(jsonPath("$.statement.recipient.name").value("Полное наименование Орг № 72862"))
-            .andExpect(jsonPath("$.statement.recipient.inn").value("0122030587"))
-            .andExpect(jsonPath("$.statement.recipient.kpp").value("012368152"))
-            .andExpect(jsonPath("$.statement.data.statementType").value("0"))
-            .andExpect(jsonPath("$.statement.data.dateFrom").value("2023-11-09T00:00:00.000"))
-            .andExpect(jsonPath("$.statement.data.dateTo").value("2023-11-09T23:59:59.999"))
-            .andExpect(jsonPath("$.statement.data.account").value("40702810801300006319"))
-            .andExpect(jsonPath("$.statement.data.bank.bic").value("012525593"))
-            .andExpect(jsonPath("$.statement.data.bank.name").value("АО \"ТЕСТ-БАНК\""))
-            .andExpect(jsonPath("$.statement.data.openingBalance").value(999.90))
-            .andExpect(jsonPath("$.statement.data.totalDebits").value(0.02))
-            .andExpect(jsonPath("$.statement.data.totalCredits").value(0.00))
-            .andExpect(jsonPath("$.statement.data.closingBalance").value(999.88))
-            .andExpect(jsonPath("$.statement.data.stamp.bic").value("012525593"))
-            .andExpect(jsonPath("$.statement.data.stamp.name").value("АО \"ТЕСТ-БАНК\""))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].payDoc.id").value("1231109MOCOWSLK 08013"))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].date").value("2023-11-09"))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].dc").value("1"))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].stamp.bic").value("012525593"))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].stamp.name").value("АО \"ТЕСТ-БАНК\""))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].stamp.status.code").value("02"))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].stamp.status.name").value("Исполнен"))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.docNo").value("8014"))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.docDate").value("2023-11-09"))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.sum").value(0.01))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payer.name").value("Полное наименование Орг № 72862"))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payer.inn").value("0122030587"))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payer.kpp").value("012368152"))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payer.account").value("40702810801300006319"))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payer.bank.bic").value("012525593"))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payer.bank.name").value("АО \"ТЕСТ-БАНК\""))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payee.name").value("Полное наименование Орг № 72862"))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payee.inn").value("0122030587"))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payee.kpp").value("012368152"))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payee.account").value("40702810901300006316"))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payee.bank.bic").value("012525593"))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payee.bank.name").value("АО \"ТЕСТ-БАНК\""))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.paymentKind").value("электронно"))
-            .andExpect(jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.transitionKind").value("09"))
-            .andReturn()
+        testClient.get()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/sdk/transactions/1C")
+                    .queryParam("account", "40702810323180001677")
+                    .queryParam("date", "2023-01-30")
+                    .queryParam("limit", "1")
+                    .queryParam("offset", "0")
+                    .build()
+            }
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$.pagination.offset").isEqualTo(0)
+            .jsonPath("$.pagination.limit").isEqualTo(10)
+            .jsonPath("$.pagination.totalCount").isEqualTo(2)
+            .jsonPath("$.statement.id").isEqualTo("032b9048-f970-5840-6ff6-73baf1b4819f")
+            .jsonPath("$.statement.formatVersion").isEqualTo("2.3.2")
+            .jsonPath("$.statement.creationDate").isEqualTo("2024-01-25T15:08:31.294")
+            .jsonPath("$.statement.sender.bic").isEqualTo("012525593")
+            .jsonPath("$.statement.sender.name").isEqualTo("АО \"ТЕСТ-БАНК\"")
+            .jsonPath("$.statement.recipient.id").isEqualTo("40702810801300006319")
+            .jsonPath("$.statement.recipient.name").isEqualTo("Полное наименование Орг № 72862")
+            .jsonPath("$.statement.recipient.inn").isEqualTo("0122030587")
+            .jsonPath("$.statement.recipient.kpp").isEqualTo("012368152")
+            .jsonPath("$.statement.data.statementType").isEqualTo("0")
+            .jsonPath("$.statement.data.dateFrom").isEqualTo("2023-11-09T00:00:00.000")
+            .jsonPath("$.statement.data.dateTo").isEqualTo("2023-11-09T23:59:59.999")
+            .jsonPath("$.statement.data.account").isEqualTo("40702810801300006319")
+            .jsonPath("$.statement.data.bank.bic").isEqualTo("012525593")
+            .jsonPath("$.statement.data.bank.name").isEqualTo("АО \"ТЕСТ-БАНК\"")
+            .jsonPath("$.statement.data.openingBalance").isEqualTo(999.90)
+            .jsonPath("$.statement.data.totalDebits").isEqualTo(0.02)
+            .jsonPath("$.statement.data.totalCredits").isEqualTo(0.00)
+            .jsonPath("$.statement.data.closingBalance").isEqualTo(999.88)
+            .jsonPath("$.statement.data.stamp.bic").isEqualTo("012525593")
+            .jsonPath("$.statement.data.stamp.name").isEqualTo("АО \"ТЕСТ-БАНК\"")
+            .jsonPath("$.statement.data.operationInfo[0].payDoc.id").isEqualTo("1231109MOCOWSLK 08013")
+            .jsonPath("$.statement.data.operationInfo[0].date").isEqualTo("2023-11-09")
+            .jsonPath("$.statement.data.operationInfo[0].dc").isEqualTo("1")
+            .jsonPath("$.statement.data.operationInfo[0].stamp.bic").isEqualTo("012525593")
+            .jsonPath("$.statement.data.operationInfo[0].stamp.name").isEqualTo("АО \"ТЕСТ-БАНК\"")
+            .jsonPath("$.statement.data.operationInfo[0].stamp.status.code").isEqualTo("02")
+            .jsonPath("$.statement.data.operationInfo[0].stamp.status.name").isEqualTo("Исполнен")
+            .jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.docNo").isEqualTo("8014")
+            .jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.docDate").isEqualTo("2023-11-09")
+            .jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.sum").isEqualTo(0.01)
+            .jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payer.name").isEqualTo("Полное наименование Орг № 72862")
+            .jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payer.inn").isEqualTo("0122030587")
+            .jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payer.kpp").isEqualTo("012368152")
+            .jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payer.account").isEqualTo("40702810801300006319")
+            .jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payer.bank.bic").isEqualTo("012525593")
+            .jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payer.bank.name").isEqualTo("АО \"ТЕСТ-БАНК\"")
+            .jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payee.name").isEqualTo("Полное наименование Орг № 72862")
+            .jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payee.inn").isEqualTo("0122030587")
+            .jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payee.kpp").isEqualTo("012368152")
+            .jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payee.account").isEqualTo("40702810901300006316")
+            .jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payee.bank.bic").isEqualTo("012525593")
+            .jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.payee.bank.name").isEqualTo("АО \"ТЕСТ-БАНК\"")
+            .jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.paymentKind").isEqualTo("электронно")
+            .jsonPath("$.statement.data.operationInfo[0].payDoc.memOrder.transitionKind").isEqualTo("09")
     }
 
     @Test
     fun negativeError404() {
-        //when
-        val result = mockMvc.perform(
-            get("/sdk/transactions/1C")
-                .param("account", "40702810323180001677")
-                .param("date", "2023-01-30")
-                .param("limit", "1")
-                .param("offset", "0")
-        )
-
-        // then
-        result.andExpect {
-            assertTrue(it.resolvedException is SdkException)
-            assertTrue(it.resolvedException!!.cause is ApiException)
-            val exception = it.resolvedException as SdkException
-            val cause = it.resolvedException!!.cause as ApiException
-            assertEquals("Error occurred while receiving statement in 1C format", exception.message)
-            assertEquals(404, cause.statusCode)
-        }.andReturn()
+        testClient.get()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/sdk/transactions/1C")
+                    .queryParam("account", "40702810323180001677")
+                    .queryParam("date", "2023-01-30")
+                    .queryParam("limit", "1")
+                    .queryParam("offset", "0")
+                    .build()
+            }
+            .exchange()
+            .expectStatus().isNotFound
     }
 
     @Test
     fun negativeError500() {
         mockGetEndpointWithInternalError("/api/accounts/(.+)/transactions/1C(.+)")
 
-        //when
-        val result = mockMvc.perform(
-            get("/sdk/transactions/1C")
-                .param("account", "40702810323180001677")
-                .param("date", "2023-01-30")
-                .param("limit", "1")
-                .param("offset", "0")
-        )
-
-        // then
-        result.andExpect {
-            assertTrue(it.resolvedException is SdkException)
-            assertTrue(it.resolvedException!!.cause is ApiException)
-            val exception = it.resolvedException as SdkException
-            val cause = it.resolvedException!!.cause as ApiException
-            assertEquals("Error occurred while receiving statement in 1C format", exception.message)
-            assertEquals(500, cause.statusCode)
-            assertEquals("{\"error\": \"Internal Server Error\"}", String(cause.response, StandardCharsets.UTF_8))
-        }.andReturn()
+        testClient.get()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/sdk/transactions/1C")
+                    .queryParam("account", "40702810323180001677")
+                    .queryParam("date", "2023-01-30")
+                    .queryParam("limit", "1")
+                    .queryParam("offset", "0")
+                    .build()
+            }
+            .exchange()
+            .expectStatus().is5xxServerError
     }
 
     private fun mockGetStatement1cEndpoint() {

@@ -3,76 +3,94 @@ package com.alfa.api.sdk.sample.app.crypto
 import com.alfa.api.sdk.sample.app.ParentIntegrationTest
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class JwsSignatureTest : ParentIntegrationTest() {
     @Test
     fun positiveAttached() {
         val data = getMockBodyFromResources("mocks/transactions/statement-summary.json")
 
-        val signedContent = mockMvc.perform(
-            post("/sdk/crypto/sign/rsa/jws")
-                .param("attached", "true")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(data)
-        )
-            .andExpect(status().isOk)
-            .andReturn().response.contentAsString
+        val signedContent = testClient.post()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/sdk/crypto/sign/rsa/jws")
+                    .queryParam("attached", "true")
+                    .build()
+            }
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(data)
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(String::class.java)
+            .returnResult()
+            .responseBody ?: error("Empty response")
 
-        mockMvc.perform(
-            post("/sdk/crypto/verify/rsa/attached/jws")
-                .contentType("application/jose")
-                .content(signedContent)
-        )
-            .andExpect(status().isOk)
-            .andExpect(content().string("true"))
+        testClient.post()
+            .uri("/sdk/crypto/verify/rsa/attached/jws")
+            .contentType(MediaType.valueOf("application/jose"))
+            .body(signedContent)
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(String::class.java)
+            .isEqualTo("true")
     }
 
     @Test
     fun positiveDetached() {
         val data = getMockBodyFromResources("mocks/transactions/statement-summary.json")
 
-        val signature = mockMvc.perform(
-            post("/sdk/crypto/sign/rsa/jws")
-                .param("attached", "false")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(data)
-        )
-            .andExpect(status().isOk)
-            .andReturn().response.contentAsString
+        val signature = testClient.post()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/sdk/crypto/sign/rsa/jws")
+                    .queryParam("attached", "false")
+                    .build()
+            }
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(data)
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(String::class.java)
+            .returnResult()
+            .responseBody ?: error("Empty response")
 
-        mockMvc.perform(
-            post("/sdk/crypto/verify/rsa/detached/jws")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("jwsWithoutData", signature)
-                .content(data)
-        )
-            .andExpect(status().isOk)
-            .andExpect(content().string("true"))
+        testClient.post()
+            .uri("/sdk/crypto/verify/rsa/detached/jws")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("jwsWithoutData", signature)
+            .body(data)
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(String::class.java)
+            .isEqualTo("true")
     }
 
     @Test
     fun negativeDetached() {
         val data = getMockBodyFromResources("mocks/transactions/statement-summary.json")
 
-        val signature = mockMvc.perform(
-            post("/sdk/crypto/sign/rsa/jws")
-                .param("attached", "false")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(data)
-        )
-            .andExpect(status().isOk)
-            .andReturn().response.contentAsString
+        val signature = testClient.post()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/sdk/crypto/sign/rsa/jws")
+                    .queryParam("attached", "false")
+                    .build()
+            }
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(data)
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(String::class.java)
+            .returnResult()
+            .responseBody ?: error("Empty response")
 
-        mockMvc.perform(
-            post("/sdk/crypto/verify/rsa/detached/jws")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("jwsWithoutData", signature)
-                .content("changed content")
-        )
-            .andExpect(status().isOk)
-            .andExpect(content().string("false"))
+        testClient.post()
+            .uri("/sdk/crypto/verify/rsa/detached/jws")
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("jwsWithoutData", signature)
+            .body("changed content")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(String::class.java)
+            .isEqualTo("false")
     }
 }

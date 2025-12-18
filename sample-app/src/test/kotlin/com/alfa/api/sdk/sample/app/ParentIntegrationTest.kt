@@ -14,7 +14,7 @@ class ParentIntegrationTest : AbstractIntegrationTest() {
         wiremock.resetMappings()
     }
 
-    protected fun mockGetEndpointWithInternalError(urlPattern: String) {
+    fun mockGetEndpointWithInternalError(urlPattern: String) {
         wiremock.stubFor(
             WireMock.get(WireMock.urlMatching(urlPattern)).willReturn(
                 WireMock.aResponse().withStatus(500)
@@ -28,7 +28,7 @@ class ParentIntegrationTest : AbstractIntegrationTest() {
         )
     }
 
-    protected fun getMockBodyFromResources(path: String): String = StreamUtils.copyToString(
+    fun getMockBodyFromResources(path: String): String = StreamUtils.copyToString(
         ClassPathResource(path).inputStream,
         StandardCharsets.UTF_8
     )

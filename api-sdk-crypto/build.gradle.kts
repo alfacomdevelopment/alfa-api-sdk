@@ -5,7 +5,7 @@ version = "0.1.2"
 plugins {
     `java-library`
     `maven-publish`
-    id("io.freefair.lombok") version "8.4"
+    alias(libs.plugins.freefair.lombok)
 }
 
 java {
@@ -15,7 +15,7 @@ java {
 
 val delombokSourcesDir = "${layout.buildDirectory.get()}/delombokSources"
 tasks.named<Delombok>("delombok") {
-    input.setFrom(files("src/main/java"))
+    input.setFrom(sourceSets["main"].java.srcDirs)
     target.set(file(delombokSourcesDir))
 }
 
@@ -23,10 +23,8 @@ val sourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
     from(delombokSourcesDir)
 }
+
 tasks.named("sourcesJar") {
-    dependsOn("delombok")
-}
-tasks.named("compileJava") {
     dependsOn("delombok")
 }
 
@@ -62,11 +60,10 @@ publishing {
 }
 
 dependencies {
-    implementation("org.bouncycastle:bcprov-jdk18on:1.78")
-    implementation("org.bouncycastle:bcpkix-jdk18on:1.78")
-    implementation("com.nimbusds:nimbus-jose-jwt:9.37.3")
+    implementation(libs.bcprov.jdk18on)
+    implementation(libs.bcpkix.jdk18on)
+    implementation(libs.nimbus.jose.jwt)
 
-
-    compileOnly("org.projectlombok:lombok:1.18.30")
-    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
 }

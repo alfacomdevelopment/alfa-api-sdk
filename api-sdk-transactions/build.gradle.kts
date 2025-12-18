@@ -5,7 +5,7 @@ version = "0.2.2"
 plugins {
     `java-library`
     `maven-publish`
-    id("io.freefair.lombok") version "8.4"
+    alias(libs.plugins.freefair.lombok)
 }
 
 java {
@@ -15,7 +15,7 @@ java {
 
 val delombokSourcesDir = "${layout.buildDirectory.get()}/delombokSources"
 tasks.named<Delombok>("delombok") {
-    input.setFrom(files("src/main/java"))
+    input.setFrom(sourceSets["main"].java.srcDirs)
     target.set(file(delombokSourcesDir))
 }
 
@@ -23,10 +23,8 @@ val sourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
     from(delombokSourcesDir)
 }
+
 tasks.named("sourcesJar") {
-    dependsOn("delombok")
-}
-tasks.named("compileJava") {
     dependsOn("delombok")
 }
 
@@ -64,13 +62,13 @@ publishing {
 dependencies {
     api(project(":api-sdk-core"))
 
-    implementation(platform("com.fasterxml.jackson:jackson-bom:2.15.3"))
+    implementation(platform(libs.jackson.bom))
+    implementation(libs.jackson.databind)
+    implementation(libs.jackson.dataformat.xml)
+    implementation(libs.jackson.jaxb.annotations)
 
-    implementation("com.fasterxml.jackson.core:jackson-databind")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
-    implementation("com.fasterxml.jackson.module:jackson-module-jaxb-annotations")
-    implementation("javax.xml.bind:jaxb-api:2.3.1")
+    implementation(libs.javax.jaxb.api)
 
-    compileOnly("org.projectlombok:lombok:1.18.30")
-    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
 }

@@ -3,7 +3,7 @@ package com.alfa.api.sdk.sample.app.controller
 import com.alfa.api.sdk.crypto.CmsSignatureService
 import com.alfa.api.sdk.crypto.JwsSignatureService
 import com.alfa.api.sdk.crypto.XmlSignatureService
-import org.apache.tomcat.util.codec.binary.Base64
+import java.util.Base64
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -22,20 +22,20 @@ class CryptoController(
     @PostMapping("/sign/rsa/cms", consumes = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
     fun signRsaCms(@RequestBody data: ByteArray, @RequestParam attached: Boolean): ByteArray {
         return if (attached) {
-            Base64.encodeBase64(cmsSignatureService.signAttached(data), false)
+            Base64.getEncoder().withoutPadding().encode(cmsSignatureService.signAttached(data))
         } else {
-            Base64.encodeBase64(cmsSignatureService.signDetached(data), false)
+            Base64.getEncoder().withoutPadding().encode(cmsSignatureService.signDetached(data))
         }
     }
 
     @PostMapping("/verify/rsa/detached/cms", consumes = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
     fun verifyRsaDetachedCms(@RequestBody data: ByteArray, @RequestHeader signature: String): Boolean {
-        return cmsSignatureService.verifyDetached(data, Base64.decodeBase64(signature))
+        return cmsSignatureService.verifyDetached(data, Base64.getDecoder().decode(signature))
     }
 
     @PostMapping("/verify/rsa/attached/cms", consumes = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
     fun verifyRsaAttachedCms(@RequestBody signatureWithFileBase64: String): Boolean {
-        return cmsSignatureService.verifyAttached(Base64.decodeBase64(signatureWithFileBase64))
+        return cmsSignatureService.verifyAttached(Base64.getDecoder().decode(signatureWithFileBase64))
     }
 
     @PostMapping("/sign/rsa/jws", consumes = [MediaType.APPLICATION_JSON_VALUE])

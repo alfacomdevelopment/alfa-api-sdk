@@ -2,19 +2,21 @@ package com.alfa.api.sdk.sample.app
 
 import com.alfa.api.sdk.sample.app.configuration.ApplicationProperties
 import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import org.bouncycastle.asn1.x500.X500Name
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.client.RestTestClient
+import org.springframework.web.context.WebApplicationContext
 import java.io.FileOutputStream
 import java.math.BigInteger
 import java.nio.file.Files
@@ -25,31 +27,37 @@ import java.security.KeyStore
 import java.security.PrivateKey
 import java.security.Security
 import java.security.cert.X509Certificate
-import java.util.*
+import java.util.Date
 
 
 @ActiveProfiles("test")
-@AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 abstract class AbstractIntegrationTest {
-    @Autowired
-    protected lateinit var properties: ApplicationProperties
+    lateinit var testClient: RestTestClient
 
     @Autowired
-    protected lateinit var mockMvc: MockMvc
+    protected lateinit var properties: ApplicationProperties
 
     @AfterEach
     fun afterEach() {
         wiremock.resetAll()
     }
 
+    @BeforeEach
+    fun beforeEach(context: WebApplicationContext) {
+        testClient = RestTestClient.bindToApplicationContext(context).build()
+    }
+
     companion object {
         @JvmStatic
-        protected val wiremock = WireMockServer(18089).apply { start() }
+        val wiremock = WireMockServer(
+            wireMockConfig()
+                .dynamicPort()
+        ).apply { start() }
 
         @JvmStatic
         @DynamicPropertySource
-        fun createTestKeystore(registry: DynamicPropertyRegistry) {
+        fun properties(registry: DynamicPropertyRegistry) {
             Security.addProvider(BouncyCastleProvider())
             val keyPair = generateKeyPair()
             val certificate = createCertificate(keyPair)
@@ -57,6 +65,7 @@ abstract class AbstractIntegrationTest {
             registry.add("sdk-sample-app.signature.rsa.path") {
                 addToPKCS12Keystore(keyPair.private, certificate).toString()
             }
+            registry.add("wiremock_base-url", wiremock::baseUrl)
         }
 
         private fun addToPKCS12Keystore(privateKey: PrivateKey, certificate: X509Certificate): Path {
