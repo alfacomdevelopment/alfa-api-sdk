@@ -1,0 +1,54 @@
+[versions]
+# Plugins
+kotlin = "2.2.10"
+spring-boot = "4.0.0"
+freefair-lombok = "9.1.0"
+
+# Libraries
+lombok = "1.18.42"
+jackson-bom = "2.20.1"
+javax-jaxb-api = "2.3.1"
+bouncycastle = "1.83"
+nimbus-jose-jwt = "10.6"
+mapstruct = "1.6.3"
+wiremock = "3.13.2"
+
+[libraries]
+# Lombok
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+
+# Jackson (use as platform/BOM)
+jackson-bom = { module = "com.fasterxml.jackson:jackson-bom", version.ref = "jackson-bom" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind" }
+jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml" }
+jackson-jaxb-annotations = { module = "com.fasterxml.jackson.module:jackson-module-jaxb-annotations" }
+
+# XML bind
+javax-jaxb-api = { module = "javax.xml.bind:jaxb-api", version.ref = "javax-jaxb-api" }
+
+# Crypto
+bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
+bcpkix-jdk18on = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
+nimbus-jose-jwt = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbus-jose-jwt" }
+
+# Kotlin
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+
+# MapStruct
+mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
+mapstruct-processor = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct" }
+
+# Testing
+wiremock-standalone = { module = "org.wiremock:wiremock-standalone", version.ref = "wiremock" }
+
+[plugins]
+# Kotlin
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+
+# Spring Boot
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+
+# Lombok (Freefair)
+freefair-lombok = { id = "io.freefair.lombok", version.ref = "freefair-lombok" }

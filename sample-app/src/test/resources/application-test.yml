@@ -1,5 +1,5 @@
 sdk-sample-app:
-  base-url: http://localhost:18089
+  base-url: ${wiremock_base-url}
   access-token: test
   signature:
     rsa:

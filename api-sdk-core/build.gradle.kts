@@ -1,12 +1,11 @@
 import io.freefair.gradle.plugins.lombok.tasks.Delombok
-
 version = "0.2.1"
 
 plugins {
     java
     `java-library`
     `maven-publish`
-    id("io.freefair.lombok") version "8.4"
+    alias(libs.plugins.freefair.lombok)
 }
 
 java {
@@ -16,7 +15,7 @@ java {
 
 val delombokSourcesDir = "${layout.buildDirectory.get()}/delombokSources"
 tasks.named<Delombok>("delombok") {
-    input.setFrom(files("src/main/java"))
+    input.setFrom(sourceSets["main"].java.srcDirs)
     target.set(file(delombokSourcesDir))
 }
 
@@ -25,9 +24,6 @@ val sourcesJar by tasks.registering(Jar::class) {
     from(delombokSourcesDir)
 }
 tasks.named("sourcesJar") {
-    dependsOn("delombok")
-}
-tasks.named("compileJava") {
     dependsOn("delombok")
 }
 
@@ -63,6 +59,6 @@ publishing {
 }
 
 dependencies {
-    compileOnly("org.projectlombok:lombok:1.18.30")
-    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
 }
