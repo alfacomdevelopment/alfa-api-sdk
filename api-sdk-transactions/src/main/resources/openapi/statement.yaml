@@ -1,0 +1,1790 @@
+openapi: 3.0.3
+info:
+  title: Alfa API
+  contact:
+    name: API Support
+    email: baas_support@alfabank.ru
+  version: 1.0.0
+externalDocs:
+  description: Документация Alfa API
+  url: https://developers.alfabank.ru
+servers:
+  - url: https://baas.alfabank.ru/api/
+    description: Prod server API
+  - url: https://sandbox.alfabank.ru/api/
+    description: Sandbox server API
+paths:
+  /jp/v1/statement/transactions:
+    get:
+      tags:
+        - Transactions
+      summary: Получение операций по счетам
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: accountNumber
+          in: query
+          description: Номер расчётного счёта
+          required: true
+          schema:
+            type: string
+          example: "40702810102300000001"
+        - name: statementDate
+          in: query
+          description: Дата исполнения операции
+          required: true
+          schema:
+            type: string
+          example: 2025-12-08
+        - name: page
+          in: query
+          description: Номер запрашиваемой страницы. Количество объектов на одной странице не больше 1000
+          required: false
+          schema:
+            type: integer
+          example: 1
+        - name: curFormat
+          in: query
+          description: Формат операции по валютному счёту. В ответе на запрос по валютному счёту будет передан объект `curTransfer` или `swiftTransfer`. Если формат в поле `curFormat` не заполнен, то в ответе на запрос по валютному счёту будет передан объект `swiftTransfer`. Если поле будет заполнено для рублёвого счёта, то система проигнорирует его и вернет блок `rurTransfer`
+          required: false
+          schema:
+            $ref: '#/components/schemas/CurFormat'
+      responses:
+        "200":
+          description: Успешный результат
+          headers:
+            x-traceid:
+              description: Идентификатор трассировки запроса
+              schema:
+                type: string
+              example: a57610880b621435
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatementResponse'
+              examples:
+                example:
+                  $ref: '#/components/examples/getTransactions'
+        "400":
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        "401":
+          description: "Предоставленный токен просрочен, отозван, имеет неправильн\
+            ый формат или недействителен по другим причинам"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        "403":
+          description: "У пользователя нет прав на использование запрашиваемого се\
+            рвиса, доступ к которому не предусмотрен настройками scope"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+        "404":
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        "429":
+          description: Слишком много запросов в заданный период времени
+        "500":
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+        "503":
+          description: Сервер временно недоступен
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Возможны два варианта:
+        - Bearer {access_token}, полученный по [Authorization Code Flow](/products/alfa-api/documentation/articles/alfa-id/articles/acf/articles/intro/intro) / [Authorization Code Flow H2H](/products/alfa-api/documentation/articles/alfa-id/articles/acf-h2h/articles/intro/intro)
+        - ApiKey {API Key}, полученный через [Портал разработчика](/products/alfa-api/documentation/articles/selfservice/articles/api-key/api-key)
+  schemas:
+    StatementResponse:
+      type: object
+      properties:
+        _links:
+          type: array
+          description: "Ссылки на предыдущую и следующую страницу, если они есть"
+          items:
+            $ref: '#/components/schemas/Links_inner'
+        transactions:
+          type: array
+          description: Массив транзакций
+          items:
+            $ref: '#/components/schemas/Transactions_inner'
+      description: Выписка операций по счетам
+      example:
+        _links:
+          - rel: prev
+            href: ?accountNumber=40702810500006103990&statementDate=2018-03-15&page=3
+          - rel: prev
+            href: ?accountNumber=40702810500006103990&statementDate=2018-03-15&page=3
+        transactions:
+          - documentDate: 2021-10-07
+            operationDate: 2018-12-31T00:00:00Z
+            amount:
+              amount: 1.01
+              currencyName: USD
+            filial: АО "АЛЬФА-БАНК"
+            correspondingAccount: "30101810400000000225"
+            debtorCode: "0"
+            curTransfer:
+              payerBankCorrAccount: "30101810200000000593"
+              intermediaryBankOption: D
+              intermediaryBankName: АО "АЛЬФА-БАНК"
+              orderingCustomerAccount: /08251801040004813
+              orderingCustomerName: ООО Радуга
+              instructionCode: instructionCode
+              messageType: "103"
+              exchangeRate: "67,74"
+              beneficiaryBankName: АО \"АЛЬФА-БАНК\"
+              messageOriginator: SABRRU2P
+              receiverCorrespondentAccount: "30101810400000000000"
+              regulatoryReporting: /N10/NS/N4/12345678901234567890/N5/12345678901/N6/TP/N7
+                МS.05.2003/N8/123456789012345/N9/12.05.2003
+              beneficiaryBankAccount: LOYDGB21323
+              instructedAmount: "USD70,00"
+              payeeBankCorrAccount: "30101810200000000593"
+              transactionRelatedReference: transactionRelatedReference
+              senderCorrespondentName: "CITIBANK N.A. NEW YORK,NY"
+              senderCorrespondentAccount: BOTKGB2L
+              valueDateCurrencyInterbankSettledAmount: "130824EUR5447,34"
+              senderCorrespondentOption: D
+              intermediaryBankAccount: COBADEFF
+              payerInn: "7728168971"
+              senderToReceiverInformation: /NZP/OT 15.03.2009. NDS NE OBLAGAETSYA
+              receiverCorrespondentName: "JSC ROSSELKHOZBANK 3, GAGARINSKY PEREULOK\
+              \ MOSCOW RUSSIAN FEDERATION"
+              payeeBankBic: "9611925"
+              senderCharges: "USD7,03"
+              payeeKpp: "770801001"
+              payeeAccount: "40802810401300015422"
+              bankOperationCode: CRED
+              transactionTypeCode: S01
+              payeeName: Наименование получателя
+              messageReceiveTime: 15-05-27 13:21
+              messageDestinator: LAPBLV2X
+              messageIdentifier: S000013082900014
+              beneficiaryCustomerName: ООО Ромашка
+              payerName: Гаврилов Добрыня Петрович
+              urgent: URGENT
+              orderingInstitutionName: АО "АЛЬФА-БАНК"
+              receiverCorrespondentOption: D
+              orderingInstitutionAccount: ABOCBNBJ080
+              messageSendTime: 15-05-27 13:21
+              orderingCustomerOption: K
+              detailsOfCharges: OUR
+              transactionReferenceNumber: 69528
+              payerKpp: "770801001"
+              payerBankName: АО \"АЛЬФА-БАНК\"
+              orderingInstitutionOption: D
+              payerAccount: "40802810401300015422"
+              payeeBankName: АО \"АЛЬФА-БАНК\"
+              beneficiaryBankOption: D
+              remittanceInformation: PAYMENT ACC AGREEMENT 1 DD 29.11.2018 FOR WATCHES
+              beneficiaryCustomerAccount: /40702810701300000761
+              payerBankBic: "044525593"
+              payeeInn: "7728168971"
+              receiverCharges: receiverCharges
+            operationCode: "01"
+            amountRub:
+              amount: 1.01
+              currencyName: USD
+            extendedDebtorCode: "50012008"
+            swiftTransfer:
+              bankOperationCode: CRED
+              intermediaryBankOption: D
+              intermediaryBankName: АО "АЛЬФА-БАНК"
+              orderingCustomerAccount: /08251801040004813
+              orderingCustomerName: ООО Радуга
+              transactionTypeCode: S01
+              instructionCode: instructionCode
+              messageReceiveTime: 15-05-27 13:21
+              messageDestinator: LAPBLV2X
+              messageType: "103"
+              exchangeRate: "67,74"
+              beneficiaryBankName: АО \"АЛЬФА-БАНК\"
+              messageIdentifier: S000013082900014
+              messageOriginator: SABRRU2P
+              receiverCorrespondentAccount: "30101810400000000000"
+              regulatoryReporting: /N10/NS/N4/12345678901234567890/N5/12345678901/N6/TP/N7
+                МS.05.2003/N8/123456789012345/N9/12.05.2003
+              beneficiaryBankAccount: LOYDGB21323
+              beneficiaryCustomerName: ООО Ромашка
+              instructedAmount: "USD70,00"
+              transactionRelatedReference: transactionRelatedReference
+              urgent: URGENT
+              orderingInstitutionName: АО "АЛЬФА-БАНК"
+              receiverCorrespondentOption: D
+              senderCorrespondentName: "CITIBANK N.A. NEW YORK,NY"
+              orderingInstitutionAccount: ABOCBNBJ080
+              senderCorrespondentAccount: BOTKGB2L
+              valueDateCurrencyInterbankSettledAmount: "130824EUR5447,34"
+              senderCorrespondentOption: D
+              messageSendTime: 15-05-27 13:21
+              orderingCustomerOption: K
+              detailsOfCharges: OUR
+              intermediaryBankAccount: COBADEFF
+              transactionReferenceNumber: 69528
+              orderingInstitutionOption: D
+              senderToReceiverInformation: /NZP/OT 15.03.2009. NDS NE OBLAGAETSYA
+              receiverCorrespondentName: "JSC ROSSELKHOZBANK 3, GAGARINSKY PEREULOK\
+              \ MOSCOW RUSSIAN FEDERATION"
+              beneficiaryBankOption: D
+              remittanceInformation: PAYMENT ACC AGREEMENT 1 DD 29.11.2018 FOR WATCHES
+              beneficiaryCustomerAccount: /40702810701300000761
+              senderCharges: "USD7,03"
+              receiverCharges: receiverCharges
+            priority: "5"
+            uuid: 55daccdf-de87-3879-976c-8b8415c8caf9
+            revaln: ПК
+            transactionId: 1211206MOCO#DS0000017
+            rurTransfer:
+              payerBankCorrAccount: "30101810200000000593"
+              departmentalInfo:
+                drawerStatus101: "1"
+                oktmo: "11605000"
+                kbk: "39210202010061000160"
+                taxPeriod107: МС.03.2016
+                docNumber108: "123"
+                reasonCode106: ТП
+                docDate109: 31.12.2018
+                uip: "32221003200126505006"
+                paymentKind110: "1"
+              payerKpp: "770801001"
+              receiptDate: 2018-12-31
+              deliveryKind: электронно
+              payerBankName: АО \"АЛЬФА-БАНК\"
+              payerInn: "7728168971"
+              valueDate: 2018-12-31
+              cartInfo:
+                documentCode: documentCode
+                documentDate: 2019-10-19T06:33:47.923Z
+                restAmount: restAmount
+                documentNumber: documentNumber
+                documentContent: documentContent
+                paymentNumber: paymentNumber
+              payerAccount: "40802810401300015422"
+              payeeName: Наименование получателя
+              payeeBankName: АО \"АЛЬФА-БАНК\"
+              payeeBankBic: "9611925"
+              payerBankBic: "044525593"
+              purposeCode: "1"
+              payeeInn: "7728168971"
+              payerName: Гаврилов Добрыня Петрович
+              payeeBankCorrAccount: "30101810200000000593"
+              payeeKpp: "770801001"
+              payeeAccount: "40802810401300015422"
+              payingCondition: payingCondition
+            number: "1843"
+            paymentPurpose: НДС не облагается
+            direction: DEBIT
+          - documentDate: 2021-10-07
+            operationDate: 2018-12-31T00:00:00Z
+            amount:
+              amount: 1.01
+              currencyName: USD
+            filial: АО "АЛЬФА-БАНК"
+            correspondingAccount: "30101810400000000225"
+            debtorCode: "0"
+            curTransfer:
+              payerBankCorrAccount: "30101810200000000593"
+              intermediaryBankOption: D
+              intermediaryBankName: АО "АЛЬФА-БАНК"
+              orderingCustomerAccount: /08251801040004813
+              orderingCustomerName: ООО Радуга
+              instructionCode: instructionCode
+              messageType: "103"
+              exchangeRate: "67,74"
+              beneficiaryBankName: АО \"АЛЬФА-БАНК\"
+              messageOriginator: SABRRU2P
+              receiverCorrespondentAccount: "30101810400000000000"
+              regulatoryReporting: /N10/NS/N4/12345678901234567890/N5/12345678901/N6/TP/N7
+                МS.05.2003/N8/123456789012345/N9/12.05.2003
+              beneficiaryBankAccount: LOYDGB21323
+              instructedAmount: "USD70,00"
+              payeeBankCorrAccount: "30101810200000000593"
+              transactionRelatedReference: transactionRelatedReference
+              senderCorrespondentName: "CITIBANK N.A. NEW YORK,NY"
+              senderCorrespondentAccount: BOTKGB2L
+              valueDateCurrencyInterbankSettledAmount: "130824EUR5447,34"
+              senderCorrespondentOption: D
+              intermediaryBankAccount: COBADEFF
+              payerInn: "7728168971"
+              senderToReceiverInformation: /NZP/OT 15.03.2009. NDS NE OBLAGAETSYA
+              receiverCorrespondentName: "JSC ROSSELKHOZBANK 3, GAGARINSKY PEREULOK\
+              \ MOSCOW RUSSIAN FEDERATION"
+              payeeBankBic: "9611925"
+              senderCharges: "USD7,03"
+              payeeKpp: "770801001"
+              payeeAccount: "40802810401300015422"
+              bankOperationCode: CRED
+              transactionTypeCode: S01
+              payeeName: Наименование получателя
+              messageReceiveTime: 15-05-27 13:21
+              messageDestinator: LAPBLV2X
+              messageIdentifier: S000013082900014
+              beneficiaryCustomerName: ООО Ромашка
+              payerName: Гаврилов Добрыня Петрович
+              urgent: URGENT
+              orderingInstitutionName: АО "АЛЬФА-БАНК"
+              receiverCorrespondentOption: D
+              orderingInstitutionAccount: ABOCBNBJ080
+              messageSendTime: 15-05-27 13:21
+              orderingCustomerOption: K
+              detailsOfCharges: OUR
+              transactionReferenceNumber: 69528
+              payerKpp: "770801001"
+              payerBankName: АО \"АЛЬФА-БАНК\"
+              orderingInstitutionOption: D
+              payerAccount: "40802810401300015422"
+              payeeBankName: АО \"АЛЬФА-БАНК\"
+              beneficiaryBankOption: D
+              remittanceInformation: PAYMENT ACC AGREEMENT 1 DD 29.11.2018 FOR WATCHES
+              beneficiaryCustomerAccount: /40702810701300000761
+              payerBankBic: "044525593"
+              payeeInn: "7728168971"
+              receiverCharges: receiverCharges
+            operationCode: "01"
+            amountRub:
+              amount: 1.01
+              currencyName: USD
+            extendedDebtorCode: "50012008"
+            swiftTransfer:
+              bankOperationCode: CRED
+              intermediaryBankOption: D
+              intermediaryBankName: АО "АЛЬФА-БАНК"
+              orderingCustomerAccount: /08251801040004813
+              orderingCustomerName: ООО Радуга
+              transactionTypeCode: S01
+              instructionCode: instructionCode
+              messageReceiveTime: 15-05-27 13:21
+              messageDestinator: LAPBLV2X
+              messageType: "103"
+              exchangeRate: "67,74"
+              beneficiaryBankName: АО \"АЛЬФА-БАНК\"
+              messageIdentifier: S000013082900014
+              messageOriginator: SABRRU2P
+              receiverCorrespondentAccount: "30101810400000000000"
+              regulatoryReporting: /N10/NS/N4/12345678901234567890/N5/12345678901/N6/TP/N7
+                МS.05.2003/N8/123456789012345/N9/12.05.2003
+              beneficiaryBankAccount: LOYDGB21323
+              beneficiaryCustomerName: ООО Ромашка
+              instructedAmount: "USD70,00"
+              transactionRelatedReference: transactionRelatedReference
+              urgent: URGENT
+              orderingInstitutionName: АО "АЛЬФА-БАНК"
+              receiverCorrespondentOption: D
+              senderCorrespondentName: "CITIBANK N.A. NEW YORK,NY"
+              orderingInstitutionAccount: ABOCBNBJ080
+              senderCorrespondentAccount: BOTKGB2L
+              valueDateCurrencyInterbankSettledAmount: "130824EUR5447,34"
+              senderCorrespondentOption: D
+              messageSendTime: 15-05-27 13:21
+              orderingCustomerOption: K
+              detailsOfCharges: OUR
+              intermediaryBankAccount: COBADEFF
+              transactionReferenceNumber: 69528
+              orderingInstitutionOption: D
+              senderToReceiverInformation: /NZP/OT 15.03.2009. NDS NE OBLAGAETSYA
+              receiverCorrespondentName: "JSC ROSSELKHOZBANK 3, GAGARINSKY PEREULOK\
+              \ MOSCOW RUSSIAN FEDERATION"
+              beneficiaryBankOption: D
+              remittanceInformation: PAYMENT ACC AGREEMENT 1 DD 29.11.2018 FOR WATCHES
+              beneficiaryCustomerAccount: /40702810701300000761
+              senderCharges: "USD7,03"
+              receiverCharges: receiverCharges
+            priority: "5"
+            uuid: 55daccdf-de87-3879-976c-8b8415c8caf9
+            revaln: ПК
+            transactionId: 1211206MOCO#DS0000017
+            rurTransfer:
+              payerBankCorrAccount: "30101810200000000593"
+              departmentalInfo:
+                drawerStatus101: "1"
+                oktmo: "11605000"
+                kbk: "39210202010061000160"
+                taxPeriod107: МС.03.2016
+                docNumber108: "123"
+                reasonCode106: ТП
+                docDate109: 31.12.2018
+                uip: "32221003200126505006"
+                paymentKind110: "1"
+              payerKpp: "770801001"
+              receiptDate: 2018-12-31
+              deliveryKind: электронно
+              payerBankName: АО \"АЛЬФА-БАНК\"
+              payerInn: "7728168971"
+              valueDate: 2018-12-31
+              cartInfo:
+                documentCode: documentCode
+                documentDate: 2019-10-19T06:33:47.923Z
+                restAmount: restAmount
+                documentNumber: documentNumber
+                documentContent: documentContent
+                paymentNumber: paymentNumber
+              payerAccount: "40802810401300015422"
+              payeeName: Наименование получателя
+              payeeBankName: АО \"АЛЬФА-БАНК\"
+              payeeBankBic: "9611925"
+              payerBankBic: "044525593"
+              purposeCode: "1"
+              payeeInn: "7728168971"
+              payerName: Гаврилов Добрыня Петрович
+              payeeBankCorrAccount: "30101810200000000593"
+              payeeKpp: "770801001"
+              payeeAccount: "40802810401300015422"
+              payingCondition: payingCondition
+            number: "1843"
+            paymentPurpose: НДС не облагается
+            direction: DEBIT
+    Links:
+      type: array
+      description: "Ссылки на предыдущую и следующую страницу, если они есть"
+      items:
+        $ref: '#/components/schemas/Links_inner'
+    Transactions:
+      type: array
+      description: Массив транзакций
+      items:
+        $ref: '#/components/schemas/Transactions_inner'
+    Links_inner:
+      type: object
+      properties:
+        href:
+          type: string
+          description: Cсылка, ведущая на следующую/предыдущую страницу
+          example: ?accountNumber=40702810500006103990&statementDate=2018-03-15&page=3
+        rel:
+          type: string
+          description: |
+            Признак страницы. Принимает возможные значения:
+            * `prev` - предыдущая страница;
+            * `next` - следующая страница
+          enum:
+            - prev
+            - next
+      description: Ссылки на предыдущую и следующую страницу, если они есть
+      example:
+        rel: prev
+        href: ?accountNumber=40702810500006103990&statementDate=2018-03-15&page=3
+    Transactions_inner:
+      type: object
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        amountRub:
+          $ref: '#/components/schemas/AmountRub'
+        correspondingAccount:
+          type: string
+          description: Корреспондирующий счёт
+          example: "30101810400000000225"
+        direction:
+          type: string
+          description: |
+            Направление транзакции. Принимает возможные значения: 
+            * `DEBIT` - списание со счёта;
+            * `CREDIT` - поступление на счёт
+          enum:
+            - DEBIT
+            - CREDIT
+        documentDate:
+          type: string
+          description: Дата документа (ГГГГ-ММ-ДД)
+          example: 2021-10-07
+        filial:
+          type: string
+          description: Наименование филиала
+          example: АО "АЛЬФА-БАНК"
+        number:
+          type: string
+          description: Номер операции
+          example: "1843"
+        operationCode:
+          type: string
+          description: |
+            Тип операции. Принимает возможные значения:
+            * `01` - платёжное поручение / валютный перевод;
+            * `02` - платёжное требование;
+            * `03` - расходный кассовый ордер / расходный кассовый чек;
+            * `04` - приходный кассовый ордер / приходный кассовый чек / объявление на взнос наличными;
+            * `06` - инкассовое поручение;
+            * `08` - аккредитив;
+            * `09` - мемориальный ордер;
+            * `16` - платёжный ордер;
+            * `17` - банковский ордер
+          enum:
+            - "01"
+            - "02"
+            - "03"
+            - "04"
+            - "06"
+            - "08"
+            - "09"
+            - "16"
+            - "17"
+        operationDate:
+          type: string
+          description: Дата и время операции (ГГГГ-ММ-ДДTЧЧ:ММ:ССZ)
+          example: 2018-12-31T00:00:00Z
+        paymentPurpose:
+          type: string
+          description: Назначение платежа
+          example: НДС не облагается
+        priority:
+          type: string
+          description: Очерёдность платежа
+          example: "5"
+        revaln:
+          type: string
+          description: |
+            Признак операции переоценки. Принимает возможные значения:
+            * `ПК` - пересчёт курса;
+            * `ДП` - дооценка руб. покрытия
+          enum:
+            - ПК
+            - ДП
+        uuid:
+          type: string
+          description: Уникальный идентификатор операции (UUID)
+          example: 55daccdf-de87-3879-976c-8b8415c8caf9
+        transactionId:
+          type: string
+          description: Идентификатор операции
+          example: 1211206MOCO#DS0000017
+        debtorCode:
+          type: string
+          description: Код дебитора
+          example: "0"
+        extendedDebtorCode:
+          type: string
+          description: Расширенный код дебитора
+          example: "50012008"
+        rurTransfer:
+          $ref: '#/components/schemas/RurTransfer'
+        swiftTransfer:
+          $ref: '#/components/schemas/SwiftTransfer'
+        curTransfer:
+          $ref: '#/components/schemas/CurTransfer'
+      example:
+        documentDate: 2021-10-07
+        operationDate: 2018-12-31T00:00:00Z
+        amount:
+          amount: 1.01
+          currencyName: USD
+        filial: АО "АЛЬФА-БАНК"
+        correspondingAccount: "30101810400000000225"
+        debtorCode: "0"
+        curTransfer:
+          payerBankCorrAccount: "30101810200000000593"
+          intermediaryBankOption: D
+          intermediaryBankName: АО "АЛЬФА-БАНК"
+          orderingCustomerAccount: /08251801040004813
+          orderingCustomerName: ООО Радуга
+          instructionCode: instructionCode
+          messageType: "103"
+          exchangeRate: "67,74"
+          beneficiaryBankName: АО \"АЛЬФА-БАНК\"
+          messageOriginator: SABRRU2P
+          receiverCorrespondentAccount: "30101810400000000000"
+          regulatoryReporting: /N10/NS/N4/12345678901234567890/N5/12345678901/N6/TP/N7
+            МS.05.2003/N8/123456789012345/N9/12.05.2003
+          beneficiaryBankAccount: LOYDGB21323
+          instructedAmount: "USD70,00"
+          payeeBankCorrAccount: "30101810200000000593"
+          transactionRelatedReference: transactionRelatedReference
+          senderCorrespondentName: "CITIBANK N.A. NEW YORK,NY"
+          senderCorrespondentAccount: BOTKGB2L
+          valueDateCurrencyInterbankSettledAmount: "130824EUR5447,34"
+          senderCorrespondentOption: D
+          intermediaryBankAccount: COBADEFF
+          payerInn: "7728168971"
+          senderToReceiverInformation: /NZP/OT 15.03.2009. NDS NE OBLAGAETSYA
+          receiverCorrespondentName: "JSC ROSSELKHOZBANK 3, GAGARINSKY PEREULOK MOSCOW\
+            \ RUSSIAN FEDERATION"
+          payeeBankBic: "9611925"
+          senderCharges: "USD7,03"
+          payeeKpp: "770801001"
+          payeeAccount: "40802810401300015422"
+          bankOperationCode: CRED
+          transactionTypeCode: S01
+          payeeName: Наименование получателя
+          messageReceiveTime: 15-05-27 13:21
+          messageDestinator: LAPBLV2X
+          messageIdentifier: S000013082900014
+          beneficiaryCustomerName: ООО Ромашка
+          payerName: Гаврилов Добрыня Петрович
+          urgent: URGENT
+          orderingInstitutionName: АО "АЛЬФА-БАНК"
+          receiverCorrespondentOption: D
+          orderingInstitutionAccount: ABOCBNBJ080
+          messageSendTime: 15-05-27 13:21
+          orderingCustomerOption: K
+          detailsOfCharges: OUR
+          transactionReferenceNumber: 69528
+          payerKpp: "770801001"
+          payerBankName: АО \"АЛЬФА-БАНК\"
+          orderingInstitutionOption: D
+          payerAccount: "40802810401300015422"
+          payeeBankName: АО \"АЛЬФА-БАНК\"
+          beneficiaryBankOption: D
+          remittanceInformation: PAYMENT ACC AGREEMENT 1 DD 29.11.2018 FOR WATCHES
+          beneficiaryCustomerAccount: /40702810701300000761
+          payerBankBic: "044525593"
+          payeeInn: "7728168971"
+          receiverCharges: receiverCharges
+        operationCode: "01"
+        amountRub:
+          amount: 1.01
+          currencyName: USD
+        extendedDebtorCode: "50012008"
+        swiftTransfer:
+          bankOperationCode: CRED
+          intermediaryBankOption: D
+          intermediaryBankName: АО "АЛЬФА-БАНК"
+          orderingCustomerAccount: /08251801040004813
+          orderingCustomerName: ООО Радуга
+          transactionTypeCode: S01
+          instructionCode: instructionCode
+          messageReceiveTime: 15-05-27 13:21
+          messageDestinator: LAPBLV2X
+          messageType: "103"
+          exchangeRate: "67,74"
+          beneficiaryBankName: АО \"АЛЬФА-БАНК\"
+          messageIdentifier: S000013082900014
+          messageOriginator: SABRRU2P
+          receiverCorrespondentAccount: "30101810400000000000"
+          regulatoryReporting: /N10/NS/N4/12345678901234567890/N5/12345678901/N6/TP/N7
+            МS.05.2003/N8/123456789012345/N9/12.05.2003
+          beneficiaryBankAccount: LOYDGB21323
+          beneficiaryCustomerName: ООО Ромашка
+          instructedAmount: "USD70,00"
+          transactionRelatedReference: transactionRelatedReference
+          urgent: URGENT
+          orderingInstitutionName: АО "АЛЬФА-БАНК"
+          receiverCorrespondentOption: D
+          senderCorrespondentName: "CITIBANK N.A. NEW YORK,NY"
+          orderingInstitutionAccount: ABOCBNBJ080
+          senderCorrespondentAccount: BOTKGB2L
+          valueDateCurrencyInterbankSettledAmount: "130824EUR5447,34"
+          senderCorrespondentOption: D
+          messageSendTime: 15-05-27 13:21
+          orderingCustomerOption: K
+          detailsOfCharges: OUR
+          intermediaryBankAccount: COBADEFF
+          transactionReferenceNumber: 69528
+          orderingInstitutionOption: D
+          senderToReceiverInformation: /NZP/OT 15.03.2009. NDS NE OBLAGAETSYA
+          receiverCorrespondentName: "JSC ROSSELKHOZBANK 3, GAGARINSKY PEREULOK MOSCOW\
+            \ RUSSIAN FEDERATION"
+          beneficiaryBankOption: D
+          remittanceInformation: PAYMENT ACC AGREEMENT 1 DD 29.11.2018 FOR WATCHES
+          beneficiaryCustomerAccount: /40702810701300000761
+          senderCharges: "USD7,03"
+          receiverCharges: receiverCharges
+        priority: "5"
+        uuid: 55daccdf-de87-3879-976c-8b8415c8caf9
+        revaln: ПК
+        transactionId: 1211206MOCO#DS0000017
+        rurTransfer:
+          payerBankCorrAccount: "30101810200000000593"
+          departmentalInfo:
+            drawerStatus101: "1"
+            oktmo: "11605000"
+            kbk: "39210202010061000160"
+            taxPeriod107: МС.03.2016
+            docNumber108: "123"
+            reasonCode106: ТП
+            docDate109: 31.12.2018
+            uip: "32221003200126505006"
+            paymentKind110: "1"
+          payerKpp: "770801001"
+          receiptDate: 2018-12-31
+          deliveryKind: электронно
+          payerBankName: АО \"АЛЬФА-БАНК\"
+          payerInn: "7728168971"
+          valueDate: 2018-12-31
+          cartInfo:
+            documentCode: documentCode
+            documentDate: 2019-10-19T06:33:47.923Z
+            restAmount: restAmount
+            documentNumber: documentNumber
+            documentContent: documentContent
+            paymentNumber: paymentNumber
+          payerAccount: "40802810401300015422"
+          payeeName: Наименование получателя
+          payeeBankName: АО \"АЛЬФА-БАНК\"
+          payeeBankBic: "9611925"
+          payerBankBic: "044525593"
+          purposeCode: "1"
+          payeeInn: "7728168971"
+          payerName: Гаврилов Добрыня Петрович
+          payeeBankCorrAccount: "30101810200000000593"
+          payeeKpp: "770801001"
+          payeeAccount: "40802810401300015422"
+          payingCondition: payingCondition
+        number: "1843"
+        paymentPurpose: НДС не облагается
+        direction: DEBIT
+      description: Массив транзакций
+    Amount:
+      type: object
+      properties:
+        amount:
+          type: number
+          description: Сумма Указывается в рублях/долларах. Копейки/центы указываются через точку
+          example: 1.01
+        currencyName:
+          type: string
+          description: Буквенный ISO-код валюты
+          example: USD
+      description: Сумма в валюте счёта
+      example:
+        amount: 1.01
+        currencyName: USD
+    AmountRub:
+      type: object
+      properties:
+        amount:
+          type: number
+          description: Сумма. Указывается в рублях. Копейки указываются через точку
+          example: 1.01
+        currencyName:
+          type: string
+          description: Буквенный ISO-код валюты
+          example: USD
+      description: Сумма в рублях
+      example:
+        amount: 1.01
+        currencyName: USD
+    RurTransfer:
+      type: object
+      properties:
+        cartInfo:
+          $ref: '#/components/schemas/CartInfo'
+        deliveryKind:
+          type: string
+          description: Способ отправки документа
+          enum:
+            - электронно
+            - телеграфом
+            - почтой
+            - срочно
+        departmentalInfo:
+          $ref: '#/components/schemas/DepartmentalInfo'
+        payeeAccount:
+          type: string
+          description: Номер счёта получателя
+          example: "40802810401300015422"
+        payeeBankBic:
+          type: string
+          description: БИК банка получателя
+          example: "9611925"
+        payeeBankCorrAccount:
+          type: string
+          description: Корсчёт банка получателя
+          example: "30101810200000000593"
+        payeeBankName:
+          type: string
+          description: Наименование банка получателя
+          example: АО \"АЛЬФА-БАНК\"
+        payeeInn:
+          type: string
+          description: ИНН получателя
+          example: "7728168971"
+        payeeKpp:
+          type: string
+          description: КПП получателя
+          example: "770801001"
+        payeeName:
+          type: string
+          description: Наименование получателя
+          example: Наименование получателя
+        payerAccount:
+          type: string
+          description: Номер счёта плательщика
+          example: "40802810401300015422"
+        payerBankBic:
+          type: string
+          description: БИК банка плательщика
+          example: "044525593"
+        payerBankCorrAccount:
+          type: string
+          description: Корсчёт банка плательщика
+          example: "30101810200000000593"
+        payerBankName:
+          type: string
+          description: Наименование банка плательщика
+          example: АО \"АЛЬФА-БАНК\"
+        payerInn:
+          type: string
+          description: ИНН плательщика
+          example: "7728168971"
+        payerKpp:
+          type: string
+          description: КПП плательщика
+          example: "770801001"
+        payerName:
+          type: string
+          description: Наименование плательщика
+          example: Гаврилов Добрыня Петрович
+        payingCondition:
+          type: string
+          description: Условие оплаты (для 02)
+        purposeCode:
+          type: string
+          description: |
+            Кодовое назначение платежа.  Принимает возможные значения:
+            * `1` - при переводе денежных средств, являющихся заработной платой и (или) иными доходами;
+            * `2` - при переводе денежных средств, являющихся доходами, на которые не может быть обращено взыскание;
+            * `3` - при переводе денежных средств, являющихся видами доходов
+          enum:
+            - "1"
+            - "2"
+            - "3"
+        receiptDate:
+          type: string
+          description: Дата поступления в банк плательщика
+          example: 2018-12-31
+        valueDate:
+          type: string
+          description: Дата валютирования
+          example: 2018-12-31
+      description: Блок для описания рублёвых счетов
+      example:
+        payerBankCorrAccount: "30101810200000000593"
+        departmentalInfo:
+          drawerStatus101: "1"
+          oktmo: "11605000"
+          kbk: "39210202010061000160"
+          taxPeriod107: МС.03.2016
+          docNumber108: "123"
+          reasonCode106: ТП
+          docDate109: 31.12.2018
+          uip: "32221003200126505006"
+          paymentKind110: "1"
+        payerKpp: "770801001"
+        receiptDate: 2018-12-31
+        deliveryKind: электронно
+        payerBankName: АО \"АЛЬФА-БАНК\"
+        payerInn: "7728168971"
+        valueDate: 2018-12-31
+        cartInfo:
+          documentCode: documentCode
+          documentDate: 2019-10-19T06:33:47.923Z
+          restAmount: restAmount
+          documentNumber: documentNumber
+          documentContent: documentContent
+          paymentNumber: paymentNumber
+        payerAccount: "40802810401300015422"
+        payeeName: Наименование получателя
+        payeeBankName: АО \"АЛЬФА-БАНК\"
+        payeeBankBic: "9611925"
+        payerBankBic: "044525593"
+        purposeCode: "1"
+        payeeInn: "7728168971"
+        payerName: Гаврилов Добрыня Петрович
+        payeeBankCorrAccount: "30101810200000000593"
+        payeeKpp: "770801001"
+        payeeAccount: "40802810401300015422"
+        payingCondition: payingCondition
+    CartInfo:
+      type: object
+      properties:
+        documentCode:
+          type: string
+          description: Шифр документа (картотека) (для 16)
+        documentContent:
+          type: string
+          description: Содержание операции (для 16)
+        documentDate:
+          type: string
+          description: Дата документа (картотека) (Формат ISO8601 c указанием часового пояса = 0 (то есть UTC)) (для 16)
+          example: 2019-10-19T06:33:47.923Z
+        documentNumber:
+          type: string
+          description: Номер документа (картотека) (для 16)
+        paymentNumber:
+          type: string
+          description: Номер платежа (картотека) (для 16)
+        restAmount:
+          type: string
+          description: Сумма остатка платежа (картотека) (для 16)
+      description: Дополнительная информация о документе (картотека)
+      example:
+        documentCode: documentCode
+        documentDate: 2019-10-19T06:33:47.923Z
+        restAmount: restAmount
+        documentNumber: documentNumber
+        documentContent: documentContent
+        paymentNumber: paymentNumber
+    DepartmentalInfo:
+      type: object
+      properties:
+        uip:
+          type: string
+          description: Уникальный идентификатор платежа
+          example: "32221003200126505006"
+        drawerStatus101:
+          type: string
+          description: Показатель статуса налогоплательщика (реквизит - 101)
+          example: "1"
+        kbk:
+          type: string
+          description: Код бюджетной классификации (реквизит - 104)
+          example: "39210202010061000160"
+        oktmo:
+          type: string
+          description: Код OKTMO (реквизит - 105)
+          example: "11605000"
+        reasonCode106:
+          type: string
+          description: Показатель основания платежа (реквизит - 106)
+          example: ТП
+        taxPeriod107:
+          type: string
+          description: Налоговый период / код таможенного органа (реквизит - 107)
+          example: МС.03.2016
+        docNumber108:
+          type: string
+          description: Номер налогового документа (реквизит - 108)
+          example: "123"
+        docDate109:
+          type: string
+          description: Дата налогового документа (реквизит - 109)
+          example: 31.12.2018
+        paymentKind110:
+          type: string
+          description: ип налогового платежа (реквизит - 110)
+          example: "1"
+      description: "Реквизиты налогового, таможенного или иного бюджетного платежа"
+      example:
+        drawerStatus101: "1"
+        oktmo: "11605000"
+        kbk: "39210202010061000160"
+        taxPeriod107: МС.03.2016
+        docNumber108: "123"
+        reasonCode106: ТП
+        docDate109: 31.12.2018
+        uip: "32221003200126505006"
+        paymentKind110: "1"
+    SwiftTransfer:
+      type: object
+      properties:
+        bankOperationCode:
+          type: string
+          description: Код банковской операции (формат MT103) - CRED
+          enum:
+            - CRED
+        beneficiaryBankAccount:
+          type: string
+          description: Номер счёта банка бенефициара. 1-я часть значения поля 57 в формате MT103
+          example: LOYDGB21323
+        beneficiaryBankName:
+          type: string
+          description: "Код BIC, расположение или название и адрес банка бенефициа\
+            ра. Содержимое поля 57 (за исключением номера счёта, с разделителями)\
+            \ в формате MT103"
+          example: АО \"АЛЬФА-БАНК\"
+        beneficiaryBankOption:
+          type: string
+          description: Признак вида поля банка бенефициара (поле 57 в формате MT103)
+          example: D
+        beneficiaryCustomerAccount:
+          type: string
+          description: Номер счёта бенефициара. 1-я часть значения поля 59 в формате
+            MT103
+          example: /40702810701300000761
+        beneficiaryCustomerName:
+          type: string
+          description: "Код BIC/BEI или название и адрес бенефициара. Содержимое п\
+            оля 59 (за исключением номера счёта, с разделителями) в формате MT103"
+          example: ООО Ромашка
+        detailsOfCharges:
+          type: string
+          description: |
+            Сведения о расходах (формат MT103). Принимает возможные значения:
+            * `OUR` - все расходы по данной операции относятся на счёт Плательщика
+          enum:
+            - OUR
+        exchangeRate:
+          type: string
+          description: Курс конвертации (формат MT103)
+          example: "67,74"
+        instructedAmount:
+          type: string
+          description: Валюта/сумма по инструкции (формат MT103)
+          example: "USD70,00"
+        instructionCode:
+          type: string
+          description: Код инструкции (формат MT103)
+        intermediaryBankAccount:
+          type: string
+          description: Номер счёта банка-посредника. 1-я часть значения поля 56 в формате
+            MT103
+          example: COBADEFF
+        intermediaryBankName:
+          type: string
+          description: "Код BIC или название банка-посредника. Содержимое поля 56\
+            \ (за исключением номера счёта, с разделителями) в формате MT103"
+          example: АО "АЛЬФА-БАНК"
+        intermediaryBankOption:
+          type: string
+          description: Признак вида поля банка-посредника
+          example: D
+        messageDestinator:
+          type: string
+          description: Получатель сообщения SWIFT (формат MT103)
+          example: LAPBLV2X
+        messageIdentifier:
+          type: string
+          description: Уникальный системный номер сообщения SWIFT (формат MT103)
+          example: S000013082900014
+        messageOriginator:
+          type: string
+          description: Отправитель сообщения SWIFT (формат MT103)
+          example: SABRRU2P
+        messageReceiveTime:
+          type: string
+          description: Дата и время получения сообщения SWIFT (формат MT103)
+          example: 15-05-27 13:21
+        messageSendTime:
+          type: string
+          description: Дата и время отправки сообщения SWIFT (формат MT103)
+          example: 15-05-27 13:21
+        messageType:
+          type: string
+          description: Тип сообщения SWIFT
+          enum:
+            - "103"
+        orderingCustomerAccount:
+          type: string
+          description: Номер счёта плательщика в формате
+          example: /08251801040004813
+        orderingCustomerName:
+          type: string
+          description: "Код BIC/BEI или название и адрес плательщика. Содержимое по\
+            ля 50 (за исключением номера счёта, с разделителями) в формате MT103"
+          example: ООО Радуга
+        orderingCustomerOption:
+          type: string
+          description: Признак вида поля плательщика
+          example: K
+        orderingInstitutionAccount:
+          type: string
+          description: Номер счёта банка плательщика. 1-я часть значения поля 52 в
+            формате MT103
+          example: ABOCBNBJ080
+        orderingInstitutionName:
+          type: string
+          description: "Код BIC или название и адрес банка плательщика. Содержимое\
+            \ поля 52 (за исключением номера счёта, с разделителями) в формате MT103"
+          example: АО "АЛЬФА-БАНК"
+        orderingInstitutionOption:
+          type: string
+          description: Признак вида поля банка плательщика
+          example: D
+        receiverCharges:
+          type: string
+          description: Расходы получателя (формат MT103)
+        receiverCorrespondentAccount:
+          type: string
+          description: Номер счёта корреспондента получателя
+          example: "30101810400000000000"
+        receiverCorrespondentName:
+          type: string
+          description: "Код BIC, расположение или название и адрес корреспондента\
+            \ получателя. Содержимое поля 54 (за исключением номера счёта, с разде\
+            лителями) в формате MT103"
+          example: "JSC ROSSELKHOZBANK 3, GAGARINSKY PEREULOK MOSCOW RUSSIAN FEDERATION"
+        receiverCorrespondentOption:
+          type: string
+          description: Признак вида поля корреспондента
+          example: D
+        regulatoryReporting:
+          type: string
+          description: Контрольная отчётность (формат MT103)
+          example: /N10/NS/N4/12345678901234567890/N5/12345678901/N6/TP/N7 МS.05.2003/N8/123456789012345/N9/12.05.2003
+        remittanceInformation:
+          type: string
+          description: "Сведения о переводе (формат MT103, поле 70)"
+          example: PAYMENT ACC AGREEMENT 1 DD 29.11.2018 FOR WATCHES
+        senderCharges:
+          type: string
+          description: Расходы отправителя (формат MT103)
+          example: "USD7,03"
+        senderCorrespondentAccount:
+          type: string
+          description: Номер счёта корреспондента отправителя
+          example: BOTKGB2L
+        senderCorrespondentName:
+          type: string
+          description: "Код BIC, расположение или название и адрес корреспондента\
+            \ отправителя. Содержимое поля 53 (за исключением номера счёта, с разд\
+            елителями) в формате MT103"
+          example: "CITIBANK N.A. NEW YORK,NY"
+        senderCorrespondentOption:
+          type: string
+          description: Признак вида поля корреспондента
+          example: D
+        senderToReceiverInformation:
+          type: string
+          description: Информация отправителя получателю (формат MT103)
+          example: /NZP/OT 15.03.2009. NDS NE OBLAGAETSYA
+        transactionReferenceNumber:
+          type: string
+          description: "Референс операции (формат MT103, поле 20)"
+          example: "69528"
+        transactionRelatedReference:
+          type: string
+          description: Связанный референс (формат MT103)
+        transactionTypeCode:
+          type: string
+          description: Код типа операции (формат MT103)
+          example: S01
+        urgent:
+          type: string
+          description: |
+            Признак срочности операции (формат MT103). Принимает возможные значения:
+            * `URGENT` - срочная операция;
+            * `NORMAL` - обычная операция
+          enum:
+            - URGENT
+            - NORMAL
+        valueDateCurrencyInterbankSettledAmount:
+          type: string
+          description: "Дата валютирования, код валюты, сумма межбанковского расчё\
+            та (формат MT103)"
+          example: "130824EUR5447,34"
+      description: Блок для описания валютных счетов
+      example:
+        bankOperationCode: CRED
+        intermediaryBankOption: D
+        intermediaryBankName: АО "АЛЬФА-БАНК"
+        orderingCustomerAccount: /08251801040004813
+        orderingCustomerName: ООО Радуга
+        transactionTypeCode: S01
+        instructionCode: instructionCode
+        messageReceiveTime: 15-05-27 13:21
+        messageDestinator: LAPBLV2X
+        messageType: "103"
+        exchangeRate: "67,74"
+        beneficiaryBankName: АО \"АЛЬФА-БАНК\"
+        messageIdentifier: S000013082900014
+        messageOriginator: SABRRU2P
+        receiverCorrespondentAccount: "30101810400000000000"
+        regulatoryReporting: /N10/NS/N4/12345678901234567890/N5/12345678901/N6/TP/N7
+          МS.05.2003/N8/123456789012345/N9/12.05.2003
+        beneficiaryBankAccount: LOYDGB21323
+        beneficiaryCustomerName: ООО Ромашка
+        instructedAmount: "USD70,00"
+        transactionRelatedReference: transactionRelatedReference
+        urgent: URGENT
+        orderingInstitutionName: АО "АЛЬФА-БАНК"
+        receiverCorrespondentOption: D
+        senderCorrespondentName: "CITIBANK N.A. NEW YORK,NY"
+        orderingInstitutionAccount: ABOCBNBJ080
+        senderCorrespondentAccount: BOTKGB2L
+        valueDateCurrencyInterbankSettledAmount: "130824EUR5447,34"
+        senderCorrespondentOption: D
+        messageSendTime: 15-05-27 13:21
+        orderingCustomerOption: K
+        detailsOfCharges: OUR
+        intermediaryBankAccount: COBADEFF
+        transactionReferenceNumber: 69528
+        orderingInstitutionOption: D
+        senderToReceiverInformation: /NZP/OT 15.03.2009. NDS NE OBLAGAETSYA
+        receiverCorrespondentName: "JSC ROSSELKHOZBANK 3, GAGARINSKY PEREULOK MOSCOW\
+          \ RUSSIAN FEDERATION"
+        beneficiaryBankOption: D
+        remittanceInformation: PAYMENT ACC AGREEMENT 1 DD 29.11.2018 FOR WATCHES
+        beneficiaryCustomerAccount: /40702810701300000761
+        senderCharges: "USD7,03"
+        receiverCharges: receiverCharges
+    CurTransfer:
+      type: object
+      properties:
+        bankOperationCode:
+          type: string
+          description: Код банковской операции (формат MT103)
+          enum:
+            - CRED
+        beneficiaryBankAccount:
+          type: string
+          description: Номер счёта банка бенефициара. 1-я часть значения поля 57 в
+            формате MT103
+          example: LOYDGB21323
+        beneficiaryBankName:
+          type: string
+          description: "Код BIC, расположение или название и адрес банка бенефициа\
+            ра. Содержимое поля 57 (за исключением номера счёта, с разделителями)\
+            \ в формате MT103"
+          example: АО \"АЛЬФА-БАНК\"
+        beneficiaryBankOption:
+          type: string
+          description: Признак вида поля банка бенефициара (поле 57 в формате MT103)
+          example: D
+        beneficiaryCustomerAccount:
+          type: string
+          description: Номер счёта бенефициара. 1-я часть значения поля 59 в формате
+            MT103
+          example: /40702810701300000761
+        beneficiaryCustomerName:
+          type: string
+          description: "Код BIC/BEI или название и адрес бенефициара. Содержимое п\
+            оля 59 (за исключением номера счёта, с разделителями) в формате MT103"
+          example: ООО Ромашка
+        detailsOfCharges:
+          type: string
+          description: |
+            Сведения о расходах (формат MT103). Принимает возможные значения:
+            * `OUR` - все расходы по данной операции относятся на счёт Плательщика
+          enum:
+            - OUR
+        exchangeRate:
+          type: string
+          description: Курс конвертации (формат MT103)
+          example: "67,74"
+        instructedAmount:
+          type: string
+          description: Валюта/сумма по инструкции (формат MT103)
+          example: "USD70,00"
+        instructionCode:
+          type: string
+          description: Код инструкции (формат MT103)
+        intermediaryBankAccount:
+          type: string
+          description: Номер счёта банка-посредника. 1-я часть значения поля 56 в формате
+            MT103
+          example: COBADEFF
+        intermediaryBankName:
+          type: string
+          description: "Код BIC или название банка-посредника. Содержимое поля 56\
+            \ (за исключением номера счёта, с разделителями) в формате MT103"
+          example: АО "АЛЬФА-БАНК"
+        intermediaryBankOption:
+          type: string
+          description: Признак вида поля банка-посредника
+          example: D
+        messageDestinator:
+          type: string
+          description: Получатель сообщения SWIFT (формат MT103)
+          example: LAPBLV2X
+        messageIdentifier:
+          type: string
+          description: Уникальный системный номер сообщения SWIFT (формат MT103)
+          example: S000013082900014
+        messageOriginator:
+          type: string
+          description: Отправитель сообщения SWIFT (формат MT103)
+          example: SABRRU2P
+        messageReceiveTime:
+          type: string
+          description: Дата и время получения сообщения SWIFT (формат MT103)
+          example: 15-05-27 13:21
+        messageSendTime:
+          type: string
+          description: Дата и время отправки сообщения SWIFT (формат MT103)
+          example: 15-05-27 13:21
+        messageType:
+          type: string
+          description: Тип сообщения SWIFT - 103 (формат MT103)
+          enum:
+            - "103"
+        orderingCustomerAccount:
+          type: string
+          description: Номер счёта плательщика в формате
+          example: /08251801040004813
+        orderingCustomerName:
+          type: string
+          description: "Код BIC/BEI или название и адрес плательщика. Содержимое по\
+            ля 50 (за исключением номера счёта, с разделителями) в формате MT103"
+          example: ООО Радуга
+        orderingCustomerOption:
+          type: string
+          description: Признак вида поля плательщика
+          example: K
+        orderingInstitutionAccount:
+          type: string
+          description: Номер счёта банка плательщика. 1-я часть значения поля 52 в
+            формате MT103
+          example: ABOCBNBJ080
+        orderingInstitutionName:
+          type: string
+          description: "Код BIC или название и адрес банка плательщика. Содержимое\
+            \ поля 52 (за исключением номера счёта, с разделителями) в формате MT103"
+          example: АО "АЛЬФА-БАНК"
+        orderingInstitutionOption:
+          type: string
+          description: Признак вида поля банка плательщика
+          example: D
+        receiverCharges:
+          type: string
+          description: Расходы получателя (формат MT103)
+        receiverCorrespondentAccount:
+          type: string
+          description: Номер счёта корреспондента получателя
+          example: "30101810400000000000"
+        receiverCorrespondentName:
+          type: string
+          description: "Код BIC, расположение или название и адрес корреспондента\
+            \ получателя. Содержимое поля 54 (за исключением номера счёта, с разде\
+            лителями) в формате MT103"
+          example: "JSC ROSSELKHOZBANK 3, GAGARINSKY PEREULOK MOSCOW RUSSIAN FEDERATION"
+        receiverCorrespondentOption:
+          type: string
+          description: Признак вида поля корреспондента
+          example: D
+        regulatoryReporting:
+          type: string
+          description: Контрольная отчётность (формат MT103)
+          example: /N10/NS/N4/12345678901234567890/N5/12345678901/N6/TP/N7 МS.05.2003/N8/123456789012345/N9/12.05.2003
+        remittanceInformation:
+          type: string
+          description: "Сведения о переводе (формат MT103, поле 70)"
+          example: PAYMENT ACC AGREEMENT 1 DD 29.11.2018 FOR WATCHES
+        senderCharges:
+          type: string
+          description: Расходы отправителя (формат MT103)
+          example: "USD7,03"
+        senderCorrespondentAccount:
+          type: string
+          description: Номер счёта корреспондента отправителя.
+          example: BOTKGB2L
+        senderCorrespondentName:
+          type: string
+          description: "Код BIC, расположение или название и адрес корреспондента\
+            \ отправителя. Содержимое поля 53 (за исключением номера счёта, с разд\
+            елителями) в формате MT103"
+          example: "CITIBANK N.A. NEW YORK,NY"
+        senderCorrespondentOption:
+          type: string
+          description: Признак вида поля корреспондента
+          example: D
+        senderToReceiverInformation:
+          type: string
+          description: Информация отправителя получателю (формат MT103)
+          example: /NZP/OT 15.03.2009. NDS NE OBLAGAETSYA
+        transactionReferenceNumber:
+          type: string
+          description: "Референс операции (формат MT103, поле 20)"
+          example: "69528"
+        transactionRelatedReference:
+          type: string
+          description: Связанный референс (формат MT103)
+        transactionTypeCode:
+          type: string
+          description: Код типа операции (формат MT103)
+          example: S01
+        urgent:
+          type: string
+          description: |
+            Признак срочности операции (формат MT103). Принимает возможные значения:
+            * `URGENT` - срочная операция;
+            * `NORMAL` - обычная операция
+          enum:
+            - URGENT
+            - NORMAL
+        valueDateCurrencyInterbankSettledAmount:
+          type: string
+          description: "Дата валютирования, код валюты, сумма межбанковского расче\
+            та (формат MT103)"
+          example: "130824EUR5447,34"
+        payeeBankBic:
+          type: string
+          description: БИК банка получателя
+          example: "9611925"
+        payeeBankCorrAccount:
+          type: string
+          description: Корсчёт банка получателя
+          example: "30101810200000000593"
+        payeeAccount:
+          type: string
+          description: Номер счёта получателя
+          example: "40802810401300015422"
+        payeeBankName:
+          type: string
+          description: Наименование банка получателя
+          example: АО \"АЛЬФА-БАНК\"
+        payeeInn:
+          type: string
+          description: ИНН получателя
+          example: "7728168971"
+        payeeKpp:
+          type: string
+          description: КПП получателя
+          example: "770801001"
+        payeeName:
+          type: string
+          description: Наименование получателя
+          example: Наименование получателя
+        payerAccount:
+          type: string
+          description: Номер счёта плательщика
+          example: "40802810401300015422"
+        payerBankBic:
+          type: string
+          description: БИК банка плательщика
+          example: "044525593"
+        payerBankCorrAccount:
+          type: string
+          description: Корсчёт банка плательщика
+          example: "30101810200000000593"
+        payerBankName:
+          type: string
+          description: Наименование банка плательщика
+          example: АО \"АЛЬФА-БАНК\"
+        payerInn:
+          type: string
+          description: ИНН плательщика
+          example: "7728168971"
+        payerKpp:
+          type: string
+          description: КПП плательщика
+          example: "770801001"
+        payerName:
+          type: string
+          description: Наименование плательщика
+          example: Гаврилов Добрыня Петрович
+      description: Блок для описания валютных счетов
+      example:
+        payerBankCorrAccount: "30101810200000000593"
+        intermediaryBankOption: D
+        intermediaryBankName: АО "АЛЬФА-БАНК"
+        orderingCustomerAccount: /08251801040004813
+        orderingCustomerName: ООО Радуга
+        instructionCode: instructionCode
+        messageType: "103"
+        exchangeRate: "67,74"
+        beneficiaryBankName: АО \"АЛЬФА-БАНК\"
+        messageOriginator: SABRRU2P
+        receiverCorrespondentAccount: "30101810400000000000"
+        regulatoryReporting: /N10/NS/N4/12345678901234567890/N5/12345678901/N6/TP/N7
+          МS.05.2003/N8/123456789012345/N9/12.05.2003
+        beneficiaryBankAccount: LOYDGB21323
+        instructedAmount: "USD70,00"
+        payeeBankCorrAccount: "30101810200000000593"
+        transactionRelatedReference: transactionRelatedReference
+        senderCorrespondentName: "CITIBANK N.A. NEW YORK,NY"
+        senderCorrespondentAccount: BOTKGB2L
+        valueDateCurrencyInterbankSettledAmount: "130824EUR5447,34"
+        senderCorrespondentOption: D
+        intermediaryBankAccount: COBADEFF
+        payerInn: "7728168971"
+        senderToReceiverInformation: /NZP/OT 15.03.2009. NDS NE OBLAGAETSYA
+        receiverCorrespondentName: "JSC ROSSELKHOZBANK 3, GAGARINSKY PEREULOK MOSCOW\
+          \ RUSSIAN FEDERATION"
+        payeeBankBic: "9611925"
+        senderCharges: "USD7,03"
+        payeeKpp: "770801001"
+        payeeAccount: "40802810401300015422"
+        bankOperationCode: CRED
+        transactionTypeCode: S01
+        payeeName: Наименование получателя
+        messageReceiveTime: 15-05-27 13:21
+        messageDestinator: LAPBLV2X
+        messageIdentifier: S000013082900014
+        beneficiaryCustomerName: ООО Ромашка
+        payerName: Гаврилов Добрыня Петрович
+        urgent: URGENT
+        orderingInstitutionName: АО "АЛЬФА-БАНК"
+        receiverCorrespondentOption: D
+        orderingInstitutionAccount: ABOCBNBJ080
+        messageSendTime: 15-05-27 13:21
+        orderingCustomerOption: K
+        detailsOfCharges: OUR
+        transactionReferenceNumber: 69528
+        payerKpp: "770801001"
+        payerBankName: АО \"АЛЬФА-БАНК\"
+        orderingInstitutionOption: D
+        payerAccount: "40802810401300015422"
+        payeeBankName: АО \"АЛЬФА-БАНК\"
+        beneficiaryBankOption: D
+        remittanceInformation: PAYMENT ACC AGREEMENT 1 DD 29.11.2018 FOR WATCHES
+        beneficiaryCustomerAccount: /40702810701300000761
+        payerBankBic: "044525593"
+        payeeInn: "7728168971"
+        receiverCharges: receiverCharges
+    ErrorBadRequest:
+      description: Неверные входные параметры запроса
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          description: |
+            Код ошибки. принимает возможные значения: 
+            * `invalid_request` - неверные входные параметры запроса
+          type: string
+          example: invalid_request
+        error_description:
+          description: Описание ошибки
+          type: string
+          example: Authorization header is not present in request headers
+    ErrorUnauthorized:
+      description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          description: |
+            Код ошибки. Принимает возможные значения: 
+            * `invalid_token` - предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          type: string
+          example: invalid_token
+        error_description:
+          description: Описание ошибки
+          type: string
+          example: The access token provided is expired, revoked, malformed, or invalid for other reasons
+    ErrorScope:
+      description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          description: |
+            Код ошибки. Принимает возможные значения:
+            * `insufficient_scope` - у пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope;
+            * `insufficient_privileges` - у пользователя нет прав на просмотр счёта;
+            * `access_denied` - доступ к счёту запрещён
+          type: string
+          example: insufficient_scope
+        error_description:
+          description: Описание ошибки
+          type: string
+          example: The request requires higher privileges than provided by the access token
+    ErrorNotFound:
+      description: Эндпоинт не найден или неактивен
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          description: |
+            Код ошибки. Принимает возможные значения:
+            * `unknown_endpoint` - эндпоинт не найден или неактивен
+          type: string
+          example: unknown_endpoint
+        error_description:
+          description: Описание ошибки
+          type: string
+          example: Endpoint is not found or not active
+    ErrorConflict:
+      description: Конфликт
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          description: |
+            Код ошибки. Принимает возможные значения: 
+            * `conflict` - платёжное поручение с таким `externalId` уже существует
+          type: string
+          example: conflict
+        error_description:
+          description: Описание ошибки
+          type: string
+          example: Request could not be processed because of conflict in the request
+    ErrorInternal:
+      description: Внутренняя ошибка сервиса при выполнении обработки запроса
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          description: |
+            Код ошибки. принимает возможные значения: 
+            * `internal_error` - внутренняя ошибка сервиса при выполнении обработки запроса
+          type: string
+          example: internal_error
+        error_description:
+          description: Описание ошибки
+          type: string
+          example: Internal server error
+    CurFormat:
+      type: string
+      description: Формат операции по валютному счёту
+      enum: [ curTransfer, swiftTransfer ]
+      example: curTransfer
+  examples:
+    getTransactions:
+      summary: Пример ответа
+      value:
+        _links:
+          - rel: prev
+            href: ?accountNumber=40702810500006103990&statementDate=2018-03-15&page=3
+        transactions:
+          - amount:
+              amount: 1.01
+              currencyName: USD
+            amountRub:
+              amount: 100.01
+              currencyName: RUR
+            correspondingAccount: "30101810400000000225"
+            direction: DEBIT
+            documentDate: 2021-10-07
+            filial: АО "АЛЬФА-БАНК"
+            number: "1843"
+            operationCode: "01"
+            operationDate: 2018-12-31T00:00:00Z
+            paymentPurpose: НДС не облагается
+            priority: "5"
+            revaln: ПК
+            uuid: 55daccdf-de87-3879-976c-8b8415c8caf9
+            transactionId: 1211206MOCO#DS0000017
+            debtorCode: 0
+            extendedDebtorCode: 50012008
+            rurTransfer:
+              cartInfo:
+                documentCode: documentCode
+                documentContent: documentContent
+                documentDate: 2019-10-19T06:33:47.923Z
+                documentNumber: documentNumber
+                paymentNumber: paymentNumber
+                restAmount: restAmount
+              deliveryKind: электронно
+              departmentalInfo:
+                uip: "32221003200126505006"
+                drawerStatus101: "1"
+                kbk: "39210202010061000160"
+                oktmo: "11605000"
+                reasonCode106: ТП
+                taxPeriod107: МС.03.2016
+                docNumber108: "123"
+                docDate109: 31.12.2018
+                paymentKind110: "1"
+              payeeAccount: "40802810401300015422"
+              payeeBankBic: "9611925"
+              payeeBankCorrAccount: "30101810200000000593"
+              payeeBankName: АО \"АЛЬФА-БАНК\"
+              payeeInn: "7728168971"
+              payeeKpp: "770801001"
+              payerName: Гаврилов Добрыня Петрович
+              payerAccount: "40802810401300015422"
+              payerBankBic: "044525593"
+              payerBankCorrAccount: "30101810200000000593"
+              payerBankName: АО \"АЛЬФА-БАНК\"
+              payerInn: "7728168971"
+              payerKpp: "770801001"
+              payeeName: Наименование получателя
+              payingCondition: payingCondition
+              purposeCode: "1"
+              receiptDate: 2018-12-31
+              valueDate: 2018-12-31
+            swiftTransfer:
+              bankOperationCode: CRED
+              intermediaryBankOption: D
+              intermediaryBankName: АО "АЛЬФА-БАНК"
+              orderingCustomerAccount: /08251801040004813
+              orderingCustomerName: ООО Радуга
+              transactionTypeCode: S01
+              instructionCode: instructionCode
+              messageReceiveTime: 15-05-27 13:21
+              messageDestinator: LAPBLV2X
+              messageType: "103"
+              exchangeRate: "67,74"
+              beneficiaryBankName: АО \"АЛЬФА-БАНК\"
+              messageIdentifier: S000013082900014
+              messageOriginator: SABRRU2P
+              receiverCorrespondentAccount: "30101810400000000000"
+              regulatoryReporting: /N10/NS/N4/12345678901234567890/N5/12345678901/N6/TP/N7
+                МS.05.2003/N8/123456789012345/N9/12.05.2003
+              beneficiaryBankAccount: LOYDGB21323
+              beneficiaryCustomerName: ООО Ромашка
+              instructedAmount: "USD70,00"
+              transactionRelatedReference: transactionRelatedReference
+              urgent: URGENT
+              orderingInstitutionName: АО "АЛЬФА-БАНК"
+              receiverCorrespondentOption: D
+              senderCorrespondentName: "CITIBANK N.A. NEW YORK,NY"
+              orderingInstitutionAccount: ABOCBNBJ080
+              senderCorrespondentAccount: BOTKGB2L
+              valueDateCurrencyInterbankSettledAmount: "130824EUR5447,34"
+              senderCorrespondentOption: D
+              messageSendTime: 15-05-27 13:21
+              orderingCustomerOption: K
+              detailsOfCharges: OUR
+              intermediaryBankAccount: COBADEFF
+              transactionReferenceNumber: 69528
+              orderingInstitutionOption: D
+              senderToReceiverInformation: /NZP/OT 15.03.2009. NDS NE OBLAGAETSYA
+              receiverCorrespondentName: "JSC ROSSELKHOZBANK 3, GAGARINSKY PEREULOK\
+                \ MOSCOW RUSSIAN FEDERATION"
+              beneficiaryBankOption: D
+              remittanceInformation: PAYMENT ACC AGREEMENT 1 DD 29.11.2018 FOR WATCHES
+              beneficiaryCustomerAccount: /40702810701300000761
+              senderCharges: "USD7,03"
+              receiverCharges: receiverCharges
+            curTransfer:
+              payerBankCorrAccount: "30101810200000000593"
+              intermediaryBankOption: D
+              intermediaryBankName: АО "АЛЬФА-БАНК"
+              orderingCustomerAccount: /08251801040004813
+              orderingCustomerName: ООО Радуга
+              instructionCode: instructionCode
+              messageType: "103"
+              exchangeRate: "67,74"
+              beneficiaryBankName: АО \"АЛЬФА-БАНК\"
+              messageOriginator: SABRRU2P
+              receiverCorrespondentAccount: "30101810400000000000"
+              regulatoryReporting: /N10/NS/N4/12345678901234567890/N5/12345678901/N6/TP/N7
+                МS.05.2003/N8/123456789012345/N9/12.05.2003
+              beneficiaryBankAccount: LOYDGB21323
+              instructedAmount: "USD70,00"
+              payeeBankCorrAccount: "30101810200000000593"
+              transactionRelatedReference: transactionRelatedReference
+              senderCorrespondentName: "CITIBANK N.A. NEW YORK,NY"
+              senderCorrespondentAccount: BOTKGB2L
+              valueDateCurrencyInterbankSettledAmount: "130824EUR5447,34"
+              senderCorrespondentOption: D
+              intermediaryBankAccount: COBADEFF
+              payerInn: "7728168971"
+              senderToReceiverInformation: /NZP/OT 15.03.2009. NDS NE OBLAGAETSYA
+              receiverCorrespondentName: "JSC ROSSELKHOZBANK 3, GAGARINSKY PEREULOK\
+                \ MOSCOW RUSSIAN FEDERATION"
+              payeeBankBic: "9611925"
+              senderCharges: "USD7,03"
+              payeeKpp: "770801001"
+              payeeAccount: "40802810401300015422"
+              bankOperationCode: CRED
+              transactionTypeCode: S01
+              payeeName: Наименование получателя
+              messageReceiveTime: 15-05-27 13:21
+              messageDestinator: LAPBLV2X
+              messageIdentifier: S000013082900014
+              beneficiaryCustomerName: ООО Ромашка
+              payerName: Гаврилов Добрыня Петрович
+              urgent: URGENT
+              orderingInstitutionName: АО "АЛЬФА-БАНК"
+              receiverCorrespondentOption: D
+              orderingInstitutionAccount: ABOCBNBJ080
+              messageSendTime: 15-05-27 13:21
+              orderingCustomerOption: K
+              detailsOfCharges: OUR
+              transactionReferenceNumber: 69528
+              payerKpp: "770801001"
+              payerBankName: АО \"АЛЬФА-БАНК\"
+              orderingInstitutionOption: D
+              payerAccount: "40802810401300015422"
+              payeeBankName: АО \"АЛЬФА-БАНК\"
+              beneficiaryBankOption: D
+              remittanceInformation: PAYMENT ACC AGREEMENT 1 DD 29.11.2018 FOR WATCHES
+              beneficiaryCustomerAccount: /40702810701300000761
+              payerBankBic: "044525593"
+              payeeInn: "7728168971"
+              receiverCharges: receiverCharges

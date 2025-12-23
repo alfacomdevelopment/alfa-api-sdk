@@ -1,14 +1,14 @@
 package com.alfa.api.sdk.sample.app.controller
 
+import com.alfa.api.sdk.transactions.TransactionsApi
+import com.alfa.api.sdk.transactions.statement.generated.model.CurFormat
+import com.alfa.api.sdk.transactions.statement.generated.model.StatementResponse
+import com.alfa.api.sdk.transactions.statement1c.generated.model.Statement1cResponse
+import com.alfa.api.sdk.transactions.summary.generated.model.SummaryResponse
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import com.alfa.api.sdk.transactions.TransactionsApi
-import com.alfa.api.sdk.transactions.model.odins.Statement1c
-import com.alfa.api.sdk.transactions.model.statement.CurFormat
-import com.alfa.api.sdk.transactions.model.statement.Statement
-import com.alfa.api.sdk.transactions.model.statement.Summary
 import java.time.LocalDate
 
 @RestController
@@ -20,7 +20,7 @@ class TransactionsController(private val transactionsApi: TransactionsApi) {
         @RequestParam date: LocalDate,
         @RequestParam page: Int,
         @RequestParam curFormat: String
-    ): Statement {
+    ): StatementResponse {
         return transactionsApi.getStatement(account, date, page, CurFormat.fromValue(curFormat))
     }
 
@@ -28,7 +28,7 @@ class TransactionsController(private val transactionsApi: TransactionsApi) {
     fun getSummary(
         @RequestParam account: String,
         @RequestParam date: LocalDate
-    ): Summary {
+    ): SummaryResponse {
         return transactionsApi.getSummary(account, date)
     }
 
@@ -38,7 +38,7 @@ class TransactionsController(private val transactionsApi: TransactionsApi) {
         @RequestParam date: LocalDate,
         @RequestParam limit: Int,
         @RequestParam offset: Int
-    ): Statement1c {
+    ): Statement1cResponse {
         return transactionsApi.getStatement1C(account, date, limit, offset)
     }
 

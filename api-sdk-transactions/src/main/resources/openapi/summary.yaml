@@ -1,0 +1,318 @@
+openapi: 3.0.3
+info:
+  title: Alfa API
+  contact:
+    name: API Support
+    email: baas_support@alfabank.ru
+  version: 1.0.0
+tags:
+  - name: Transactions
+    description: Выписки по счетам юрлиц
+servers:
+  - url: https://baas.alfabank.ru/api/
+    description: Prod server API
+  - url: https://sandbox.alfabank.ru/api/
+    description: Sandbox server API
+paths:
+  /jp/v1/statement/summary:
+    get:
+      tags:
+        - Transactions
+      summary: 'Получение информации об оборотах'
+      operationId: turnoverInfoGet
+      security:
+        - bearerAuth: [ ]
+      description: Получение информации об оборотах
+      parameters:
+        - name: accountNumber
+          in: query
+          description: Номер расчётного счёта
+          required: true
+          schema:
+            type: string
+          example: "40702810102300000001"
+        - name: statementDate
+          in: query
+          description: Дата исполнения операции
+          required: true
+          schema:
+            type: string
+          example: 2025-12-08
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SummaryResponse'
+        '400':
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        '401':
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        '403':
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+        '404':
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        '429':
+          description: Слишком много запросов в заданный период времени
+        '500':
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+        '503':
+          description: Сервер временно недоступен
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Возможны два варианта:
+        - Bearer {access_token}, полученный по [Authorization Code Flow](/products/alfa-api/documentation/articles/alfa-id/articles/acf/articles/intro/intro) / [Authorization Code Flow H2H](/products/alfa-api/documentation/articles/alfa-id/articles/acf-h2h/articles/intro/intro)
+        - ApiKey {API Key}, полученный через [Портал разработчика](/products/alfa-api/documentation/articles/selfservice/articles/api-key/api-key)
+  schemas:
+    SummaryResponse:
+      description: Информация получена
+      type: object
+      properties:
+        composedDateTime:
+          description: Дата составления сводки
+          type: string
+          example: "2018-12-31"
+        lastMovementDate:
+          description: "Дата последней операции по счёту за запрошенный период"
+          type: string
+          example: "2018-12-31"
+        openingRate:
+          description: "Курс ЦБ за единицу валюты на начало периода"
+          type: string
+          example: null
+        openingBalance:
+          $ref: '#/components/schemas/openingBalance'
+        openingBalanceRub:
+          $ref: '#/components/schemas/openingBalanceRub'
+        closingBalance:
+          $ref: '#/components/schemas/closingBalance'
+        closingBalanceRub:
+          $ref: '#/components/schemas/closingBalanceRub'
+        debitTurnover:
+          $ref: '#/components/schemas/debitTurnover'
+        debitTurnoverRub:
+          $ref: '#/components/schemas/DebitTurnoverRub'
+        debitTransactionsNumber:
+          description: "Количество дебетовых операций по счёту"
+          type: integer
+          example: 10
+        creditTransactionsNumber:
+          description: "Количество кредитовых операций по счёту"
+          type: integer
+          example: 10
+        creditTurnover:
+          $ref: '#/components/schemas/creditTurnover'
+        creditTurnoverRub:
+          $ref: '#/components/schemas/creditTurnoverRub'
+    openingBalance:
+      type: object
+      description: Входящий остаток в валюте счёта
+      properties:
+        amount:
+          description: Сумма
+          type: number
+          example: 10000.55
+        currencyName:
+          description: Буквенный ISO-код валюты
+          type: string
+          example: RUR
+    openingBalanceRub:
+      type: object
+      description: Входящий остаток в рублях
+      properties:
+        amount:
+          description: Сумма
+          type: number
+          example: 10000.55
+        currencyName:
+          description: Буквенный ISO-код валюты
+          type: string
+          example: RUR
+    closingBalance:
+      type: object
+      description: Исходящий остаток в валюте счёта
+      properties:
+        amount:
+          description: Сумма
+          type: number
+          example: 25000.3
+        currencyName:
+          description: Буквенный ISO-код валюты
+          type: string
+          example: RUR
+    closingBalanceRub:
+      type: object
+      description: Исходящий остаток в рублях
+      properties:
+        amount:
+          description: Сумма
+          type: number
+          example: 25000.3
+        currencyName:
+          description: Буквенный ISO-код валюты
+          type: string
+          example: RUR
+    debitTurnover:
+      type: object
+      description: Дебетовый оборот в валюте счёта
+      properties:
+        amount:
+          description: Сумма
+          type: number
+          example: 10000
+        currencyName:
+          description: Буквенный ISO-код валюты
+          type: string
+          example: RUR
+    DebitTurnoverRub:
+      type: object
+      description: Дебетовый оборот в рублях
+      properties:
+        amount:
+          description: Сумма
+          type: number
+          example: 10000
+        currencyName:
+          description: Буквенный ISO-код валюты
+          type: string
+          example: RUR
+    creditTurnover:
+      type: object
+      description: Кредитовый оборот в валюте счёта
+      properties:
+        amount:
+          description: Сумма
+          type: number
+          example: 24999.75
+        currencyName:
+          description: Буквенный ISO-код валюты
+          type: string
+          example: RUR
+    creditTurnoverRub:
+      type: object
+      description: Кредитовый оборот в рублях
+      properties:
+        amount:
+          description: Сумма
+          type: number
+          example: 24999.75
+        currencyName:
+          description: Буквенный ISO-код валюты
+          type: string
+          example: RUR
+        creditTransactionsNumber:
+          description: Количество кредитовых операций по счёту
+          type: integer
+          example: 10
+    creditTransactionsNumber:
+      description: "Количество кредитовых операций по счёту"
+      type: integer
+      example: 10
+    ErrorBadRequest:
+      description: Неверные входные параметры запроса
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          description: |
+            Код ошибки. Принимает возможные значения:
+            * `invalid_request` - неверные входные параметры запроса
+          type: string
+          example: invalid_request
+        error_description:
+          description: Описание ошибки
+          type: string
+          example: Authorization header is not present in request headers
+    ErrorUnauthorized:
+      description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          description: |
+            Код ошибки. Принимает возможные значения:
+            * `invalid_token` - предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          type: string
+          example: invalid_token
+        error_description:
+          description: Описание ошибки
+          type: string
+          example: The access token provided is expired, revoked, malformed, or invalid for other reasons
+    ErrorScope:
+      description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          description: |
+            Код ошибки. Принимает возможные значения:
+            * 'insufficient_scope` - у пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope;
+            * `insufficient_privileges` - у пользователя нет прав на просмотр счёта;
+            * `access_denied` - доступ к счёту запрещён
+          type: string
+          example: insufficient_scope
+        error_description:
+          description: Описание ошибки
+          type: string
+          example: The request requires higher privileges than provided by the access token
+    ErrorNotFound:
+      description: Эндпоинт не найден или неактивен
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          description: |
+            Код ошибки. Принимает возможные значения:
+            * `unknown_endpoint` - эндпоинт не найден или неактивен
+          type: string
+          example: unknown_endpoint
+        error_description:
+          description: Описание ошибки
+          type: string
+          example: Endpoint is not found or not active
+    ErrorInternal:
+      description: Внутренняя ошибка сервиса при выполнении обработки запроса
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          description: |
+            Код ошибки. Принимает возможные значения:
+            * `internal_error` - внутренняя ошибка сервиса при выполнении обработки запроса
+          type: string
+          example: internal_error
+        error_description:
+          description: Описание ошибки
+          type: string
+          example: Internal server error
