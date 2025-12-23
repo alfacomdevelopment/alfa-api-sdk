@@ -3,11 +3,15 @@
 kotlin = "2.2.10"
 spring-boot = "4.0.0"
 freefair-lombok = "9.1.0"
+openapi-generator = "7.17.0"
 
 # Libraries
 lombok = "1.18.42"
 jackson-bom = "2.20.1"
 javax-jaxb-api = "2.3.1"
+javax-annotation-api = "1.3.2"
+jsr305 = "3.0.2"
+threeten-jaxb-core = "1.2"
 bouncycastle = "1.83"
 nimbus-jose-jwt = "10.6"
 mapstruct = "1.6.3"
@@ -25,6 +29,11 @@ jackson-jaxb-annotations = { module = "com.fasterxml.jackson.module:jackson-modu
 
 # XML bind
 javax-jaxb-api = { module = "javax.xml.bind:jaxb-api", version.ref = "javax-jaxb-api" }
+
+# Annotations
+javax-annotation-api = { module = "javax.annotation:javax.annotation-api", version.ref = "javax-annotation-api" }
+jsr305 = { module = "com.google.code.findbugs:jsr305", version.ref = "jsr305" }
+threeten-jaxb-core = { module = "io.github.threeten-jaxb:threeten-jaxb-core", version.ref = "threeten-jaxb-core" }
 
 # Crypto
 bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
@@ -52,3 +61,6 @@ spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 
 # Lombok (Freefair)
 freefair-lombok = { id = "io.freefair.lombok", version.ref = "freefair-lombok" }
+
+# OpenAPI Generator
+openapi-generator = { id = "org.openapi.generator", version.ref = "openapi-generator" }

@@ -1,0 +1,1061 @@
+openapi: 3.0.3
+info:
+  title: Alfa API
+  contact:
+    name: API Support
+    email: baas_support@alfabank.ru
+  version: 1.0.0
+externalDocs:
+  description: Документация Alfa API
+  url: https://developers.alfabank.ru/
+servers:
+  - url: https://baas.alfabank.ru/api/
+    description: Prod server API
+  - url: https://sandbox.alfabank.ru/api/
+    description: Sandbox server API
+security:
+  - bearerAuth: [ ]
+paths:
+  /jp/v2/accounts/{accountNumber}/transactions/1C:
+    get:
+      tags:
+        - Transactions
+      summary: Получение операций по счетам в формате 1С
+      operationId: getTransactions
+      parameters:
+        - name: accountNumber
+          in: path
+          description: Номер расчётного счёта
+          required: true
+          schema:
+            pattern: "\\d{20}"
+            type: string
+          example: "40702810102300000001"
+        - name: executeDate
+          in: query
+          description: Дата исполнения
+          required: true
+          schema:
+            type: string
+            format: date
+          example: 2025-12-08
+        - name: offset
+          in: query
+          description: "Количество объектов в списке, которые необходимо пропустить"
+          required: false
+          schema:
+            minimum: 0
+            type: integer
+            default: 0
+          example: 0
+        - name: limit
+          in: query
+          description: Количество объектов на одной странице
+          required: false
+          schema:
+            minimum: 1
+            type: integer
+            default: 10
+          example: 1000
+      responses:
+        "200":
+          description: OK
+          headers:
+            x-traceid:
+              description: Идентификатор трассировки запроса
+              schema:
+                type: string
+              example: a57610880b621435
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Statement1cResponse'
+        "400":
+          description: Неверные входные параметры запроса
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequestXML'
+        "401":
+          description: "Предоставленный токен просрочен, отозван, имеет неправильн\
+            ый формат или недействителен по другим причинам."
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorizedXML'
+        "403":
+          description: "У пользователя нет прав на использование запрашиваемого се\
+            рвиса, доступ к которому не предусмотрен настройками scope"
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorScopeXML'
+        "404":
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFoundXML'
+        "429":
+          description: Слишком много запросов в заданный период времени
+        "500":
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorInternalXML'
+        "503":
+          description: Сервер временно недоступен
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Возможны два варианта:
+        - Bearer {access_token}, полученный по [Authorization Code Flow](/products/alfa-api/documentation/articles/alfa-id/articles/acf/articles/intro/intro) / [Authorization Code Flow H2H](/products/alfa-api/documentation/articles/alfa-id/articles/acf-h2h/articles/intro/intro)
+        - ApiKey {API Key}, полученный через [Портал разработчика](/products/alfa-api/documentation/articles/selfservice/articles/api-key/api-key)
+  schemas:
+    Statement1cResponse:
+      type: object
+      properties:
+        Pagination:
+          $ref: '#/components/schemas/Pagination'
+        Statement:
+          $ref: '#/components/schemas/Statement'
+      description: Ответ для выписки в формате 1С
+      example: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <Response xmlns:ns2="http://directbank.1c.ru/XMLSchema">
+            <Pagination>
+                <Limit>10</Limit>
+                <Offset>0</Offset>
+                <TotalCount>2</TotalCount>
+            </Pagination>
+            <ns2:Statement creationDate="2024-07-26T12:46:39.090" formatVersion="2.3.2" id="c4780ba2-53a3-2a44-3c3c-76987173f225">
+                <Data>
+                    <Account>40702810301300081287</Account>
+                    <Bank>
+                        <BIC>044525593</BIC>
+                        <Name>АО "АЛЬФА-БАНК"</Name>
+                    </Bank>
+                    <ClosingBalance>999.96</ClosingBalance>
+                    <DateFrom>2024-07-12T00:00:00.000</DateFrom>
+                    <DateTo>2024-07-12T23:59:59.999</DateTo>
+                    <OpeningBalance>999.96</OpeningBalance>
+                    <OperationInfo>
+                        <Date>2024-07-12</Date>
+                        <DC>2</DC>
+                        <PayDoc docKind="18" id="1240712MOCOIBSR 01100">
+                            <MemOrder>
+                                <DocDate>2024-07-12</DocDate>
+                                <DocNo>1100</DocNo>
+                                <Payee>
+                                    <Account>40702810301300081287</Account>
+                                    <Bank>
+                                        <BIC>044525593</BIC>
+                                        <Name>АО "АЛЬФА-БАНК"</Name>
+                                    </Bank>
+                                    <INN>0540384626</INN>
+                                    <KPP>047531225</KPP>
+                                    <Name>Полное наименование Орг № 34589</Name>
+                                </Payee>
+                                <Payer>
+                                    <Account>40702810701880040102</Account>
+                                    <Bank>
+                                        <BIC>044525593</BIC>
+                                        <Name>АО "АЛЬФА-БАНК"</Name>
+                                    </Bank>
+                                    <INN>0201860380</INN>
+                                    <KPP>044174533</KPP>
+                                    <Name>Полное наименование Орг № 13858</Name>
+                                </Payer>
+                                <PaymentKind>электронно</PaymentKind>
+                                <Sum>0.01</Sum>
+                                <TransitionKind>09</TransitionKind>
+                            </MemOrder>
+                        </PayDoc>
+                        <Stamp>
+                            <BIC>044525593</BIC>
+                            <Name>АО "АЛЬФА-БАНК"</Name>
+                            <Status>
+                                <Code>02</Code>
+                                <Name>Исполнен</Name>
+                            </Status>
+                        </Stamp>
+                    </OperationInfo>
+                    <OperationInfo>
+                        <Date>2024-07-12</Date>
+                        <DC>1</DC>
+                        <PayDoc docKind="18" id="1240712MOCOIBSR 01007">
+                            <MemOrder>
+                                <DocDate>2024-07-12</DocDate>
+                                <DocNo>1008</DocNo>
+                                <Payee>
+                                    <Account>40702810701880040102</Account>
+                                    <Bank>
+                                        <BIC>044525593</BIC>
+                                        <Name>АО "АЛЬФА-БАНК"</Name>
+                                    </Bank>
+                                    <INN>0201860380</INN>
+                                    <KPP>044174533</KPP>
+                                    <Name>Полное наименование Орг № 13858</Name>
+                                </Payee>
+                                <Payer>
+                                    <Account>40702810301300081287</Account>
+                                    <Bank>
+                                        <BIC>044525593</BIC>
+                                        <Name>АО "АЛЬФА-БАНК"</Name>
+                                    </Bank>
+                                    <INN>0540384626</INN>
+                                    <KPP>047531225</KPP>
+                                    <Name>Полное наименование Орг № 34589</Name>
+                                </Payer>
+                                <PaymentKind>электронно</PaymentKind>
+                                <Sum>0.01</Sum>
+                                <TransitionKind>09</TransitionKind>
+                            </MemOrder>
+                        </PayDoc>
+                        <Stamp>
+                            <BIC>044525593</BIC>
+                            <Name>АО "АЛЬФА-БАНК"</Name>
+                            <Status>
+                                <Code>02</Code>
+                                <Name>Исполнен</Name>
+                            </Status>
+                        </Stamp>
+                    </OperationInfo>
+                    <Stamp>
+                        <BIC>044525593</BIC>
+                        <Name>АО "АЛЬФА-БАНК"</Name>
+                    </Stamp>
+                    <StatementType>0</StatementType>
+                    <TotalCredits>0.01</TotalCredits>
+                    <TotalDebits>0.01</TotalDebits>
+                </Data>
+                <Recipient id="40702810301300081287" inn="0540384626" kpp="047531225" name="Полное наименование Орг № 34589"/>
+                <Sender bic="044525593" name="АО &quot;АЛЬФА-БАНК&quot;"/>
+            </ns2:Statement>
+        </Response>
+      xml:
+        name: Response
+    Pagination:
+      type: object
+      properties:
+        Limit:
+          minimum: 0
+          type: integer
+          description: Количество записей на одной странице
+          example: 1000
+          xml:
+            name: Limit
+        Offset:
+          minimum: 0
+          type: integer
+          description: "Количество записей в списке, которые были пропущены"
+          example: 0
+          xml:
+            name: Offset
+        TotalCount:
+          minimum: 0
+          type: integer
+          description: Общее количество записей
+          example: 10000
+          xml:
+            name: TotalCount
+      description: Данные пагинации
+      xml:
+        name: Pagination
+    Statement:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Уникальный идентификатор выписки
+          example: f7cbc6af-33dd-4c37-b67d-7400e1c327ad
+          xml:
+            name: id
+            attribute: true
+        formatVersion:
+          type: string
+          description: Версия формата
+          example: 2.3.2
+          xml:
+            name: formatVersion
+            attribute: true
+        creationDate:
+          type: string
+          description: Дата и время формирования
+          example: 2022-01-21T11:25:22.522Z
+          xml:
+            name: creationDate
+            attribute: true
+        Sender:
+          $ref: '#/components/schemas/Sender'
+        Recipient:
+          $ref: '#/components/schemas/Recipient'
+        Data:
+          $ref: '#/components/schemas/Data'
+      description: Выписка операций по счетам в формате 1С
+      xml:
+        name: Statement
+        namespace: http://directbank.1c.ru/XMLSchema
+    Sender:
+      type: object
+      properties:
+        bic:
+          type: string
+          description: БИК банка
+          example: "044525593"
+          xml:
+            name: bic
+            attribute: true
+        name:
+          type: string
+          description: Название банка
+          example: АО "АЛЬФА-БАНК"
+          xml:
+            name: name
+            attribute: true
+      description: Отправитель
+    Recipient:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Идентификатор клиента, как он задан на стороне банка"
+          example: "40702810701300000761"
+          xml:
+            name: id
+            attribute: true
+        name:
+          type: string
+          description: Название клиента
+          example: Полное наименование Орг № 11329
+          xml:
+            name: name
+            attribute: true
+        inn:
+          type: string
+          description: ИНН клиента
+          example: "25247358"
+          xml:
+            name: inn
+            attribute: true
+        kpp:
+          type: string
+          description: КПП клиента
+          example: "037186025"
+          xml:
+            name: kpp
+            attribute: true
+      description: Получаетель
+    Data:
+      type: object
+      properties:
+        StatementType:
+          type: string
+          description: |
+            Тип выписки. Принимает возможные значения:
+            * `0` - окончательная выписка;
+            * `1` - промежуточная выписка;
+            * `2` - текущий остаток на счёте
+          xml:
+            name: StatementType
+          enum:
+            - "0"
+            - "1"
+            - "2"
+          x-enum-varnames:
+            - ZERO
+            - ONE
+            - TWO
+        DateFrom:
+          type: string
+          description: Начало периода выписки
+          example: 2021-05-26T00:00:00.000
+          xml:
+            name: DateFrom
+        DateTo:
+          type: string
+          description: Конец периода выписки
+          example: 2021-05-26T23:59:59.999
+          xml:
+            name: DateTo
+        Account:
+          type: string
+          description: Номер лиц. счёта
+          example: "40702810701300000761"
+          xml:
+            name: Account
+        Bank:
+          $ref: '#/components/schemas/Bank'
+        OpeningBalance:
+          type: number
+          description: Остаток на счёте на начало периода
+          example: 99527.0
+          xml:
+            name: OpeningBalance
+        TotalDebits:
+          type: number
+          description: Общая сумма документов по дебету счёта (списание)
+          example: 853.0
+          xml:
+            name: TotalDebits
+        TotalCredits:
+          type: number
+          description: Общая сумма документов по кредиту счёта (поступление)
+          example: 100000.0
+          xml:
+            name: TotalCredits
+        ClosingBalance:
+          type: number
+          description: Остаток на счёте на конец периода
+          example: 99407.2
+          xml:
+            name: ClosingBalance
+        OperationInfo:
+          type: array
+          description: Информация об одной операции по лицевому счёту в выписке
+          xml:
+            name: OperationInfo
+          items:
+            $ref: '#/components/schemas/OperationInfo'
+        Stamp:
+          $ref: '#/components/schemas/Stamp'
+      description: Данные выписки по лиц. счёту
+      xml:
+        name: Data
+    Bank:
+      type: object
+      properties:
+        Bic:
+          type: string
+          description: БИК банка
+          example: "044525593"
+          xml:
+            name: BIC
+        Name:
+          type: string
+          description: Название банка
+          example: АО "АЛЬФА-БАНК"
+          xml:
+            name: Name
+        CorrespAcc:
+          type: string
+          description: Корсчёт банка
+          example: "30101810200000000593"
+          xml:
+            name: CorrespAcc
+      description: Данные банка
+    OperationInfo:
+      type: object
+      properties:
+        Dc:
+          $ref: '#/components/schemas/Dc'
+        Date:
+          type: string
+          description: Дата проводки документа по лиц. счёту
+          example: 2022-01-20
+          xml:
+            name: Date
+        ExtId:
+          type: string
+          description: ID исходного платежного документа плательщик
+          example: "null"
+          xml:
+            name: ExtID
+        Stamp:
+          $ref: '#/components/schemas/PayDocStamp'
+        PayDoc:
+          $ref: '#/components/schemas/PayDoc'
+      description: Информация об одной операции по лицевому счёту в выписке
+    Dc:
+      type: string
+      description: |
+        Признак дебета/кредита. Принимает возможные значения:
+        * `1` - операция по дебету (списание со счёта);
+        * `2` - операция по кредиту (поступление на счёт)
+      xml:
+        name: DC
+      enum:
+        - "1"
+        - "2"
+      x-enum-varnames:
+        - DEBIT
+        - CREDIT
+    PayDocStamp:
+      type: object
+      properties:
+        Bic:
+          type: string
+          description: БИК банка
+          example: "044525593"
+          xml:
+            name: BIC
+        Name:
+          type: string
+          description: Название банка
+          example: АО \"АЛЬФА-БАНК\"
+          xml:
+            name: Name
+        CorrespAcc:
+          type: string
+          description: Корсчёт банка
+          example: "30101810200000000593"
+          xml:
+            name: CoreespAcc
+        Branch:
+          type: string
+          description: Отделение банка
+          xml:
+            name: Branch
+        Status:
+          $ref: '#/components/schemas/PayDocStampStatus'
+      description: Данные штампа банка по каждому платёжному документу
+    PayDocStampStatus:
+      type: object
+      properties:
+        Code:
+          type: string
+          description: Код статуса (02 - Исполнен)
+          example: "2"
+          xml:
+            name: Code
+        Name:
+          type: string
+          description: Наименование статуса на стороне банка
+          example: Исполнен
+          xml:
+            name: Name
+        MoreInfo:
+          type: string
+          description: Дополнительная информация к статусу
+          example: "null"
+          xml:
+            name: MoreInfo
+      description: Статус платёжного документа в банке
+    PayDoc:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Идентификатор платёжного документа в банке
+          example: 1220120MOPYTMD0000031_artificially_created
+          xml:
+            name: id
+            attribute: true
+        extId:
+          type: string
+          description: ID исходного платёжного документа плательщик
+          xml:
+            name: extId
+            attribute: true
+        docKind:
+          type: string
+          description: |
+            Код вида электронного документа. Принимает возможные значения:
+            * `10` - платёжное поручение;
+            * `11` - платёжное требование;
+            * `16` - мемориальный ордер;
+            * `17` - платёжный ордер;
+            * `18` - банковский ордер
+          xml:
+            name: docKind
+            attribute: true
+          enum:
+            - "10"
+            - "10"
+            - "11"
+            - "16"
+            - "17"
+            - "18"
+            - "18"
+          x-enum-varnames:
+            - PAYMENT
+            - PAYMENT_ORDER
+            - PAYMENT_REQUEST
+            - MEMORY_ORDER
+            - COLLECTION_LETTER
+            - BANK_ORDER
+            - DEFAULT
+        PayDocRu:
+          $ref: '#/components/schemas/PayDocRu'
+        PayRequest:
+          $ref: '#/components/schemas/PayRequest'
+        CollectionOrder:
+          $ref: '#/components/schemas/PayDocRu'
+        PaymentOrder:
+          $ref: '#/components/schemas/PaymentOrder'
+        BankOrder:
+          $ref: '#/components/schemas/BankOrder'
+        MemOrder:
+          $ref: '#/components/schemas/BankOrder'
+      description: Данные платёжного документа
+    PayDocRu:
+      description: Данные платёжного поручения
+      allOf:
+        - $ref: '#/components/schemas/PaymentDataType'
+        - $ref: '#/components/schemas/PayDocRu_allOf'
+    PaymentDataType:
+      type: object
+      properties:
+        DocNo:
+          type: string
+          description: Номер документа (поле 3)
+          example: "768"
+          xml:
+            name: DocNo
+        DocDate:
+          type: string
+          description: Дата составления (поле 4)
+          example: 2019-05-04
+          xml:
+            name: DocDate
+        Sum:
+          type: number
+          description: Сумма документа (поле 7)
+          example: 36.0
+          xml:
+            name: Sum
+        Payer:
+          $ref: '#/components/schemas/Accounts'
+        Payee:
+          $ref: '#/components/schemas/Accounts'
+        PaymentKind:
+          $ref: '#/components/schemas/PaymentKind'
+        TransitionKind:
+          type: string
+          description: Вид операции (поле 18)
+          example: "17"
+          xml:
+            name: TransitionKind
+        Priority:
+          type: string
+          description: Очерёдность платежа (поле 21)
+          example: "5"
+          xml:
+            name: Priority
+        Code:
+          type: string
+          description: Уникальный идентификатор платежа (поле 22)
+          example: "0"
+          xml:
+            name: Code
+        IncomeTypeCode:
+          type: string
+          description: Код вида дохода (поле 20)
+          example: "2"
+          xml:
+            name: IncomeTypeCode
+        Purpose:
+          type: string
+          description: Назначение платежа (поле 24)
+          example: Комиссия за переводы в валюте РФ за 2022-01-20.
+          xml:
+            name: Purpose
+      description: Данные платёжного поручения
+      xml:
+        name: PaymentDataType
+    Accounts:
+      type: object
+      properties:
+        Name:
+          type: string
+          description: Наименование налогоплательщика
+          example: Полное наименование Орг № 11329
+          xml:
+            name: Name
+        Inn:
+          type: string
+          description: ИНН налогоплательщика
+          example: "25247358"
+          xml:
+            name: INN
+        Kpp:
+          type: string
+          description: КПП налогоплательщика
+          example: "037186025"
+          xml:
+            name: KPP
+        Account:
+          type: string
+          description: Расчётный счёт клиента
+          example: "40702810701300000761"
+          xml:
+            name: Account
+        Bank:
+          $ref: '#/components/schemas/Bank'
+      description: Данные налогоплательщика
+    PaymentKind:
+      type: string
+      description: |
+        Вид платежа (поле 5). Принимает возможные значения:
+        * `электронно`;
+        * `телеграфом`;
+        * `почтой`;
+        * `срочно`
+      xml:
+        name: PaymentKind
+      enum:
+        - электронно
+        - телеграфом
+        - почтой
+        - срочно
+      x-enum-varnames:
+        - ELECTRONICALLY
+        - TELEGRAPH
+        - POST
+        - URGENT
+    BudgetPaymentInfo:
+      type: object
+      properties:
+        DrawerStatus:
+          type: string
+          description: Статус составителя (поле 101)
+          example: "1"
+          xml:
+            name: DrawerStatus
+        Cbc:
+          type: string
+          description: Код бюджетной классификации (КБК) в соответствии с классификацией
+            доходов бюджетов РФ (поле 104)
+          example: "0"
+          xml:
+            name: CBC
+        Oktmo:
+          type: string
+          description: Значение кода ОКТМО муниципального образования (поле 105)
+          example: "54701000"
+          xml:
+            name: OKTMO
+        Reason:
+          type: string
+          description: Основание налогового платежа (поле 106)
+          example: ТП
+          xml:
+            name: Reason
+        TaxPeriod:
+          type: string
+          description: Налоговый период / код таможенного органа (поле 107)
+          example: МС.03.2016
+          xml:
+            name: TaxPeriod
+        DocNo:
+          type: string
+          description: Номер налогового документа (поле 108)
+          example: "12345"
+          xml:
+            name: DocNo
+        DocDate:
+          type: string
+          description: Дата налогового документа или 0 (поле 109)
+          example: 22.01.2022
+          xml:
+            name: DocDate
+        PayType:
+          type: string
+          description: Код выплат (поле 110)
+          example: "1"
+          xml:
+            name: PayType
+      description: Реквизиты бюджетного документа
+    PayRequest:
+      description: Данные платёжного требования
+      allOf:
+        - $ref: '#/components/schemas/PaymentDataType'
+        - $ref: '#/components/schemas/PayRequest_allOf'
+    PaymentOrder:
+      description: Данные платёжного ордера
+      allOf:
+        - $ref: '#/components/schemas/PaymentDataType'
+        - $ref: '#/components/schemas/PaymentOrder_allOf'
+    BankOrder:
+      type: object
+      properties:
+        DocNo:
+          type: string
+          description: Номер документа (поле 3)
+          example: "12345"
+          xml:
+            name: DocNo
+        DocDate:
+          type: string
+          description: Дата составления (поле 4)
+          example: 2022-01-22
+          xml:
+            name: DocDate
+        Sum:
+          type: number
+          description: Сумма документа (поле 7)
+          example: 14
+          xml:
+            name: Sum
+        Payer:
+          $ref: '#/components/schemas/Accounts'
+        Payee:
+          $ref: '#/components/schemas/Accounts'
+        paymentKind:
+          $ref: '#/components/schemas/PaymentKind'
+        transitionKind:
+          type: string
+          description: Вид операции (поле 18)
+          example: "17"
+          xml:
+            name: TransitionKind
+        priority:
+          type: string
+          description: Очерёдность платежа (поле 21)
+          example: "5"
+          xml:
+            name: Priority
+        code:
+          type: string
+          description: Уникальный идентификатор платежа (поле 22)
+          example: "0"
+          xml:
+            name: Code
+        purpose:
+          type: string
+          description: Назначение платежа (поле 24)
+          example: За транспортные услуги
+          xml:
+            name: Purpose
+      description: Данные банковского ордера
+    Stamp:
+      type: object
+      properties:
+        Bic:
+          type: string
+          description: БИК банка
+          example: "044525593"
+          xml:
+            name: BIC
+        Name:
+          type: string
+          description: Название банка
+          example: АО \"АЛЬФА-БАНК\"
+          xml:
+            name: Name
+        CorrespAcc:
+          type: string
+          description: Корсчёт банка
+          example: "30101810200000000593"
+          xml:
+            name: CorrespAcc
+        ExtIdStatementRequest:
+          type: string
+          description: "ID исходного запроса на выписку, если такой был"
+          example: "null"
+          xml:
+            name: ExtIDStatementRequest
+      description: Данные штампа банка по выписке в целом
+      xml:
+        name: Stamp
+    ErrorBadRequestXML:
+      type: object
+      required:
+        - Error
+      properties:
+        Error:
+          type: string
+          description: |
+            Код ошибки: 1010 - неверные входные параметры запроса
+          example: 1010
+          xml:
+            name: Error
+        ErrorDescription:
+          type: string
+          description: Описание ошибки
+          example: Account 40702810301300081287 does not exist on the database
+          xml:
+            name: ErrorDescription
+      description: Ошибка запроса
+      example: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <ErrorResponse>
+          <Error>1010</Error>
+          <ErrorDescription>Account 40702810301300081287 does not exist on the database</ErrorDescription>
+        </ErrorResponse>
+      xml:
+        name: ErrorResponse
+    ErrorUnauthorizedXML:
+      type: object
+      required:
+        - Error
+      properties:
+        Error:
+          type: string
+          description: |
+            Код ошибки. Принимает возможные значения: 
+            * `invalid_token` - предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          example: invalid_token
+          xml:
+            name: Error
+        ErrorDescription:
+          type: string
+          description: Описание ошибки
+          example: "The access token provided is expired, revoked, malformed, or invalid\
+            \ for other reasons"
+          xml:
+            name: ErrorDescription
+      description: Ошибка авторизации
+      example: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <ErrorResponse>
+          <Error>invalid_token</Error>
+          <ErrorDescription>The access token provided is expired, revoked, malformed, or invalid for other reasons</ErrorDescription>
+        </ErrorResponse>
+      xml:
+        name: ErrorResponse
+    ErrorScopeXML:
+      type: object
+      required:
+        - Error
+      properties:
+        Error:
+          type: string
+          description: |
+            Код ошибки: 1202 - у пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope или доступ к счёту запрещён
+          example: 1202
+          xml:
+            name: Error
+        ErrorDescription:
+          type: string
+          description: Описание ошибки
+          example: The request requires higher privileges than provided by the access token
+          xml:
+            name: ErrorDescription
+      description: Ошибка прав доступа
+      example: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <ErrorResponse>
+          <Error>1202</Error>
+          <ErrorDescription>The request requires higher privileges than provided by the access token</ErrorDescription>
+        </ErrorResponse>
+      xml:
+        name: ErrorResponse
+    ErrorNotFoundXML:
+      type: object
+      required:
+        - Error
+      properties:
+        Error:
+          type: string
+          description: |
+            Код ошибки: 1003 - эндпоинт не найден или неактивен
+          example: 1003
+          xml:
+            name: Error
+        ErrorDescription:
+          type: string
+          description: Описание ошибки
+          example: Endpoint is not found or not active
+          xml:
+            name: ErrorDescription
+      description: Ошибка прав доступа
+      example: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <ErrorResponse>
+          <Error>1003</Error>
+          <ErrorDescription>Endpoint is not found or not active</ErrorDescription>
+        </ErrorResponse>
+      xml:
+        name: ErrorResponse
+    ErrorInternalXML:
+      type: object
+      required:
+        - Error
+      properties:
+        Error:
+          type: string
+          description: |
+            Код ошибки: `1001` - внутренняя ошибка сервиса при выполнении обработки запроса
+          example: 1001
+          xml:
+            name: Error
+        ErrorDescription:
+          type: string
+          description: Описание ошибки
+          example: Internal server error
+          xml:
+            name: ErrorDescription
+      description: Ошибка сервера
+      example: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <ErrorResponse>
+          <Error>1001</Error>
+          <ErrorDescription>Internal server error</ErrorDescription>
+        </ErrorResponse>
+      xml:
+        name: ErrorResponse
+    PayDocRu_allOf:
+      type: object
+      properties:
+        BudgetPaymentInfo:
+          $ref: '#/components/schemas/BudgetPaymentInfo'
+    PayRequest_allOf:
+      type: object
+      properties:
+        PaymentCondition:
+          type: string
+          description: Условие оплаты (поле 35)
+          example: "1"
+          xml:
+            name: PaymentCondition
+        AcceptTerm:
+          type: integer
+          description: Срок для акцепта (поле 36)
+          format: int32
+          example: 0
+          xml:
+            name: AcceptTerm
+        DocDispatchDate:
+          type: string
+          description: Дата отсылки (вручения) плательщику предусмотренных договором
+            документов (поле 37)
+          example: 20.01.2022
+          xml:
+            name: DocDispatchDate
+    PaymentOrder_allOf:
+      type: object
+      properties:
+        TransitionContent:
+          type: string
+          description: Содержание операции (поле 70)
+          example: "null"
+          xml:
+            name: TransitionContent
+        PartialPaymentNo:
+          type: string
+          description: Номер частичного платежа (поле 38)
+          example: "0"
+          xml:
+            name: PartialPaymentNo
+        PartialTransitionKind:
+          type: string
+          description: Шифр платежного документа (поле 39)
+          example: "3"
+          xml:
+            name: PartialTransitionKind
+        SumResidualPayment:
+          type: number
+          description: Сумма остатка платежа (поле 42)
+          example: 0
+          xml:
+            name: SumResidualPayment
+        PartialDocNo:
+          type: string
+          description: Номер платёжного документа (поле 40)
+          example: "12345"
+          xml:
+            name: PartialDocNo
+        PartialDocDate:
+          type: string
+          description: Дата платёжного документа (поле 41)
+          example: 20.01.2022
+          xml:
+            name: PartialDocDate
+        BudgetPaymentInfo:
+          $ref: '#/components/schemas/BudgetPaymentInfo'

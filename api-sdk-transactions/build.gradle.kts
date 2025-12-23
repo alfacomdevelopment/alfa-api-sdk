@@ -1,11 +1,11 @@
-import io.freefair.gradle.plugins.lombok.tasks.Delombok
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 version = "0.2.2"
 
 plugins {
     `java-library`
     `maven-publish`
-    alias(libs.plugins.freefair.lombok)
+    alias(libs.plugins.openapi.generator)
 }
 
 java {
@@ -13,19 +13,80 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-val delombokSourcesDir = "${layout.buildDirectory.get()}/delombokSources"
-tasks.named<Delombok>("delombok") {
-    input.setFrom(sourceSets["main"].java.srcDirs)
-    target.set(file(delombokSourcesDir))
+val openApiSpecsDir = layout.projectDirectory.dir("src/main/resources/openapi")
+val openApiOutDir = layout.buildDirectory.dir("generated/openapi")
+
+fun GenerateTask.configureCommon(specFileName: String) {
+    group = "openapi"
+
+    generatorName.set("java")
+    inputSpec.set(openApiSpecsDir.file(specFileName).asFile.absolutePath)
+    outputDir.set(openApiOutDir.get().asFile.absolutePath)
+
+    globalProperties.set(
+        mapOf(
+            "models" to "",
+            "apis" to "false",
+            "supportingFiles" to "false",
+            "modelDocs" to "false",
+            "modelTests" to "false",
+            "apiDocs" to "false",
+            "apiTests" to "false"
+        )
+    )
+
+    // Общие опции; library=webclient полезна если позже включишь apis/supportingFiles
+    configOptions.set(
+        mapOf(
+            "library" to "webclient",
+            "dateLibrary" to "java8",
+            "hideGenerationTimestamp" to "true",
+            "serializableModel" to "true",
+            "useJakartaEe" to "false"
+        )
+    )
+}
+
+val openApiGenerateModelsSummary by tasks.registering(GenerateTask::class) {
+    description = "Generate models from summary.yaml"
+    configureCommon("summary.yaml")
+    modelPackage.set("com.alfa.api.sdk.transactions.summary.generated.model")
+}
+
+val openApiGenerateModelsStatement by tasks.registering(GenerateTask::class) {
+    description = "Generate models from statement.yaml"
+    configureCommon("statement.yaml")
+    modelPackage.set("com.alfa.api.sdk.transactions.statement.generated.model")
+}
+
+val openApiGenerateModelsStatement1c by tasks.registering(GenerateTask::class) {
+    description = "Generate models from statement1c.yaml"
+    configureCommon("statement1c.yaml")
+    configOptions.put("withXml", "true")
+    modelPackage.set("com.alfa.api.sdk.transactions.statement1c.generated.model")
+}
+
+val openApiGenerateModelsAll by tasks.registering {
+    group = "openapi"
+    description = "Generate models from all OpenAPI specs (transactions)"
+    dependsOn(
+        openApiGenerateModelsSummary,
+        openApiGenerateModelsStatement,
+        openApiGenerateModelsStatement1c
+    )
+}
+
+sourceSets["main"].java.srcDir(openApiOutDir.map { it.dir("src/main/java") })
+
+tasks.named("compileJava") {
+    dependsOn(openApiGenerateModelsAll)
 }
 
 val sourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
-    from(delombokSourcesDir)
-}
+    from(sourceSets["main"].allSource)
 
-tasks.named("sourcesJar") {
-    dependsOn("delombok")
+    dependsOn(openApiGenerateModelsAll)
 }
 
 tasks.withType<Checkstyle>().configureEach {
@@ -69,6 +130,7 @@ dependencies {
 
     implementation(libs.javax.jaxb.api)
 
-    compileOnly(libs.lombok)
-    annotationProcessor(libs.lombok)
+    compileOnly(libs.javax.annotation.api)
+    compileOnly(libs.jsr305)
+    compileOnly(libs.threeten.jaxb.core)
 }

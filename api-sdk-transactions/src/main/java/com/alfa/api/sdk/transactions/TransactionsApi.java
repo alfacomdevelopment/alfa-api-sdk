@@ -5,10 +5,10 @@ import com.alfa.api.sdk.client.constants.HttpHeaders;
 import com.alfa.api.sdk.client.dto.ApiResponse;
 import com.alfa.api.sdk.client.dto.Method;
 import com.alfa.api.sdk.common.exceptions.SdkException;
-import com.alfa.api.sdk.transactions.model.odins.Statement1c;
-import com.alfa.api.sdk.transactions.model.statement.CurFormat;
-import com.alfa.api.sdk.transactions.model.statement.Statement;
-import com.alfa.api.sdk.transactions.model.statement.Summary;
+import com.alfa.api.sdk.transactions.statement.generated.model.CurFormat;
+import com.alfa.api.sdk.transactions.statement.generated.model.StatementResponse;
+import com.alfa.api.sdk.transactions.statement1c.generated.model.Statement1cResponse;
+import com.alfa.api.sdk.transactions.summary.generated.model.SummaryResponse;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -69,7 +69,7 @@ public class TransactionsApi {
      * @param curFormat     The format of the currency account transaction.
      * @return statement
      */
-    public Statement getStatement(String accountNumber, LocalDate statementDate, Integer page, CurFormat curFormat) {
+    public StatementResponse getStatement(String accountNumber, LocalDate statementDate, Integer page, CurFormat curFormat) {
         try {
             Map<String, String> headers = new HashMap<>();
             headers.put(HttpHeaders.ACCEPT, HttpHeaders.Accept.APPLICATION_JSON);
@@ -78,11 +78,11 @@ public class TransactionsApi {
             queryParams.put("accountNumber", accountNumber);
             queryParams.put("statementDate", statementDate.toString());
             queryParams.put("page", page.toString());
-            queryParams.put("curFormat", curFormat.toString());
+            queryParams.put("curFormat", curFormat.getValue());
 
             String url = String.format("%s/statement/transactions", contextPath);
             ApiResponse apiResponse = apiHttpClient.send(Method.GET, url, queryParams, headers, null);
-            return jsonMapper.readValue(apiResponse.getResponse(), Statement.class);
+            return jsonMapper.readValue(apiResponse.getResponse(), StatementResponse.class);
         } catch (Exception e) {
             throw new SdkException("Error occurred while receiving statement", e);
         }
@@ -95,7 +95,7 @@ public class TransactionsApi {
      * @param statementDate date of transaction execution
      * @return account summary
      */
-    public Summary getSummary(String accountNumber, LocalDate statementDate) {
+    public SummaryResponse getSummary(String accountNumber, LocalDate statementDate) {
         try {
             Map<String, String> headers = new HashMap<>();
             headers.put(HttpHeaders.ACCEPT, HttpHeaders.Accept.APPLICATION_JSON);
@@ -106,7 +106,7 @@ public class TransactionsApi {
 
             String url = String.format("%s/statement/summary", contextPath);
             ApiResponse apiResponse = apiHttpClient.send(Method.GET, url, queryParams, headers, null);
-            return jsonMapper.readValue(apiResponse.getResponse(), Summary.class);
+            return jsonMapper.readValue(apiResponse.getResponse(), SummaryResponse.class);
         } catch (Exception e) {
             throw new SdkException("Error occurred while receiving account summary", e);
         }
@@ -121,7 +121,7 @@ public class TransactionsApi {
      * @param offset        starting point of the transactions to return
      * @return statement in 1C format
      */
-    public Statement1c getStatement1C(String accountNumber, LocalDate executeDate, Integer limit, Integer offset) {
+    public Statement1cResponse getStatement1C(String accountNumber, LocalDate executeDate, Integer limit, Integer offset) {
         try {
             Map<String, String> headers = new HashMap<>();
             headers.put(HttpHeaders.ACCEPT, HttpHeaders.Accept.APPLICATION_XML);
@@ -133,7 +133,7 @@ public class TransactionsApi {
 
             String url = String.format("%s/accounts/%s/transactions/1C", contextPath, accountNumber);
             ApiResponse apiResponse = apiHttpClient.send(Method.GET, url, queryParams, headers, null);
-            return xmlMapper.readValue(apiResponse.getResponse(), Statement1c.class);
+            return xmlMapper.readValue(apiResponse.getResponse(), Statement1cResponse.class);
         } catch (Exception e) {
             throw new SdkException("Error occurred while receiving statement in 1C format", e);
         }
