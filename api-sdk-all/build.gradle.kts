@@ -1,5 +1,3 @@
-version = "0.3.3"
-
 plugins{
     `java-library`
     `maven-publish`

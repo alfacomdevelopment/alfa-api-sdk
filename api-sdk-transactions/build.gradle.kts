@@ -1,7 +1,5 @@
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
-version = "0.2.2"
-
 plugins {
     `java-library`
     `maven-publish`

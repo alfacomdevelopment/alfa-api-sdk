@@ -2,16 +2,14 @@ name: Publish library to GitHub Packages
 on:
   workflow_dispatch:
     inputs:
-      submodulePath:
-        description: 'Submodule to publish'
+      versionIncrementType:
+        description: 'Version increment type'
         required: true
         type: choice
         options:
-          - "api-sdk-all"
-          - "api-sdk-core"
-          - "api-sdk-transactions"
-          - "api-sdk-crypto"
-          - "PUBLISH ALL SUBMODULES"
+          - "incrementPatch"
+          - "incrementMinor"
+          - "incrementMajor"
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -33,13 +31,9 @@ jobs:
           distribution: 'temurin'
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v3
-      - name: Publish package
-        if: github.event.inputs.submodulePath != 'PUBLISH ALL SUBMODULES'
-        run: ./gradlew ${{ github.event.inputs.submodulePath }}:publish
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Publish all packages
-        if: github.event.inputs.submodulePath == 'PUBLISH ALL SUBMODULES'
+      - name: Release version
+        run: ./gradlew release -Prelease.versionIncrementer=${{ github.event.inputs.versionIncrementType }}
+      - name: Publish
         run: ./gradlew publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

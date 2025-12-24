@@ -1,7 +1,5 @@
 import io.freefair.gradle.plugins.lombok.tasks.Delombok
 
-version = "0.1.2"
-
 plugins {
     `java-library`
     `maven-publish`

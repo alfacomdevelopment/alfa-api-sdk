@@ -1,6 +1,4 @@
 import io.freefair.gradle.plugins.lombok.tasks.Delombok
-version = "0.2.1"
-
 plugins {
     java
     `java-library`
