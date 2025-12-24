@@ -20,12 +20,6 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
-      - name: Check branch
-        run: |
-          if [[ "${{ github.ref }}" != "refs/heads/main" ]]; then
-            echo "Workflow can only run on 'main' branch."
-            exit 1
-          fi
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
