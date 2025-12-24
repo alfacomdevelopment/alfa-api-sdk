@@ -33,7 +33,6 @@ fun GenerateTask.configureCommon(specFileName: String) {
         )
     )
 
-    // Общие опции; library=webclient полезна если позже включишь apis/supportingFiles
     configOptions.set(
         mapOf(
             "library" to "webclient",
