@@ -5,6 +5,7 @@ import com.alfa.api.sdk.crypto.XmlSignatureService;
 import com.alfa.api.sdk.crypto.exceptions.CryptoRuntimeException;
 import com.alfa.api.sdk.crypto.model.KeyStoreParameters;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -52,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 public class XmlSignatureServiceImpl extends AbstractSignatureService implements XmlSignatureService {
     public XmlSignatureServiceImpl(KeyStoreParameters parameters, SignatureAlgorithm signatureAlgorithm) {
         super(parameters, signatureAlgorithm);
@@ -68,6 +70,7 @@ public class XmlSignatureServiceImpl extends AbstractSignatureService implements
 
             return serializeXml(document);
         } catch (Exception e) {
+            log.error("Error signing XML: {}", e.getMessage(), e);
             throw new CryptoRuntimeException("An error occurred while signing XML", e);
         }
     }
@@ -88,6 +91,7 @@ public class XmlSignatureServiceImpl extends AbstractSignatureService implements
             XMLSignature signature = xmlSignatureFactory.unmarshalXMLSignature(validateContext);
             return signature.validate(validateContext);
         } catch (Exception e) {
+            log.warn("XML signature verification failed: {}", e.getMessage());
             return false;
         }
     }

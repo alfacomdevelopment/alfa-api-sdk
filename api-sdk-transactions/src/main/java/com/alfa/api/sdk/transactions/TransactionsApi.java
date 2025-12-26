@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -22,6 +23,7 @@ import java.util.Map;
 /**
  * Class provides methods for interacting with a transactions API.
  */
+@Slf4j
 @SuppressWarnings("java:S1075")
 public class TransactionsApi {
     private final ObjectMapper jsonMapper = new ObjectMapper();
@@ -81,9 +83,12 @@ public class TransactionsApi {
             queryParams.put("curFormat", curFormat.getValue());
 
             String url = String.format("%s/statement/transactions", contextPath);
+            log.debug("Request getStatement: accountNumber={}, statementDate={}, page={}, curFormat={}", accountNumber, statementDate, page, curFormat);
             ApiResponse apiResponse = apiHttpClient.send(Method.GET, url, queryParams, headers, null);
+            log.debug("Response getStatement: status={}, responseLength={}", apiResponse.getStatusCode(), apiResponse.getResponse().length);
             return jsonMapper.readValue(apiResponse.getResponse(), StatementResponse.class);
         } catch (Exception e) {
+            log.error("Error while getting statement: {}", e.getMessage(), e);
             throw new SdkException("Error occurred while receiving statement", e);
         }
     }
@@ -105,9 +110,12 @@ public class TransactionsApi {
             queryParams.put("statementDate", statementDate.toString());
 
             String url = String.format("%s/statement/summary", contextPath);
+            log.debug("Request getSummary: accountNumber={}, statementDate={}", accountNumber, statementDate);
             ApiResponse apiResponse = apiHttpClient.send(Method.GET, url, queryParams, headers, null);
+            log.debug("Response getSummary: status={}, responseLength={}", apiResponse.getStatusCode(), apiResponse.getResponse().length);
             return jsonMapper.readValue(apiResponse.getResponse(), SummaryResponse.class);
         } catch (Exception e) {
+            log.error("Error while getting summary: {}", e.getMessage(), e);
             throw new SdkException("Error occurred while receiving account summary", e);
         }
     }
@@ -132,9 +140,12 @@ public class TransactionsApi {
             queryParams.put("offset", offset.toString());
 
             String url = String.format("%s/accounts/%s/transactions/1C", contextPath, accountNumber);
+            log.debug("Request getStatement1C: accountNumber={}, executeDate={}, limit={}, offset={}", accountNumber, executeDate, limit, offset);
             ApiResponse apiResponse = apiHttpClient.send(Method.GET, url, queryParams, headers, null);
+            log.debug("Response getStatement1C: status={}, responseLength={}", apiResponse.getStatusCode(), apiResponse.getResponse().length);
             return xmlMapper.readValue(apiResponse.getResponse(), Statement1cResponse.class);
         } catch (Exception e) {
+            log.error("Error while getting statement 1C: {}", e.getMessage(), e);
             throw new SdkException("Error occurred while receiving statement in 1C format", e);
         }
     }
@@ -159,9 +170,12 @@ public class TransactionsApi {
             queryParams.put("offset", offset.toString());
 
             String url = String.format("%s/accounts/%s/transactions/MT940", contextPath, accountNumber);
+            log.debug("Request getStatementMT940: accountNumber={}, executeDate={}, limit={}, offset={}", accountNumber, executeDate, limit, offset);
             ApiResponse apiResponse = apiHttpClient.send(Method.GET, url, queryParams, headers, null);
+            log.debug("Response getStatementMT940: status={}, responseLength={}", apiResponse.getStatusCode(), apiResponse.getResponse().length);
             return new String(apiResponse.getResponse(), StandardCharsets.UTF_8);
         } catch (Exception e) {
+            log.error("Error while getting statement MT940: {}", e.getMessage(), e);
             throw new SdkException("Error occurred while receiving statement in MT940 format", e);
         }
     }

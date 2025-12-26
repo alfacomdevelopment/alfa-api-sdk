@@ -4,6 +4,7 @@ import com.alfa.api.sdk.crypto.AbstractSignatureService;
 import com.alfa.api.sdk.crypto.CmsSignatureService;
 import com.alfa.api.sdk.crypto.exceptions.CryptoRuntimeException;
 import com.alfa.api.sdk.crypto.model.KeyStoreParameters;
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSException;
@@ -29,6 +30,7 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Collections;
 
+@Slf4j
 @SuppressWarnings("java:S5164")
 public class CmsSignatureServiceImpl extends AbstractSignatureService implements CmsSignatureService {
     private final ThreadLocal<CMSSignedDataGenerator> cmsSignedDataGeneratorThreadLocal = new ThreadLocal<>();
@@ -74,6 +76,7 @@ public class CmsSignatureServiceImpl extends AbstractSignatureService implements
                     signedData.getEncoded();
         } catch (CMSException | OperatorCreationException |
                  CertificateEncodingException | IOException e) {
+            log.error("Error during CMS signing: {}", e.getMessage(), e);
             throw new CryptoRuntimeException("An error occurred during the signing process", e);
         }
     }
@@ -99,6 +102,7 @@ public class CmsSignatureServiceImpl extends AbstractSignatureService implements
             }
             return true;
         } catch (IOException | CMSException | CertificateException | OperatorCreationException e) {
+            log.warn("CMS signature verification failed: {}", e.getMessage());
             return false;
         }
     }

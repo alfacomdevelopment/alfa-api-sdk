@@ -3,6 +3,7 @@ import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 plugins {
     `java-library`
     `maven-publish`
+    alias(libs.plugins.freefair.lombok)
     alias(libs.plugins.openapi.generator)
 }
 
@@ -130,4 +131,7 @@ dependencies {
     compileOnly(libs.javax.annotation.api)
     compileOnly(libs.jsr305)
     compileOnly(libs.threeten.jaxb.core)
+    compileOnly(libs.lombok)
+
+    annotationProcessor(libs.lombok)
 }

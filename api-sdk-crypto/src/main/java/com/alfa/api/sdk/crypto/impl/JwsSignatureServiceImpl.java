@@ -14,10 +14,12 @@ import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.util.Base64URL;
+import lombok.extern.slf4j.Slf4j;
 
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 
+@Slf4j
 public class JwsSignatureServiceImpl extends AbstractSignatureService implements JwsSignatureService {
     public JwsSignatureServiceImpl(KeyStoreParameters parameters, SignatureAlgorithm signatureAlgorithm) {
         super(parameters, signatureAlgorithm);
@@ -47,6 +49,7 @@ public class JwsSignatureServiceImpl extends AbstractSignatureService implements
                 return String.format("%s..%s", jwsObject.getHeader().toBase64URL(), jwsObject.getSignature().toString());
             }
         } catch (JOSEException e) {
+            log.error("Error creating JWS: {}", e.getMessage(), e);
             throw new CryptoRuntimeException("An error occurred while creating JWS", e);
         }
     }
@@ -63,6 +66,7 @@ public class JwsSignatureServiceImpl extends AbstractSignatureService implements
             JWSVerifier verifier = new RSASSAVerifier((RSAPublicKey) certificate.getPublicKey());
             return jwsObject.verify(verifier);
         } catch (JOSEException | ParseException e) {
+            log.warn("JWS verification failed: {}", e.getMessage());
             return false;
         }
     }
