@@ -58,6 +58,8 @@ publishing {
 }
 
 dependencies {
+    api(libs.slf4j)
+
     implementation(libs.bcprov.jdk18on)
     implementation(libs.bcpkix.jdk18on)
     implementation(libs.nimbus.jose.jwt)
