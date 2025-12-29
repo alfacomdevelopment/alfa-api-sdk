@@ -57,6 +57,8 @@ publishing {
 }
 
 dependencies {
+    api(libs.slf4j)
+
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
 }
