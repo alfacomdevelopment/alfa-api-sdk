@@ -23,5 +23,6 @@ publishing {
 
 dependencies {
     api(project(":api-sdk-transactions"))
+    api(project(":api-sdk-customer-info"))
     api(project(":api-sdk-crypto"))
 }

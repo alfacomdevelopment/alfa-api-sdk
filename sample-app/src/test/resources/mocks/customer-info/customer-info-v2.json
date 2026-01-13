@@ -1,0 +1,108 @@
+{
+  "organizationId": "1ba92f29c6a39a60b5bf487a4c8c63631c10c6b3b98e0b7428668838c857b50b",
+  "fullName": "Test Organization",
+  "shortName": "Test Org",
+  "inn": "0000000000",
+  "organizationForm": {
+    "code": "00000",
+    "fullName": "Test Organization Form",
+    "shortName": "TOF",
+    "type": "0000"
+  },
+  "kpps": [
+    "000000000"
+  ],
+  "ogrn": "0000000000000",
+  "okpo": "00000000",
+  "okved": "00.00",
+  "type": "LEGAL",
+  "phone": "70000000000",
+  "email": "test@example.com",
+  "category": "OTHER",
+  "status": "ACTIVE",
+  "registrationDate": "2020-01-01T00:00:00Z",
+  "addresses": [
+    {
+      "type": "LEGAL_FULL",
+      "area": "Test Area",
+      "building": "1",
+      "city": "Test City",
+      "country": "000",
+      "flat": "15",
+      "fullAddress": "Test Address",
+      "house": "73",
+      "region": "Test Region",
+      "settlement": "Test Settlement",
+      "settlementType": "city",
+      "street": "Test Street",
+      "zip": "000000"
+    }
+  ],
+  "accounts": [
+    {
+      "number": "00000000000000000000",
+      "type": "PAYMENT",
+      "typeName": "Test Account",
+      "openDate": "2020-01-01",
+      "currencyCode": "000",
+      "transitAccountNumber": "",
+      "specConditions": [
+        {
+          "code": "AI11",
+          "description": "Not allowed",
+          "value": false
+        },
+        {
+          "code": "AI12",
+          "description": "Not allowed",
+          "value": false
+        },
+        {
+          "code": "AI14",
+          "description": "Not allowed",
+          "value": false
+        },
+        {
+          "code": "AI17",
+          "description": "Not allowed",
+          "value": false
+        },
+        {
+          "code": "AI20",
+          "description": "Not allowed",
+          "value": false
+        },
+        {
+          "code": "AI30",
+          "description": "Not allowed",
+          "value": false
+        },
+        {
+          "code": "AI47",
+          "description": "Not allowed",
+          "value": false
+        },
+        {
+          "code": "AI82",
+          "description": "Not allowed",
+          "value": false
+        },
+        {
+          "code": "AI83",
+          "description": "Not allowed",
+          "value": false
+        },
+        {
+          "code": "AI87",
+          "description": "Not allowed",
+          "value": false
+        }
+      ],
+      "clientName": "",
+      "amountBalance": 1000.00,
+      "amountTotal": 1000.00,
+      "amountHolds": 0.00,
+      "bank": {}
+    }
+  ]
+}

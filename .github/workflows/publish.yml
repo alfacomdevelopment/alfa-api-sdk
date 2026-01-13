@@ -10,6 +10,9 @@ on:
           - "incrementPatch"
           - "incrementMinor"
           - "incrementMajor"
+  push:
+    branches-ignore:
+      - main
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -20,12 +23,6 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Check branch
-        run: |
-          if [[ "${{ github.ref }}" != "refs/heads/main" ]]; then
-            echo "Workflow can only run on 'main' branch."
-            exit 1
-          fi
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
@@ -34,7 +31,16 @@ jobs:
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v3
       - name: Release version
+        if: github.ref_name == 'main'
         run: ./gradlew release -Prelease.versionIncrementer=${{ github.event.inputs.versionIncrementType }}
+      - name: Delete old snapshot packages
+        if: github.ref_name != 'main'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const run = require('./.github/scripts/delete-snapshot-packages.js');
+            await run({ github, context, core });
       - name: Publish
         run: ./gradlew publish
         env:
