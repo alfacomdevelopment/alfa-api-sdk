@@ -49,52 +49,52 @@
       "specConditions": [
         {
           "code": "AI11",
-          "description": "Not allowed",
+          "description": "Нельзя кредитовать",
           "value": false
         },
         {
           "code": "AI12",
-          "description": "Not allowed",
+          "description": "Нельзя дебетовать",
           "value": false
         },
         {
           "code": "AI14",
-          "description": "Not allowed",
+          "description": "Клиент закрыт",
           "value": false
         },
         {
           "code": "AI17",
-          "description": "Not allowed",
+          "description": "Счёт заблокирован",
           "value": false
         },
         {
           "code": "AI20",
-          "description": "Not allowed",
+          "description": "Неактивный счёт",
           "value": false
         },
         {
           "code": "AI30",
-          "description": "Not allowed",
+          "description": "Счёт закрыт",
           "value": false
         },
         {
           "code": "AI47",
-          "description": "Not allowed",
+          "description": "Внутренний счёт",
           "value": false
         },
         {
           "code": "AI82",
-          "description": "Not allowed",
+          "description": "Дебетование ограничено",
           "value": false
         },
         {
           "code": "AI83",
-          "description": "Not allowed",
+          "description": "Электронная картотека",
           "value": false
         },
         {
           "code": "AI87",
-          "description": "Not allowed",
+          "description": "Бумажная разновалютная картотека",
           "value": false
         }
       ],

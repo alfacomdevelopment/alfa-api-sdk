@@ -21,6 +21,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation(libs.kotlin.reflect)
     implementation(libs.mapstruct)
+    implementation(libs.javax.jaxb.api)
 
     kapt(libs.mapstruct.processor)
 
