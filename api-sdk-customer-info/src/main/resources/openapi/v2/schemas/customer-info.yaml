@@ -93,6 +93,7 @@ components:
             - ACTIVE
             - LIQUIDATING
             - LIQUIDATED
+            - BANKRUPT
         registrationDate:
           type: string
           description: Дата регистрации организации
