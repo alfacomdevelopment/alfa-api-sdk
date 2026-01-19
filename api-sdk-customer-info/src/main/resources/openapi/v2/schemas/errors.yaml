@@ -1,0 +1,91 @@
+components:
+  schemas:
+    ErrorBadRequest:
+      description: Неверные входные параметры запроса
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          description: Код ошибки
+          type: string
+          example: invalid_request
+        error_description:
+          description: Сообщение об ошибке
+          type: string
+          example: Authorization header is not present in request headers
+
+    ErrorUnauthorized:
+      description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          description: Код ошибки
+          type: string
+          example: invalid_token
+        error_description:
+          description: Сообщение об ошибке
+          type: string
+          example: The access token provided is expired, revoked, malformed, or invalid for other reasons
+
+    ErrorScope:
+      description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          description: Код ошибки
+          type: string
+          example: insufficient_scope
+        error_description:
+          description: Сообщение об ошибке
+          type: string
+          example: The request requires higher privileges than provided by the access token
+
+    ErrorNotFound:
+      description: Эндпоинт не найден или неактивен
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          description: Код ошибки
+          type: string
+          example: unknown_endpoint
+        error_description:
+          description: Сообщение об ошибке
+          type: string
+          example: Endpoint is not found or not active
+
+    ErrorConflict:
+      description: Конфликт
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          description: Код ошибки
+          type: string
+          example: conflict
+        error_description:
+          description: Сообщение об ошибке
+          type: string
+          example: Request could not be processed because of conflict in the request
+
+    ErrorInternal:
+      description: Внутренняя ошибка сервиса при выполнении обработки запроса
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          description: Код ошибки
+          type: string
+          example: internal_error
+        error_description:
+          description: Сообщение об ошибке
+          type: string
+          example: Internal server error

@@ -9,6 +9,16 @@ scmVersion {
     }
     releaseOnlyOnReleaseBranches = true
     releaseBranchNames = listOf("main")
+    val releaseBranches = releaseBranchNames.orNull ?: emptyList()
+    versionCreator { version, position ->
+        val base = version.toString()
+        if (position.branch != null && releaseBranches.contains(position.branch)) {
+            base
+        } else {
+            val buildNumber = providers.environmentVariable("GITHUB_RUN_NUMBER").orNull ?: "0"
+            "$base-$buildNumber"
+        }
+    }
 }
 
 version = scmVersion.version

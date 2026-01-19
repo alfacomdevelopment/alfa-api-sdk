@@ -1,0 +1,299 @@
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    # Схемы для customer-info
+    CustomerInfo:
+      type: object
+      properties:
+        organizationId:
+          type: string
+          description: Хэш идентификатора клиента (ЮЛ)
+          example: bca96ae8b26184217fcf75f51347bd7bd5031ea6605c434c49f85378e9509732
+        fullName:
+          type: string
+          description: Полное наименование организации
+          example: Общество с ограниченной ответственностью "Ромашка"
+        shortName:
+          type: string
+          description: Сокращённое наименование организации
+          example: ООО "Ромашка"
+        inn:
+          type: string
+          description: ИНН
+          example: 0665413230
+        organizationForm:
+          type: object
+          required:
+            - code
+            - fullName
+            - shortName
+            - type
+          properties:
+            fullName:
+              type: string
+              description: Организационно-правовая форма организации клиента
+              example: Общество с ограниченной ответственностью
+            shortName:
+              type: string
+              description: Краткое наименование ОПФ
+              example: ООО
+            type:
+              type: string
+              description: Тип ОПФ
+              example: 2014
+            code:
+              type: string
+              description: Код ОПФ
+              example: 12300
+        kpps:
+          type: array
+          items:
+            type: string
+            description: Список КПП организации
+            example: 011206020
+        ogrn:
+          type: string
+          description: ОГРН
+          example: 1020203094163
+        okpo:
+          type: string
+          description: ОКПО
+          example: 41294456
+        okved:
+          type: string
+          description: ОКВЭД
+          example: 71.12
+        type:
+          type: string
+          description: Тип организации
+          example: LEGAL
+        phone:
+          type: string
+          description: Контактный телефон клиента
+          example: 79099876543
+        email:
+          type: string
+          description: Электронная почта клиента
+          example: client@example.com
+        category:
+          type: string
+          description: 'Категория организации. BANK - банк; FINANCIAL - финансовая; OTHER - другая'
+          enum:
+            - BANK
+            - FINANCIAL
+            - OTHER
+        status:
+          type: string
+          description: Статус организации. ACTIVE — действующая; LIQUIDATING — ликвидируется; LIQUIDATED — ликвидирована
+          enum:
+            - ACTIVE
+            - LIQUIDATING
+            - LIQUIDATED
+        registrationDate:
+          type: string
+          description: Дата регистрации организации
+        addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        accounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Account"
+    Address:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Тип адреса (actual - фактический, legal - юридический)
+          example: legal
+        area:
+          type: string
+          description: Район
+          example: Тахтамукайский район
+        building:
+          type: string
+          description: Строение, корпус
+          example: 1
+        city:
+          type: string
+          description: Город
+          example: Майкоп
+        country:
+          type: string
+          description: Числовой код страны
+          example: 643
+        flat:
+          type: string
+          description: Квартира
+          example: 123
+        fullAddress:
+          type: string
+          description: Адрес
+          example: Республика Адыгея, г. Майкоп, улица Депутатская, д. 3
+        house:
+          type: string
+          description: Дом
+          example: 3
+        region:
+          type: string
+          description: Полное наименование региона
+          example: Республика Адыгея
+        settlement:
+          type: string
+          description: Населенный пункт
+          example: Майкоп
+        settlementType:
+          type: string
+          description: Тип населенного пункта
+          example: г.
+        street:
+          type: string
+          description: Улица
+          example: улица Депутатская
+        zip:
+          type: string
+          description: Индекс
+          example: 385600
+        fiasCode:
+          type: string
+          description: Код ФИАС
+    Account:
+      type: object
+      properties:
+        number:
+          type: string
+          description: Наименование счета
+          minLength: 20
+          maxLength: 20
+          example: 40702810002300001935
+        type:
+          type: string
+          description: Тип счёта
+          example: PAYMENT
+        typeName:
+          type: string
+          description: Наименование типа счёта
+          example: Расчётный счёт
+        openDate:
+          type: string
+          description: Дата открытия счёта
+          example: "2021-10-07"
+        currencyCode:
+          type: string
+          description: Цифровой код валюты
+          minLength: 3
+          maxLength: 3
+          example: 810
+        transitAccountNumber:
+          type: string
+          description: Парный транзитный счет
+          example: 40702978904100000001
+        specConditions:
+          type: array
+          items:
+            $ref: "#/components/schemas/SpecCondition"
+        clientName:
+          type: string
+          description: Клиентское наименование счёта
+          example: "Наименование"
+        amountBalance:
+          type: number
+          description: Текущий остаток по счёту в рублях(или в валюте счета)
+          example: 810000
+        amountTotal:
+          type: number
+          description: Сумма доступных средств (без учёта овердрафта) в рублях(или в валюте счета)
+          example: 100000
+        amountHolds:
+          type: number
+          description: Сумма зарезервированных средств (холды) в рублях(или в валюте счета)
+          example: 100
+        amountOverdraftOwnFunds:
+          type: number
+          description: Собственные средства в рублях(или в валюте счета)
+        amountOverdraftLimit:
+          type: number
+          description: Доступный лимит средств в рублях(или в валюте счета)
+          example: 100000
+        blockedSums:
+          description: Заблокированные (арестованные) суммы на счёте
+          type: array
+          items:
+            $ref: "#/components/schemas/AccountBlockInfo"
+        bank:
+          $ref: "#/components/schemas/Bank"
+    Bank:
+      description: Информация об отделении банке, где открыт счет
+      type: object
+      properties:
+        bic:
+          type: string
+          description: БИК банка
+          example: 044525593
+        correspondentAccountNumber:
+          type: string
+          description: Номер корреспондентского счета
+          example: 30101810200000000593
+    AccountBlockInfo:
+      type: object
+      description: Объект массива с информацией о блокировках счета клиента
+      properties:
+        num:
+          type: string
+          description: Номер решения
+          example: 112233
+        beginDate:
+          type: string
+          description: Дата начала действия ограничения
+          format: datetime
+          example: "2020-10-23"
+        cause:
+          type: string
+          description: Основание ареста
+          example: Неисполнение требования об уплате налога, сбора, пени, штрафа № 53228 от 05.11.2019 г
+        initiator:
+          type: string
+          description: Наименование органа, наложившего арест
+          example: Межрайонная ИФНС России № 51 по г. Москве
+        sum:
+          type: BigDecimal
+          description: Заблокированная (арестованная) сумма на счёте в рублях(или в валюте счета)
+          example: 988800
+        blockType:
+          type: string
+          description: Бухгалтерский режим, к которому относится данное решение. OUTGOING_LIMITATION - Полная блокировка; PARTIAL_BALANCE_BLOCK - Блокировка части баланса
+          enum:
+            - OUTGOING_LIMITATION
+            - PARTIAL_BALANCE_BLOCK
+          example: PARTIAL_BALANCE_BLOCK
+    SpecCondition:
+      type: object
+      description: Спецусловия по счету.
+        Для AI12 - Нельзя дебетовать.
+        AI11 - Нельзя кредитовать.
+        AI14 - Клиент закрыт.
+        AI17 - Счёт заблокирован.
+        AI20 - Неактивный счёт.
+        AI30 - Счёт закрыт.
+        AI47 - Внутренний счёт.
+        AI82 - Дебетование ограничено.
+        AI83 - Электронная картотека.
+        AI87 - Бумажная разновалютная картотека.
+      properties:
+        code:
+          type: string
+          description: Код спецусловия
+          example: AI17
+        description:
+          type: string
+          description: Описание спецусловия
+          example: Счёт заблокирован
+        value:
+          type: boolean
+          description: Текущее значение
+          example: true

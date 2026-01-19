@@ -1,0 +1,96 @@
+get:
+  tags:
+    - Customer-info
+  summary: "Получение профиля организации"
+  parameters:
+    - name: X-AlfaID-Authorization
+      required: true
+      in: header
+      schema:
+        type: string
+        minLength: 1
+      description: Bearer токен доступа, проставленный api-gateway
+    - name: X-ClientId
+      required: true
+      in: header
+      schema:
+        type: string
+        minLength: 1
+      description: ClientId
+    - name: X-Cus
+      required: false
+      in: header
+      schema:
+        type: string
+      description: cus
+    - name: X-Acus
+      required: false
+      in: header
+      schema:
+        type: string
+      description: acus
+    - name: X-Sub
+      required: false
+      in: header
+      schema:
+        type: string
+      description: sub
+    - name: X-Aclc
+      required: false
+      in: header
+      schema:
+        type: string
+      description: aclc
+    - name: X-Organization-Id-Hash
+      required: false
+      in: header
+      schema:
+        type: string
+      description: X-Organization-Id-Hash
+  responses:
+    "200":
+      description: Успешный результат
+      headers:
+        x-traceid:
+          schema:
+            type: string
+          description: Идентификатор трассировки запроса
+          example: a57610880b621435
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/customer-info.yaml#/components/schemas/CustomerInfo"
+    "400":
+      description: Authorization отсутствует в заголовках запроса
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/errors.yaml#/components/schemas/ErrorBadRequest"
+    "401":
+      description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам.
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/errors.yaml#/components/schemas/ErrorUnauthorized"
+    "403":
+      description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/errors.yaml#/components/schemas/ErrorScope"
+    "404":
+      description: Эндпоинт не найден или неактивен
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/errors.yaml#/components/schemas/ErrorNotFound"
+    "429":
+      description: Cлишком много запросов в заданный период времени
+    "500":
+      description: Внутренняя ошибка сервиса при выполнении обработки запроса
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/errors.yaml#/components/schemas/ErrorInternal"
+    "503":
+      description: Сервер временно недоступен

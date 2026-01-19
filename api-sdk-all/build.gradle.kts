@@ -3,6 +3,11 @@ plugins{
     `maven-publish`
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
 publishing {
     repositories {
         maven {
@@ -23,5 +28,6 @@ publishing {
 
 dependencies {
     api(project(":api-sdk-transactions"))
+    api(project(":api-sdk-customer-info"))
     api(project(":api-sdk-crypto"))
 }

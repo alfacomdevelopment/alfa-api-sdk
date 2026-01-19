@@ -1,16 +1,29 @@
 # Alfa API SDK
-## SDK structure
-- **api-sdk-all** - library that contains all other modules
-- **api-sdk-core** - SDK core, contains client and common classes
-- **api-sdk-transactions** - library for integration with TransactionsApi
-- **api-sdk-crypto** - utility library for cryptography operations
+Java SDK for Alfa API integrations, including transactions and cryptography helpers.
 
-## Prerequisites
-Java JDK 8 or higher
+## Table of contents
+- [Modules](#modules)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Transactions API](#transactions-api)
+- [Customer Info API](#customer-info-api)
+- [Cryptography](#cryptography)
+- [Usage example](#usage-example)
 
-## Get Started
-### Adding dependency
-```
+## Modules
+- **api-sdk-all** - all modules in a single dependency
+- **api-sdk-core** - SDK core, HTTP client, and common classes
+- **api-sdk-transactions** - integration with `TransactionsApi`
+- **api-sdk-customer-info** - integration with `CustomerInfoApi`
+- **api-sdk-crypto** - cryptography utilities (CMS/JWS/XML)
+
+## Requirements
+- Java 8+
+
+## Installation
+### Gradle (Kotlin DSL)
+```kotlin
 repositories {
     mavenCentral()
     maven {
@@ -23,47 +36,56 @@ repositories {
 }
 
 dependencies {
-    // You can add this library to your dependencies to connect all modules at once:
-    implementation("com.alfa.api.sdk:api-sdk-all:<version>") 
-    
-    // OR you can connect each module separately:
-    implementation("com.alfa.api.sdk:api-sdk-transactions:<version>") 
+    // All modules in one dependency:
+    implementation("com.alfa.api.sdk:api-sdk-all:<version>")
+
+    // OR add modules separately:
+    implementation("com.alfa.api.sdk:api-sdk-transactions:<version>")
+    implementation("com.alfa.api.sdk:api-sdk-customer-info:<version>")
 }
 ```
-- Latest versions of the dependencies are listed [here](https://github.com/users/alfacomdevelopment/packages?repo_name=alfa-api-sdk).
-- You can get a personal GitHub token [here](https://github.com/settings/tokens/new).
+- Latest package versions: https://github.com/users/alfacomdevelopment/packages?repo_name=alfa-api-sdk
+- Create a GitHub personal access token: https://github.com/settings/tokens/new
 
-### Setting up API client
+## Configuration
+### API client
 ```java
 TransportSecurityProvider transportSecurityProvider = new TlsProvider(
-        TlsProvider.TlsProperties.builder()
-                .keyStorePath("<path to your keystore>")
-                .keyStorePassword("<password for your keystore>")
-                .privateKeyAlias("<alia for private-key entry in keystore>")
-                .trustStorePath("<path to your truststore>")
-                .trustStorePassword("<password for your truststore>")
-                .build()
+    TlsProvider.TlsProperties.builder()
+        .keyStorePath("<path to your keystore>")
+        .keyStorePassword("<password for your keystore>")
+        .privateKeyAlias("<alias for private-key entry in keystore>")
+        .trustStorePath("<path to your truststore>")
+        .trustStorePassword("<password for your truststore>")
+        .build()
 );
-CredentialProvider credentialProvider = new BearerTokenProvider("<your access token here>");
-ApiHttpClient apiHttpClient = new ApiSyncHttpClient("<service url>", transportSecurityProvider, credentialProvider);
+CredentialProvider credentialProvider = new BearerTokenProvider("<your access token>");
+ApiHttpClient apiHttpClient = new ApiSyncHttpClient(
+    "<service url>",
+    transportSecurityProvider,
+    credentialProvider
+);
 ```
 
-### TransactionApi
-#### Methods
-* `getStatement(String accountNumber, LocalDate statementDate, Integer page, CurFormat curFormat)` - retrieves a statement for a specific account number, statement date, page number, and currency format.
-* `getSummary(String accountNumber, LocalDate statementDate)` - retrieves a summary for a specific account number and statement date.
-* `getStatement1C(String accountNumber, LocalDate executeDate, Integer limit, Integer offset)` - retrieves a statement for a specific account number, statement date, limit, and offset in 1C format. 
-* `getStatementMT940(String accountNumber, LocalDate executeDate, Integer limit, Integer offset)` - retrieves a statement for a specific account number, statement date, limit, and offset in MT940 format.
+## Transactions API
+### Methods
+- `getStatement(String accountNumber, LocalDate statementDate, Integer page, CurFormat curFormat)` - statement by account, date, page, and currency format.
+- `getSummary(String accountNumber, LocalDate statementDate)` - summary by account and date.
+- `getStatement1C(String accountNumber, LocalDate executeDate, Integer limit, Integer offset)` - statement in 1C format.
+- `getStatementMT940(String accountNumber, LocalDate executeDate, Integer limit, Integer offset)` - statement in MT940 format.
 
+## Customer Info API
+### Methods
+- `getCustomerInfoV2()` - returns organization profile.
 
-### Cryptography services
-Dependency `api-sdk-crypto` contains various services that encapsulate the cryptography logic.
-Currently supported only RSA signing and verification of CMS, JSON, XML types.
-#### Creating Services
-To create a `CmsSignatureService`, you need to write this code:
+## Cryptography
+The `api-sdk-crypto` module provides RSA signing/verification for CMS, JSON (JWS), and XML.
+
+### Create services
+Example: `CmsSignatureService`
 ```java
 CmsSignatureService cmsSignatureService = new CmsSignatureServiceImpl(
-KeyStoreParameters.builder()
+    KeyStoreParameters.builder()
         .path("/path/to/keystore")
         .type(KeyStoreParameters.KeyStoreType.JKS)
         .password("example")
@@ -72,21 +94,21 @@ KeyStoreParameters.builder()
                 .password("example")
                 .build())
         .certificate(CertificateParameters.builder()
-                .alias("example")
-                .build())
+            .alias("example")
+            .build())
         .build(),
     SignatureAlgorithm.RSA
 );
 ```
-Similarly, for `JwsSignatureService` and `XmlSignatureService`
+Similarly, for `JwsSignatureService` and `XmlSignatureService`.
 
-#### CmsSignatureService methods
-* `signDetached(byte[] data)` - this method signs the given data using a detached signature approach. It takes the data to be signed as input and returns the signature as a byte array.
-* `verifyDetached(byte[] data, byte[] signature)` - this method verifies a detached signature against the original data. It requires the original data and the signature to be verified as inputs. It returns true if the signature is valid, and false otherwise.
-* `signAttached(byte[] data)` - this method signs the provided data with an attached signature. It takes the data to be signed as input and returns the data along with the signature, encapsulated in a single byte array.
-* `verifyAttached(byte[] dataWithSignature)` - this method verifies an attached signature against the provided data that includes the signature. It takes the data with the attached signature as input and returns true if the signature is valid, and false otherwise.
+### CmsSignatureService methods
+- `signDetached(byte[] data)` - returns a detached CMS signature.
+- `verifyDetached(byte[] data, byte[] signature)` - validates a detached CMS signature.
+- `signAttached(byte[] data)` - returns data with an attached CMS signature.
+- `verifyAttached(byte[] dataWithSignature)` - validates an attached CMS signature.
 
-*Example:*
+Example:
 ```java
 byte[] detachedSignature = cmsSignatureService.signDetached("some data to be signed".getBytes(StandardCharsets.UTF_8));
 boolean verificationResult = cmsSignatureService.verifyDetached("some data to be signed".getBytes(StandardCharsets.UTF_8), detachedSignature);
@@ -95,13 +117,13 @@ byte[] attachedSignature = cmsSignatureService.signAttached("some data to be sig
 boolean verificationResult = cmsSignatureService.verifyAttached(attachedSignature);
 ```
 
-#### JwsSignatureService methods
-* `signDetached(String data)` - generates a JWS signature for the given data without including the data itself in the signature. Returns the signature as a string.
-* `verifyDetached(String data, String jwsWithoutData)` - validates a detached JWS signature against the original data. Returns true if the signature is valid and the data hasn't been altered; otherwise, returns false.
-* `signAttached(String data)` - creates a JWS signature that embeds the given data within the signature itself. Returns the combined signature and data as a string.
-* `verifyAttached(String jwsWithData)` - checks the validity of a JWS signature that contains embedded data. Returns true if the signature is valid and the embedded data is unmodified; otherwise, returns false.
+### JwsSignatureService methods
+- `signDetached(String data)` - returns a detached JWS signature.
+- `verifyDetached(String data, String jwsWithoutData)` - validates a detached JWS signature.
+- `signAttached(String data)` - returns JWS with embedded data.
+- `verifyAttached(String jwsWithData)` - validates an attached JWS signature.
 
-*Example:*
+Example:
 ```java
 byte[] jwsWithoutData = jwsSignatureService.signDetached("{\"some\":\"json\"}");
 boolean verificationResult = jwsSignatureService.verifyDetached("{\"some\":\"json\"}", jwsWithoutData);
@@ -110,16 +132,15 @@ byte[] jwsWithData = jwsSignatureService.signAttached("{\"some\":\"json\"}");
 boolean verificationResult = jwsSignatureService.verifyAttached(jwsWithData);
 ```
 
-#### XmlSignatureService methods
-* `sign(String data)` - this method takes an XML string (data) as input and returns a new string where the original XML content is digitally signed. The returned string includes both the original XML content and the embedded signature.
-* `verify(String dataWithSignature)` - this method accepts an XML string (dataWithSignature) that contains an embedded signature. It verifies the signature against the expected signature and returns true if the signature is valid, or false if it is not.
+### XmlSignatureService methods
+- `sign(String data)` - signs XML and returns the signed XML.
+- `verify(String dataWithSignature)` - validates a signed XML document.
 
-*Example:*
+Example:
 ```java
 byte[] signedXml = xmlSignatureService.sign("<Some>Xml</Some>");
 boolean verificationResult = xmlSignatureService.verify(signedXml);
 ```
 
 ## Usage example
-You can check out an example of how to use the SDK in a [test Spring Boot 3 application](https://github.com/alfacomdevelopment/alfa-api-sdk/tree/main/sample-app).
-
+See a test Spring Boot application in `sample-app`: https://github.com/alfacomdevelopment/alfa-api-sdk/tree/main/sample-app
