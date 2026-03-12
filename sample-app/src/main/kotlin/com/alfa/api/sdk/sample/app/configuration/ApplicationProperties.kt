@@ -6,10 +6,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 data class ApplicationProperties(
     var baseUrl: String,
     var tlsProperties: TlsProperties?,
-    var accessToken: String,
+    var accessToken: String? = null,
+    var apiKey: String? = null,
+    var authType: AuthType = AuthType.BEARER,
     var transactions: TransactionsProperties?,
     var signature: SignatureProperties,
 ) {
+    enum class AuthType {
+        BEARER,
+        API_KEY
+    }
+
     data class TransactionsProperties(
         var contextPath: String
     )
