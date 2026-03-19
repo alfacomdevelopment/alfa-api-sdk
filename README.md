@@ -67,6 +67,24 @@ ApiHttpClient apiHttpClient = new ApiSyncHttpClient(
 );
 ```
 
+### Credential providers
+The SDK supports the following `CredentialProvider` implementations:
+
+- `BearerTokenProvider` - sends `Authorization: Bearer <access token>`
+- `ApiKeyProvider` - sends `Authorization: ApiKey <api key>`
+
+Example with bearer token:
+```java
+CredentialProvider credentialProvider = new BearerTokenProvider("<your access token>");
+ApiHttpClient apiHttpClient = new ApiSyncHttpClient("<service url>", credentialProvider);
+```
+
+Example with API key:
+```java
+CredentialProvider credentialProvider = new ApiKeyProvider("<your api key>");
+ApiHttpClient apiHttpClient = new ApiSyncHttpClient("<service url>", credentialProvider);
+```
+
 ## Transactions API
 ### Methods
 - `getStatement(String accountNumber, LocalDate statementDate, Integer page, CurFormat curFormat)` - statement by account, date, page, and currency format.

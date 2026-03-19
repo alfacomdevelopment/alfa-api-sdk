@@ -2,6 +2,8 @@ package com.alfa.api.sdk.sample.app.configuration
 
 import com.alfa.api.sdk.client.ApiHttpClient
 import com.alfa.api.sdk.client.ApiSyncHttpClient
+import com.alfa.api.sdk.client.security.ApiKeyProvider
+import com.alfa.api.sdk.client.security.CredentialProvider
 import com.alfa.api.sdk.client.security.BearerTokenProvider
 import com.alfa.api.sdk.client.security.TlsProvider
 import com.alfa.api.sdk.crypto.AbstractSignatureService
@@ -26,8 +28,17 @@ class SdkConfiguration(
         ApiSyncHttpClient(
             properties.baseUrl,
             TlsProvider(sslPropertiesMapper.map(properties.tlsProperties)),
-            BearerTokenProvider(properties.accessToken)
+            createCredentialProvider()
         )
+
+    private fun createCredentialProvider(): CredentialProvider =
+        when (properties.authType) {
+            ApplicationProperties.AuthType.BEARER ->
+                BearerTokenProvider(requireNotNull(properties.accessToken) { "sdk-sample-app.access-token is required" })
+
+            ApplicationProperties.AuthType.API_KEY ->
+                ApiKeyProvider(requireNotNull(properties.apiKey) { "sdk-sample-app.api-key is required" })
+        }
 
     @Bean
     fun createTransactionsApi(apiHttpClient: ApiHttpClient): TransactionsApi =
