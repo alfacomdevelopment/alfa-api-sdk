@@ -11,6 +11,7 @@ import com.alfa.api.sdk.crypto.impl.CmsSignatureServiceImpl
 import com.alfa.api.sdk.crypto.impl.JwsSignatureServiceImpl
 import com.alfa.api.sdk.crypto.impl.XmlSignatureServiceImpl
 import com.alfa.api.sdk.customer.info.CustomerInfoApi
+import com.alfa.api.sdk.digital.ruble.DigitalRubleApi
 import com.alfa.api.sdk.sample.app.mapper.SignaturePropertiesMapper
 import com.alfa.api.sdk.sample.app.mapper.SslPropertiesMapper
 import com.alfa.api.sdk.transactions.TransactionsApi
@@ -47,6 +48,10 @@ class SdkConfiguration(
     @Bean
     fun createCustomerInfoApi(apiHttpClient: ApiHttpClient): CustomerInfoApi =
         CustomerInfoApi(apiHttpClient)
+
+    @Bean
+    fun createDigitalRubleApi(apiHttpClient: ApiHttpClient): DigitalRubleApi =
+        DigitalRubleApi(apiHttpClient)
 
     @Bean
     fun createRsaCmsSignatureService() =

@@ -5,6 +5,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class HttpHeaders {
     public static final String ACCEPT = "Accept";
+    public static final String CONTENT_TYPE = "Content-Type";
 
     @UtilityClass
     public static class Accept {

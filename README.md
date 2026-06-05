@@ -1,5 +1,5 @@
 # Alfa API SDK
-Java SDK for Alfa API integrations, including transactions and cryptography helpers.
+Java SDK for Alfa API integrations, including transactions, digital ruble, and cryptography helpers.
 
 ## Table of contents
 - [Modules](#modules)
@@ -8,6 +8,7 @@ Java SDK for Alfa API integrations, including transactions and cryptography help
 - [Configuration](#configuration)
 - [Transactions API](#transactions-api)
 - [Customer Info API](#customer-info-api)
+- [Digital Ruble API](#digital-ruble-api)
 - [Cryptography](#cryptography)
 - [Usage example](#usage-example)
 
@@ -16,6 +17,7 @@ Java SDK for Alfa API integrations, including transactions and cryptography help
 - **api-sdk-core** - SDK core, HTTP client, and common classes
 - **api-sdk-transactions** - integration with `TransactionsApi`
 - **api-sdk-customer-info** - integration with `CustomerInfoApi`
+- **api-sdk-digital-ruble** - integration with `DigitalRubleApi`
 - **api-sdk-crypto** - cryptography utilities (CMS/JWS/XML)
 
 ## Requirements
@@ -42,6 +44,7 @@ dependencies {
     // OR add modules separately:
     implementation("com.alfa.api.sdk:api-sdk-transactions:<version>")
     implementation("com.alfa.api.sdk:api-sdk-customer-info:<version>")
+    implementation("com.alfa.api.sdk:api-sdk-digital-ruble:<version>")
 }
 ```
 - Latest package versions: https://github.com/users/alfacomdevelopment/packages?repo_name=alfa-api-sdk
@@ -95,6 +98,14 @@ ApiHttpClient apiHttpClient = new ApiSyncHttpClient("<service url>", credentialP
 ## Customer Info API
 ### Methods
 - `getCustomerInfoV2()` - returns organization profile.
+
+## Digital Ruble API
+Gateway headers such as `X-ClientId`, `X-Cus`, `X-Acus`, and `X-Sub` are derived from the access token and are not SDK method parameters.
+
+### Methods
+- `getWalletContext()` - returns the digital ruble wallet context.
+- `getCertificates()` - returns certificates required for digital ruble operations.
+- `getStatementTransactions(StatementRequest request)` - returns digital ruble statement transactions.
 
 ## Cryptography
 The `api-sdk-crypto` module provides RSA signing/verification for CMS, JSON (JWS), and XML.

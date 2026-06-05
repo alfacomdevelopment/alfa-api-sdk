@@ -5,5 +5,6 @@ include("api-sdk-all")
 include("api-sdk-transactions")
 include("api-sdk-customer-info")
 include("api-sdk-crypto")
+include("api-sdk-digital-ruble")
 
 include("sample-app")

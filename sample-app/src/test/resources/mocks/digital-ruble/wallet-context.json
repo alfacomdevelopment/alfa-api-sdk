@@ -1,0 +1,12 @@
+{
+  "participantId": "participant-1",
+  "participantWalletId": "wallet-1",
+  "devices": [
+    {
+      "deviceId": "device-1",
+      "fingerprint": "fingerprint-1",
+      "certificate": "certificate-1",
+      "certificateSerialNumber": "serial-1"
+    }
+  ]
+}
