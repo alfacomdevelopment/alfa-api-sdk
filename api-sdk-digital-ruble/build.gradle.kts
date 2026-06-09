@@ -15,12 +15,14 @@ java {
 val openApiSpecsDir = layout.projectDirectory.dir("src/main/resources/openapi")
 val openApiOutDir = layout.buildDirectory.dir("generated/openapi")
 
-fun GenerateTask.configureCommon(specFileName: String) {
+val openApiGenerateModelsDigitalRuble by tasks.registering(GenerateTask::class) {
     group = "openapi"
+    description = "Generate models from digital-ruble.yaml"
 
     generatorName.set("java")
-    inputSpec.set(openApiSpecsDir.file(specFileName).asFile.absolutePath)
+    inputSpec.set(openApiSpecsDir.file("digital-ruble.yaml").asFile.absolutePath)
     outputDir.set(openApiOutDir.get().asFile.absolutePath)
+    modelPackage.set("com.alfa.api.sdk.digital.ruble.generated.model")
 
     globalProperties.set(
         mapOf(
@@ -45,46 +47,16 @@ fun GenerateTask.configureCommon(specFileName: String) {
     )
 }
 
-val openApiGenerateModelsSummary by tasks.registering(GenerateTask::class) {
-    description = "Generate models from summary.yaml"
-    configureCommon("summary.yaml")
-    modelPackage.set("com.alfa.api.sdk.transactions.summary.generated.model")
-}
-
-val openApiGenerateModelsStatement by tasks.registering(GenerateTask::class) {
-    description = "Generate models from statement.yaml"
-    configureCommon("statement.yaml")
-    modelPackage.set("com.alfa.api.sdk.transactions.statement.generated.model")
-}
-
-val openApiGenerateModelsStatement1c by tasks.registering(GenerateTask::class) {
-    description = "Generate models from statement1c.yaml"
-    configureCommon("statement1c.yaml")
-    configOptions.put("withXml", "true")
-    modelPackage.set("com.alfa.api.sdk.transactions.statement1c.generated.model")
-}
-
-val openApiGenerateModelsAll by tasks.registering {
-    group = "openapi"
-    description = "Generate models from all OpenAPI specs (transactions)"
-    dependsOn(
-        openApiGenerateModelsSummary,
-        openApiGenerateModelsStatement,
-        openApiGenerateModelsStatement1c
-    )
-}
-
 sourceSets["main"].java.srcDir(openApiOutDir.map { it.dir("src/main/java") })
 
 tasks.named("compileJava") {
-    dependsOn(openApiGenerateModelsAll)
+    dependsOn(openApiGenerateModelsDigitalRuble)
 }
 
 val sourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
     from(sourceSets["main"].allSource)
-
-    dependsOn(openApiGenerateModelsAll)
+    dependsOn(openApiGenerateModelsDigitalRuble)
 }
 
 tasks.withType<Checkstyle>().configureEach {
@@ -123,15 +95,10 @@ dependencies {
 
     implementation(platform(libs.jackson.bom))
     implementation(libs.jackson.databind)
-    implementation(libs.jackson.dataformat.xml)
-    implementation(libs.jackson.jaxb.annotations)
     implementation(libs.jackson.datatype.jsr310)
-
-    implementation(libs.javax.jaxb.api)
 
     compileOnly(libs.javax.annotation.api)
     compileOnly(libs.jsr305)
-    compileOnly(libs.threeten.jaxb.core)
     compileOnly(libs.lombok)
 
     annotationProcessor(libs.lombok)

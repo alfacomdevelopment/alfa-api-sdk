@@ -1,0 +1,32 @@
+{
+  "unknownField": "ignored",
+  "pagination": {
+    "limit": 10,
+    "offset": 0,
+    "totalCount": 1
+  },
+  "statement": {
+    "cbdcMessage": "response-message",
+    "openingBalance": "10.00",
+    "outgoingBalance": "15.00",
+    "participantId": "participant-1",
+    "participantWalletId": "wallet-1",
+    "historyFilters": {
+      "periodFrom": "2026-05-01",
+      "periodTo": "2026-05-10",
+      "transactionType": "BUY",
+      "direction": "INCOMING"
+    },
+    "transactions": [
+      {
+        "transactionId": "transaction-1",
+        "transactionDate": "2026-05-02T10:15:30Z",
+        "status": "COMPLETED",
+        "transactionType": "BUY",
+        "direction": "OUTGOING",
+        "amount": "5.00",
+        "currency": "RUB"
+      }
+    ]
+  }
+}

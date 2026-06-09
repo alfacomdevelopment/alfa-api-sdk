@@ -1,4 +1,5 @@
 get:
+  operationId: getCustomerInfoV2
   tags:
     - Customer-info
   summary: "Получение профиля организации"

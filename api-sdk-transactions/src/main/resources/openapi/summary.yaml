@@ -1,18 +1,10 @@
 openapi: 3.0.3
 info:
   title: Alfa API
-  contact:
-    name: API Support
-    email: baas_support@alfabank.ru
   version: 1.0.0
 tags:
   - name: Transactions
     description: Выписки по счетам юрлиц
-servers:
-  - url: https://baas.alfabank.ru/api/
-    description: Prod server API
-  - url: https://sandbox.alfabank.ru/api/
-    description: Sandbox server API
 paths:
   /jp/v1/statement/summary:
     get:

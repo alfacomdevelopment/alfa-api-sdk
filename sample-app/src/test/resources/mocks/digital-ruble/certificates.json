@@ -1,0 +1,17 @@
+{
+  "rcdOfBankOfRussia": [
+    "rcd-bank-of-russia-1"
+  ],
+  "rcdOfBank": [
+    "rcd-bank-1"
+  ],
+  "certificateOfBankOfRussiaCertificationCenter": [
+    "certificate-bank-of-russia-ca-1"
+  ],
+  "certificateOfBankCertificationCenter": [
+    "certificate-bank-ca-1"
+  ],
+  "certificateBankProcessing": [
+    "certificate-bank-processing-1"
+  ]
+}

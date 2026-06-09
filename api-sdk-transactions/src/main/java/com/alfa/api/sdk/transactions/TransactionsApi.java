@@ -11,7 +11,9 @@ import com.alfa.api.sdk.transactions.statement1c.generated.model.Statement1cResp
 import com.alfa.api.sdk.transactions.summary.generated.model.SummaryResponse;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +28,11 @@ import java.util.Map;
 @Slf4j
 @SuppressWarnings("java:S1075")
 public class TransactionsApi {
-    private final ObjectMapper jsonMapper = new ObjectMapper();
+    private final ObjectMapper jsonMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
     private final ObjectMapper xmlMapper = new XmlMapper()
             .registerModule(new JaxbAnnotationModule())
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
