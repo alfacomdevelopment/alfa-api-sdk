@@ -13,6 +13,13 @@ on:
   push:
     branches-ignore:
       - main
+    tags-ignore:
+      - '**'
+
+concurrency:
+  group: publish-library
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
