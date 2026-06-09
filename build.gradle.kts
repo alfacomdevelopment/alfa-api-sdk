@@ -16,7 +16,8 @@ scmVersion {
             base
         } else {
             val buildNumber = providers.environmentVariable("GITHUB_RUN_NUMBER").orNull ?: "0"
-            "$base-$buildNumber"
+            val runAttempt = providers.environmentVariable("GITHUB_RUN_ATTEMPT").orNull ?: "1"
+            "$base-$buildNumber.$runAttempt"
         }
     }
 }

@@ -13,6 +13,13 @@ on:
   push:
     branches-ignore:
       - main
+    tags-ignore:
+      - '**'
+
+concurrency:
+  group: publish-library
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -28,8 +35,6 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-      - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@v3
       - name: Release version
         if: github.ref_name == 'main'
         run: ./gradlew release -Prelease.versionIncrementer=${{ github.event.inputs.versionIncrementType }}
