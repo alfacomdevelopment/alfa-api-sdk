@@ -1,4 +1,8 @@
 # Alfa API SDK
+[![Build](https://github.com/alfacomdevelopment/alfa-api-sdk/actions/workflows/build.yml/badge.svg)](https://github.com/alfacomdevelopment/alfa-api-sdk/actions/workflows/build.yml)
+[![CodeQL](https://github.com/alfacomdevelopment/alfa-api-sdk/actions/workflows/codeql.yml/badge.svg)](https://github.com/alfacomdevelopment/alfa-api-sdk/actions/workflows/codeql.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Java SDK for Alfa API integrations, including transactions, digital ruble, and cryptography helpers.
 
 ## Table of contents
@@ -11,6 +15,8 @@ Java SDK for Alfa API integrations, including transactions, digital ruble, and c
 - [Digital Ruble API](#digital-ruble-api)
 - [Cryptography](#cryptography)
 - [Usage example](#usage-example)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Modules
 - **api-sdk-all** - all modules in a single dependency
@@ -173,3 +179,9 @@ boolean verificationResult = xmlSignatureService.verify(signedXml);
 
 ## Usage example
 See a test Spring Boot application in `sample-app`: https://github.com/alfacomdevelopment/alfa-api-sdk/tree/main/sample-app
+
+## Contributing
+See [CONTRIBUTING.md](CONTRIBUTING.md) for local development, pull request, dependency update, and release guidelines.
+
+## License
+This project is licensed under the [MIT License](LICENSE).
