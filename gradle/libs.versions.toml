@@ -1,6 +1,6 @@
 [versions]
 # Plugins
-kotlin = "2.4.0"
+kotlin = "2.3.10"
 spring-boot = "4.1.0"
 freefair-lombok = "9.5.0"
 openapi-generator = "7.23.0"
