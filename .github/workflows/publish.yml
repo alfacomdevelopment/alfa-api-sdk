@@ -1,4 +1,5 @@
 name: Publish library to GitHub Packages
+
 on:
   workflow_dispatch:
     inputs:
@@ -27,25 +28,42 @@ jobs:
       contents: write
       packages: write
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout code
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
+
+      - name: Validate release branch
+        if: github.event_name == 'workflow_dispatch' && github.ref_name != 'main'
+        run: |
+          echo "::error::Stable releases must be run from the main branch."
+          exit 1
+
+      - name: Validate Gradle wrapper
+        uses: gradle/actions/wrapper-validation@v6
+
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
           java-version: '21'
           distribution: 'temurin'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
       - name: Release version
-        if: github.ref_name == 'main'
+        if: github.event_name == 'workflow_dispatch' && github.ref_name == 'main'
         run: ./gradlew release -Prelease.versionIncrementer=${{ github.event.inputs.versionIncrementType }}
+
       - name: Delete old snapshot packages
-        if: github.ref_name != 'main'
+        if: github.event_name == 'push' && github.ref_name != 'main'
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const run = require('./.github/scripts/delete-snapshot-packages.js');
             await run({ github, context, core });
+
       - name: Publish
         run: ./gradlew publish
         env:

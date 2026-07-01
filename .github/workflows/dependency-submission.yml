@@ -1,17 +1,17 @@
-name: Build
+name: Dependency Submission
 
 on:
   push:
-  pull_request:
     branches:
       - main
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  build:
+  dependency-submission:
+    name: Submit Gradle dependency graph
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -26,8 +26,5 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v6
-
-      - name: Run build
-        run: ./gradlew clean build
+      - name: Generate and submit dependency graph
+        uses: gradle/actions/dependency-submission@v6
