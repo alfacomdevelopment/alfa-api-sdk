@@ -106,8 +106,6 @@ ApiHttpClient apiHttpClient = new ApiSyncHttpClient("<service url>", credentialP
 - `getCustomerInfoV2()` - returns organization profile.
 
 ## Digital Ruble API
-Gateway headers such as `X-ClientId`, `X-Cus`, `X-Acus`, and `X-Sub` are derived from the access token and are not SDK method parameters.
-
 ### Methods
 - `getWalletContext()` - returns the digital ruble wallet context.
 - `getCertificates()` - returns certificates required for digital ruble operations.
