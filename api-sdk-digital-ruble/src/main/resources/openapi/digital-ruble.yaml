@@ -12,10 +12,6 @@ paths:
       tags:
         - WalletContext
       operationId: getWalletContext
-      parameters:
-        - $ref: '#/components/parameters/XClientId'
-        - $ref: '#/components/parameters/XCus'
-        - $ref: '#/components/parameters/XAcus'
       responses:
         '200':
           description: Wallet context
@@ -36,10 +32,6 @@ paths:
       tags:
         - Certificates
       operationId: getCertificates
-      parameters:
-        - $ref: '#/components/parameters/XClientId'
-        - $ref: '#/components/parameters/XCus'
-        - $ref: '#/components/parameters/XAcus'
       responses:
         '200':
           description: Certificates
@@ -60,11 +52,6 @@ paths:
       tags:
         - Statement
       operationId: getStatementTransactions
-      parameters:
-        - $ref: '#/components/parameters/XClientId'
-        - $ref: '#/components/parameters/XCus'
-        - $ref: '#/components/parameters/XAcus'
-        - $ref: '#/components/parameters/XSub'
       requestBody:
         required: true
         content:
@@ -87,27 +74,6 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 components:
-  parameters:
-    XClientId:
-      in: header
-      name: X-ClientId
-      schema:
-        type: string
-    XCus:
-      in: header
-      name: X-Cus
-      schema:
-        type: string
-    XAcus:
-      in: header
-      name: X-Acus
-      schema:
-        type: string
-    XSub:
-      in: header
-      name: X-Sub
-      schema:
-        type: string
   responses:
     BadRequest:
       description: Bad request
