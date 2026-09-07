@@ -1,5 +1,5 @@
 plugins {
-    id("pl.allegro.tech.build.axion-release") version "1.21.2"
+    id("pl.allegro.tech.build.axion-release") version "1.21.3"
 }
 apply(plugin = "pl.allegro.tech.build.axion-release")
 
