@@ -13,6 +13,7 @@ springBoot {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    jvmArgs("-Xshare:off")
 }
 
 dependencies {

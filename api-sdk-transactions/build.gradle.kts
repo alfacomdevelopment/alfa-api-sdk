@@ -8,8 +8,8 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 val openApiSpecsDir = layout.projectDirectory.dir("src/main/resources/openapi")
@@ -40,31 +40,32 @@ fun GenerateTask.configureCommon(specFileName: String) {
             "dateLibrary" to "java8",
             "hideGenerationTimestamp" to "true",
             "serializableModel" to "true",
+            "skipOperationExample" to "true",
             "useJakartaEe" to "false"
         )
     )
 }
 
-val openApiGenerateModelsSummary by tasks.registering(GenerateTask::class) {
+val openApiGenerateModelsSummary = tasks.register<GenerateTask>("openApiGenerateModelsSummary") {
     description = "Generate models from summary.yaml"
     configureCommon("summary.yaml")
     modelPackage.set("com.alfa.api.sdk.transactions.summary.generated.model")
 }
 
-val openApiGenerateModelsStatement by tasks.registering(GenerateTask::class) {
+val openApiGenerateModelsStatement = tasks.register<GenerateTask>("openApiGenerateModelsStatement") {
     description = "Generate models from statement.yaml"
     configureCommon("statement.yaml")
     modelPackage.set("com.alfa.api.sdk.transactions.statement.generated.model")
 }
 
-val openApiGenerateModelsStatement1c by tasks.registering(GenerateTask::class) {
+val openApiGenerateModelsStatement1c = tasks.register<GenerateTask>("openApiGenerateModelsStatement1c") {
     description = "Generate models from statement1c.yaml"
     configureCommon("statement1c.yaml")
     configOptions.put("withXml", "true")
     modelPackage.set("com.alfa.api.sdk.transactions.statement1c.generated.model")
 }
 
-val openApiGenerateModelsAll by tasks.registering {
+val openApiGenerateModelsAll = tasks.register("openApiGenerateModelsAll") {
     group = "openapi"
     description = "Generate models from all OpenAPI specs (transactions)"
     dependsOn(
@@ -80,7 +81,7 @@ tasks.named("compileJava") {
     dependsOn(openApiGenerateModelsAll)
 }
 
-val sourcesJar by tasks.registering(Jar::class) {
+val sourcesJar = tasks.register<Jar>("sourcesJar") {
     archiveClassifier.set("sources")
     from(sourceSets["main"].allSource)
 

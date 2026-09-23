@@ -8,14 +8,14 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 val openApiSpecsDir = layout.projectDirectory.dir("src/main/resources/openapi")
 val openApiOutDir = layout.buildDirectory.dir("generated/openapi")
 
-val openApiGenerateModelsDigitalRuble by tasks.registering(GenerateTask::class) {
+val openApiGenerateModelsDigitalRuble = tasks.register<GenerateTask>("openApiGenerateModelsDigitalRuble") {
     group = "openapi"
     description = "Generate models from digital-ruble.yaml"
 
@@ -42,6 +42,7 @@ val openApiGenerateModelsDigitalRuble by tasks.registering(GenerateTask::class) 
             "dateLibrary" to "java8",
             "hideGenerationTimestamp" to "true",
             "serializableModel" to "true",
+            "skipOperationExample" to "true",
             "useJakartaEe" to "false"
         )
     )
@@ -53,7 +54,7 @@ tasks.named("compileJava") {
     dependsOn(openApiGenerateModelsDigitalRuble)
 }
 
-val sourcesJar by tasks.registering(Jar::class) {
+val sourcesJar = tasks.register<Jar>("sourcesJar") {
     archiveClassifier.set("sources")
     from(sourceSets["main"].allSource)
     dependsOn(openApiGenerateModelsDigitalRuble)

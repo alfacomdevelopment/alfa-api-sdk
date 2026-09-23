@@ -3,7 +3,7 @@
 [![CodeQL](https://github.com/alfacomdevelopment/alfa-api-sdk/actions/workflows/codeql.yml/badge.svg)](https://github.com/alfacomdevelopment/alfa-api-sdk/actions/workflows/codeql.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Java SDK for Alfa API integrations, including transactions, digital ruble, and cryptography helpers.
+Java SDK for Alfa API integrations, including transactions, digital ruble, electronic signature, and cryptography helpers.
 
 ## Table of contents
 - [Modules](#modules)
@@ -13,6 +13,7 @@ Java SDK for Alfa API integrations, including transactions, digital ruble, and c
 - [Transactions API](#transactions-api)
 - [Customer Info API](#customer-info-api)
 - [Digital Ruble API](#digital-ruble-api)
+- [Signature API](#signature-api)
 - [Cryptography](#cryptography)
 - [Usage example](#usage-example)
 - [Contributing](#contributing)
@@ -24,10 +25,11 @@ Java SDK for Alfa API integrations, including transactions, digital ruble, and c
 - **api-sdk-transactions** - integration with `TransactionsApi`
 - **api-sdk-customer-info** - integration with `CustomerInfoApi`
 - **api-sdk-digital-ruble** - integration with `DigitalRubleApi`
+- **api-sdk-signature** - integration with `SignatureApi`
 - **api-sdk-crypto** - cryptography utilities (CMS/JWS/XML)
 
 ## Requirements
-- Java 8+
+- Java 11+
 
 ## Installation
 ### Gradle (Kotlin DSL)
@@ -51,6 +53,7 @@ dependencies {
     implementation("com.alfa.api.sdk:api-sdk-transactions:<version>")
     implementation("com.alfa.api.sdk:api-sdk-customer-info:<version>")
     implementation("com.alfa.api.sdk:api-sdk-digital-ruble:<version>")
+    implementation("com.alfa.api.sdk:api-sdk-signature:<version>")
 }
 ```
 - Latest package versions: https://github.com/users/alfacomdevelopment/packages?repo_name=alfa-api-sdk
@@ -110,6 +113,28 @@ ApiHttpClient apiHttpClient = new ApiSyncHttpClient("<service url>", credentialP
 - `getWalletContext()` - returns the digital ruble wallet context.
 - `getCertificates()` - returns certificates required for digital ruble operations.
 - `getStatementTransactions(StatementRequest request)` - returns digital ruble statement transactions.
+
+## Signature API
+### Methods
+- `getDn()` - returns the distinguished name configuration for CSR generation.
+- `getDnFile()` - returns the distinguished name configuration as a `.cnf` file.
+- `issueRsaCertificate(RequestIssueRSACertificate request)` - creates an RSA certificate issuance request.
+- `sendRequest(String id, RequestPostOperations request)` - sends a certificate request for signing.
+- `signRequest(String id, RequestPutOperations request)` - signs a request with an SMS code.
+- `getRequest(String id)` - returns request data.
+- `getRsaCertificate(String id)` - returns an RSA certificate.
+- `getRsaCertificates()` - returns all RSA certificates.
+- `activateRsaCertificate(String id)` - creates an RSA certificate activation request.
+- `changeSignMethod(SignSettings request)` - creates a request to change the current signing method.
+- `switchRsaCertificate(String id)` - creates a request to switch to another RSA certificate.
+- `reissueRsaCertificate(String id, RequestReissueRSACertificate request)` - creates a certificate reissue request.
+- `revokeRsaCertificate(String id)` - creates a certificate revocation request.
+- `createQesRequest()` - creates a QES connection request.
+- `sendQesRequest(String id, SendRequestQes request)` - sends a QES request for signing.
+- `signQesRequest(String id, SignRequestQes request)` - signs a QES request.
+- `registerPowerOfAttorney(RegisterPoaRequest request)` - creates a power of attorney registration request.
+- `getPowerOfAttorneyStatus(String id)` - returns the registration status of a power of attorney.
+- `downloadPowerOfAttorney(String id, String accept)` - downloads a power of attorney file.
 
 ## Cryptography
 The `api-sdk-crypto` module provides RSA signing/verification for CMS, JSON (JWS), and XML.

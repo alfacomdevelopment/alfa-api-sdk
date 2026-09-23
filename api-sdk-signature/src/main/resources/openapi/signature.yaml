@@ -1,0 +1,2513 @@
+openapi: 3.0.3
+info:
+  title: Alfa API Signature
+  version: 3.0.0
+paths:
+  /jp/v3/signature/dn:
+    get:
+      summary: Получение DN пользователя
+      operationId: getDn
+      parameters:
+      - in: header
+        required: true
+        name: X-AlfaID-Authorization
+        schema:
+          type: string
+          description: Bearer токен доступа, проставленный api-gateway
+      - in: header
+        required: false
+        name: X-Cus
+        schema:
+          type: string
+          description: cus
+      - in: header
+        required: false
+        name: X-Acus
+        schema:
+          type: string
+          description: acus
+      tags:
+      - SignatureV3
+      responses:
+        200:
+          description: Успешный результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDN'
+          headers:
+            x-traceid:
+              schema:
+                type: string
+              description: Идентификатор трассировки запроса
+              example: a57610880b621435
+        400:
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        401:
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        403:
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+        404:
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        429:
+          description: Cлишком много запросов в заданный период времени
+        500:
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+        503:
+          description: Сервер временно недоступен
+  /jp/v3/signature/dn/file:
+    get:
+      summary: Получение DN пользователя файлом в формате .cnf
+      operationId: getDnFile
+      parameters:
+      - in: header
+        required: true
+        name: X-AlfaID-Authorization
+        schema:
+          type: string
+          description: Bearer токен доступа, проставленный api-gateway
+      - in: header
+        required: false
+        name: X-Cus
+        schema:
+          type: string
+          description: cus
+      - in: header
+        required: false
+        name: X-Acus
+        schema:
+          type: string
+          description: acus
+      tags:
+      - SignatureV3
+      responses:
+        200:
+          description: Успешный результат
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ResponseDNcnf'
+          headers:
+            x-traceid:
+              schema:
+                type: string
+              description: Идентификатор трассировки запроса
+              example: a57610880b621435
+        400:
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        401:
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        403:
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+        404:
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        429:
+          description: Cлишком много запросов в заданный период времени
+        500:
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+        503:
+          description: Сервер временно недоступен
+  /jp/v3/signature/rsa-certificates/requests/issue:
+    post:
+      summary: Заявка на выпуск RSA-сертификата
+      operationId: issueRsaCertificate
+      parameters:
+      - in: header
+        required: true
+        name: X-AlfaID-Authorization
+        schema:
+          type: string
+          description: Bearer токен доступа, проставленный api-gateway
+      - in: header
+        required: false
+        name: X-Cus
+        schema:
+          type: string
+          description: cus
+      - in: header
+        required: false
+        name: X-Acus
+        schema:
+          type: string
+          description: acus
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestIssueRSACertificate'
+      tags:
+      - SignatureV3
+      responses:
+        200:
+          description: Успешный результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseRsaCertificate'
+          headers:
+            x-traceid:
+              schema:
+                type: string
+              description: Идентификатор трассировки запроса
+              example: a57610880b621435
+        400:
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        401:
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        403:
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+        404:
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        429:
+          description: Cлишком много запросов в заданный период времени
+        500:
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+        503:
+          description: Сервер временно недоступен
+  /jp/v3/signature/requests/{id}/operations:
+    post:
+      summary: Отправка заявки на подпись
+      operationId: sendRequest
+      parameters:
+      - in: header
+        required: true
+        name: X-AlfaID-Authorization
+        schema:
+          type: string
+          description: Bearer токен доступа, проставленный api-gateway
+      - in: header
+        required: false
+        name: X-Cus
+        schema:
+          type: string
+          description: cus
+      - in: header
+        required: false
+        name: X-Acus
+        schema:
+          type: string
+          description: acus
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Идентификатор заявки
+        example: 62550ef50163785f2222707e
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestPostOperations'
+      tags:
+      - SignatureV3
+      responses:
+        '200':
+          description: Успешный результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponsePostOperations'
+          headers:
+            x-traceid:
+              schema:
+                type: string
+              description: Идентификатор трассировки запроса
+              example: a57610880b621435
+        '400':
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        '401':
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        '403':
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+        '404':
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        '429':
+          description: Cлишком много запросов в заданный период времени
+        '500':
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+        '503':
+          description: Сервер временно недоступен
+  /jp/v3/signature/requests/operations/{id}:
+    put:
+      summary: Подписание заявки c помощью кода из СМС
+      operationId: signRequest
+      parameters:
+      - in: header
+        required: true
+        name: X-AlfaID-Authorization
+        schema:
+          type: string
+          description: Bearer токен доступа, проставленный api-gateway
+      - in: header
+        required: false
+        name: X-Cus
+        schema:
+          type: string
+          description: cus
+      - in: header
+        required: false
+        name: X-Acus
+        schema:
+          type: string
+          description: acus
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Идентификатор операции
+        example: 2629a563-3c82-44a2-a4f5-67b79e44cbea
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestPutOperations'
+      tags:
+      - SignatureV3
+      responses:
+        200:
+          description: Успешный результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponsePutOperations'
+          headers:
+            x-traceid:
+              schema:
+                type: string
+              description: Идентификатор трассировки запроса
+              example: a57610880b621435
+        400:
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        401:
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        403:
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+        404:
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        429:
+          description: Cлишком много запросов в заданный период времени
+        500:
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+        503:
+          description: Сервер временно недоступен
+  /jp/v3/signature/requests/{id}:
+    get:
+      summary: Получение данных заявки
+      operationId: getRequest
+      tags:
+      - SignatureV3
+      parameters:
+      - in: header
+        required: true
+        name: X-AlfaID-Authorization
+        schema:
+          type: string
+          description: Bearer токен доступа, проставленный api-gateway
+      - in: header
+        required: false
+        name: X-Cus
+        schema:
+          type: string
+          description: cus
+      - in: header
+        required: false
+        name: X-Acus
+        schema:
+          type: string
+          description: acus
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Идентификатор заявки
+        example: 62550ef50163785f2222707e
+      responses:
+        200:
+          description: Успешный результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestData'
+          headers:
+            x-traceid:
+              schema:
+                type: string
+              description: Идентификатор трассировки запроса
+              example: a57610880b621435
+        400:
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        401:
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        403:
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+        404:
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        429:
+          description: Cлишком много запросов в заданный период времени
+        500:
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+        503:
+          description: Сервер временно недоступен
+  /jp/v3/signature/rsa-certificates/{id}:
+    get:
+      summary: Получение RSA-сертификата
+      operationId: getRsaCertificate
+      parameters:
+      - in: header
+        required: true
+        name: X-AlfaID-Authorization
+        schema:
+          type: string
+          description: Bearer токен доступа, проставленный api-gateway
+      - in: header
+        required: false
+        name: X-Cus
+        schema:
+          type: string
+          description: cus
+      - in: header
+        required: false
+        name: X-Acus
+        schema:
+          type: string
+          description: acus
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Идентификатор сертификата
+        example: 62552f2457595f1652c4b179
+      tags:
+      - SignatureV3
+      responses:
+        200:
+          description: Успешный результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RSACertificate'
+          headers:
+            x-traceid:
+              schema:
+                type: string
+              description: Идентификатор трассировки запроса
+              example: a57610880b621435
+        400:
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        401:
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        403:
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+        404:
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        429:
+          description: Cлишком много запросов в заданный период времени
+        500:
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+        503:
+          description: Сервер временно недоступен
+  /jp/v3/signature/rsa-certificates:
+    get:
+      summary: Получение списка RSA-сертификатов
+      operationId: getRsaCertificates
+      parameters:
+      - in: header
+        required: true
+        name: X-AlfaID-Authorization
+        schema:
+          type: string
+          description: Bearer токен доступа, проставленный api-gateway
+      - in: header
+        required: false
+        name: X-Cus
+        schema:
+          type: string
+          description: cus
+      - in: header
+        required: false
+        name: X-Acus
+        schema:
+          type: string
+          description: acus
+      tags:
+      - SignatureV3
+      responses:
+        200:
+          description: Успешный результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RsaCertificates'
+          headers:
+            x-traceid:
+              schema:
+                type: string
+              description: Идентификатор трассировки запроса
+              example: a57610880b621435
+        400:
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        401:
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        403:
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+        404:
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        429:
+          description: Cлишком много запросов в заданный период времени
+        500:
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+        503:
+          description: Сервер временно недоступен
+  /jp/v3/signature/rsa-certificates/{id}/requests/activation:
+    post:
+      summary: Заявка на активацию RSA-сертификата
+      operationId: activateRsaCertificate
+      parameters:
+      - in: header
+        required: true
+        name: X-AlfaID-Authorization
+        schema:
+          type: string
+          description: Bearer токен доступа, проставленный api-gateway
+      - in: header
+        required: false
+        name: X-Cus
+        schema:
+          type: string
+          description: cus
+      - in: header
+        required: false
+        name: X-Acus
+        schema:
+          type: string
+          description: acus
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Идентификатор сертификата
+        example: 62552f2457595f1652c4b179
+      tags:
+      - SignatureV3
+      responses:
+        200:
+          description: Успешный результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseRsaCertificate'
+          headers:
+            x-traceid:
+              schema:
+                type: string
+              description: Идентификатор трассировки запроса
+              example: a57610880b621435
+        400:
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        401:
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        403:
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+        404:
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        429:
+          description: Cлишком много запросов в заданный период времени
+        500:
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+        503:
+          description: Сервер временно недоступен
+  /jp/v3/signature/rsa-certificates/{id}/requests/revocation:
+    post:
+      summary: Заявка на отзыв RSA-сертификата
+      operationId: revokeRsaCertificate
+      parameters:
+      - in: header
+        required: true
+        name: X-AlfaID-Authorization
+        schema:
+          type: string
+          description: Bearer токен доступа, проставленный api-gateway
+      - in: header
+        required: false
+        name: X-Cus
+        schema:
+          type: string
+          description: cus
+      - in: header
+        required: false
+        name: X-Acus
+        schema:
+          type: string
+          description: acus
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Идентификатор сертификата
+        example: 62552f2457595f1652c4b179
+      tags:
+      - SignatureV3
+      responses:
+        200:
+          description: Успешный результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseRsaCertificate'
+          headers:
+            x-traceid:
+              schema:
+                type: string
+              description: Идентификатор трассировки запроса
+              example: a57610880b621435
+        400:
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        401:
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        403:
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+        404:
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        429:
+          description: Cлишком много запросов в заданный период времени
+        500:
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+        503:
+          description: Сервер временно недоступен
+  /jp/v3/signature/rsa-certificates/{id}/requests/switch:
+    post:
+      summary: Заявка на переключение RSA-сертификата
+      operationId: switchRsaCertificate
+      parameters:
+      - in: header
+        required: true
+        name: X-AlfaID-Authorization
+        schema:
+          type: string
+          description: Bearer токен доступа, проставленный api-gateway
+      - in: header
+        required: false
+        name: X-Cus
+        schema:
+          type: string
+          description: cus
+      - in: header
+        required: false
+        name: X-Acus
+        schema:
+          type: string
+          description: acus
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Идентификатор сертификата
+        example: 62552f2457595f1652c4b179
+      tags:
+      - SignatureV3
+      responses:
+        200:
+          description: Успешный результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseRsaCertificate'
+          headers:
+            x-traceid:
+              schema:
+                type: string
+              description: Идентификатор трассировки запроса
+              example: a57610880b621435
+        400:
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        401:
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        403:
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+        404:
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        429:
+          description: Cлишком много запросов в заданный период времени
+        500:
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+        503:
+          description: Сервер временно недоступен
+  /jp/v3/signature/rsa-certificates/{id}/requests/reissue:
+    post:
+      summary: Заявка на перевыпуск RSA-сертификата
+      operationId: reissueRsaCertificate
+      parameters:
+      - in: header
+        required: true
+        name: X-AlfaID-Authorization
+        schema:
+          type: string
+          description: Bearer токен доступа, проставленный api-gateway
+      - in: header
+        required: false
+        name: X-Cus
+        schema:
+          type: string
+          description: cus
+      - in: header
+        required: false
+        name: X-Acus
+        schema:
+          type: string
+          description: acus
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Идентификатор сертификата
+        example: 62552f2457595f1652c4b179
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestReissueRSACertificate'
+      tags:
+      - SignatureV3
+      responses:
+        200:
+          description: Успешный результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseRsaCertificate'
+          headers:
+            x-traceid:
+              schema:
+                type: string
+              description: Идентификатор трассировки запроса
+              example: a57610880b621435
+        400:
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        401:
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        403:
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+        404:
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        429:
+          description: Cлишком много запросов в заданный период времени
+        500:
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+        503:
+          description: Сервер временно недоступен
+  /jp/v3/signature/sign-settings:
+    put:
+      summary: Заявка на изменение текущего способа подписи
+      operationId: changeSignMethod
+      parameters:
+      - in: header
+        required: true
+        name: X-AlfaID-Authorization
+        schema:
+          type: string
+          description: Bearer токен доступа, проставленный api-gateway
+      - in: header
+        required: false
+        name: X-Cus
+        schema:
+          type: string
+          description: cus
+      - in: header
+        required: false
+        name: X-Acus
+        schema:
+          type: string
+          description: acus
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignSettings'
+      tags:
+      - SignatureV3
+      responses:
+        '200':
+          description: Успешный результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseRsaCertificate'
+        '400':
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        '401':
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        '403':
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+        '404':
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        '429':
+          description: Cлишком много запросов в заданный период времени
+        '500':
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+        '503':
+          description: Сервер временно недоступен
+  /jp/v3/signature/powers-of-attorney/requests:
+    post:
+      tags:
+      - POA-V3
+      operationId: postPoaRequests
+      summary: Регистрация МЧД в банке
+      parameters:
+      - in: header
+        name: X-Client-IP
+        description: IP-адрес клиента, который отправил запрос
+        required: false
+        schema:
+          type: string
+        example: 192.168.1.1
+      - in: header
+        name: X-Cus
+        description: Уникальный идентификатор организации (ЮЛ)
+        required: false
+        schema:
+          type: string
+        example: UBM600
+      - in: header
+        name: X-Acus
+        description: Уникальный идентификатор УЛ ЮЛ
+        required: false
+        schema:
+          type: string
+        example: XBI97G
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterPoaRequest'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterPoaResponse'
+        '400':
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+              example:
+                error: invalid_request
+                error_description: 'Request is missing a required parameter: poaNumber'
+        '401':
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+              example:
+                error: invalid_token
+                error_description: The access token provided is expired, revoked, malformed, or invalid for other reasons
+        '403':
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+              example:
+                error: insufficient_scope
+                error_description: The request requires higher privileges than provided by the access token
+        '415':
+          description: Неподдерживаемый тип данных
+        '500':
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+              example:
+                error: internal_error
+                error_description: Internal server error
+        '503':
+          description: Сервер временно недоступен
+  /jp/v3/signature/powers-of-attorney/requests/{id}/status:
+    get:
+      tags:
+      - POA-V3
+      operationId: getPoaRequestsStatus
+      summary: Получение статуса регистрации МЧД
+      parameters:
+      - name: id
+        in: path
+        description: Идентификатор запроса в системе МЧД
+        required: true
+        schema:
+          type: string
+        example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+      - in: header
+        name: X-Client-IP
+        description: IP-адрес клиента, который отправил запрос
+        required: false
+        schema:
+          type: string
+        example: 192.168.1.1
+      - in: header
+        name: X-Cus
+        description: Уникальный идентификатор организации (ЮЛ)
+        required: false
+        schema:
+          type: string
+        example: UBM600
+      - in: header
+        name: X-Acus
+        description: Уникальный идентификатор УЛ ЮЛ
+        required: false
+        schema:
+          type: string
+        example: XBI97G
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPoaStatus'
+        '400':
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+              example:
+                error: invalid_request
+                error_description: Parameter 'X-Sub' is not valid, Required request header 'X-Sub' for method parameter type String is not present
+        '401':
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+              example:
+                error: invalid_token
+                error_description: The access token provided is expired, revoked, malformed, or invalid for other reasons
+        '403':
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+              example:
+                error: insufficient_scope
+                error_description: The request requires higher privileges than provided by the access token
+        '415':
+          description: Неподдерживаемый тип данных
+        '500':
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+              example:
+                error: internal_error
+                error_description: Internal server error
+        '503':
+          description: Сервер временно недоступен
+  /jp/v3/signature/powers-of-attorney/requests/{id}:
+    get:
+      tags:
+      - POA-V3
+      summary: Скачивание файла машиночитаемой доверенности
+      operationId: getPoaRequestsDownload
+      parameters:
+      - name: id
+        in: path
+        description: Идентификатор запроса в системе МЧД
+        required: true
+        schema:
+          type: string
+        example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+      - name: Accept
+        in: header
+        description: Тип контента
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: X-Client-IP
+        description: IP-адрес клиента, который отправил запрос
+        required: false
+        schema:
+          type: string
+        example: 192.168.1.1
+      - in: header
+        name: X-Cus
+        description: Уникальный идентификатор организации (ЮЛ)
+        required: false
+        schema:
+          type: string
+        example: UBM600
+      - in: header
+        name: X-Acus
+        description: Уникальный идентификатор УЛ ЮЛ
+        required: false
+        schema:
+          type: string
+        example: XBI97G
+      responses:
+        200:
+          description: OK
+          content:
+            application/pdf:
+              schema:
+                $ref: '#/components/schemas/PowerOfAttorneyDocument'
+            application/zip:
+              schema:
+                $ref: '#/components/schemas/PowerOfAttorneyDocument'
+            application/x-zip-compressed:
+              schema:
+                $ref: '#/components/schemas/PowerOfAttorneyDocument'
+          headers:
+            Content-Type:
+              required: true
+              schema:
+                type: string
+                example: application/pdf
+            Content-Disposition:
+              required: false
+              schema:
+                type: string
+                example: attachment; filename=poa-e386c9e2-b37b-484d-a691-38a74e8d3fbf.pdf
+        400:
+          description: Неверные входные параметры запроса
+        401:
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+        403:
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+        415:
+          description: Неподдерживаемый тип данных
+        500:
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+        503:
+          description: Сервер временно недоступен
+  /jp/v3/signature/qes/requests:
+    post:
+      summary: Создание заявки на подключение КЭП
+      operationId: createQESRequest
+      tags:
+      - QES-V3
+      parameters:
+      - in: header
+        name: X-Client-IP
+        description: IP-адрес клиента, который отправил запрос
+        required: false
+        schema:
+          type: string
+        example: 192.168.1.1
+      - in: header
+        name: X-Cus
+        description: Уникальный идентификатор организации (ЮЛ)
+        required: false
+        schema:
+          type: string
+        example: UBM600
+      - in: header
+        name: X-Acus
+        description: Уникальный идентификатор УЛ ЮЛ
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Успешный результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnableQesResponse'
+        '400':
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        '401':
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        '403':
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+        '415':
+          description: Неподдерживаемый тип данных
+        '404':
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        '429':
+          description: Cлишком много запросов в заданный период времени
+        '500':
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+        '503':
+          description: Сервер временно недоступен
+  /jp/v3/signature/qes/requests/{id}:
+    post:
+      tags:
+      - QES-V3
+      summary: Отправка заявки на подключение КЭП на подпись
+      operationId: qesRequestsPost
+      parameters:
+      - name: id
+        in: path
+        description: Идентификатор заявки
+        required: true
+        schema:
+          type: string
+        example: 63160a37e27edd0c316567a6
+      - in: header
+        name: X-Client-IP
+        description: IP-адрес клиента, который отправил запрос
+        required: false
+        schema:
+          type: string
+        example: 192.168.1.1
+      - in: header
+        name: X-Cus
+        description: Уникальный идентификатор организации (ЮЛ)
+        required: false
+        schema:
+          type: string
+        example: UBM600
+      - in: header
+        name: X-Acus
+        description: Уникальный идентификатор УЛ ЮЛ
+        required: false
+        schema:
+          type: string
+        example: XBI97G
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendRequestQes'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendRequestQesResponse'
+        '400':
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+              example:
+                error: invalid_request
+                error_description: Parameter 'X-Sub' is not valid, Required request header 'X-Sub' for method parameter type String is not present
+        '401':
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+              example:
+                error: invalid_token
+                error_description: The access token provided is expired, revoked, malformed, or invalid for other reasons
+        '403':
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+              example:
+                error: insufficient_scope
+                error_description: The request requires higher privileges than provided by the access token
+        '415':
+          description: Неподдерживаемый тип данных
+        '404':
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        '429':
+          description: Cлишком много запросов в заданный период времени
+        '500':
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+              example:
+                error: internal_error
+                error_description: Internal server error
+        '503':
+          description: Сервер временно недоступен
+    patch:
+      tags:
+      - QES-V3
+      summary: Подписание заявки с помощью КЭП
+      operationId: qesRequestsPatch
+      parameters:
+      - name: id
+        in: path
+        description: Идентификатор заявки
+        required: true
+        schema:
+          type: string
+        example: 63160a37e27edd0c316567a6
+      - in: header
+        name: X-Client-IP
+        description: IP-адрес клиента, который отправил запрос
+        required: false
+        schema:
+          type: string
+        example: 192.168.1.1
+      - in: header
+        name: X-Cus
+        description: Уникальный идентификатор организации (ЮЛ)
+        required: false
+        schema:
+          type: string
+        example: UBM600
+      - in: header
+        name: X-Acus
+        description: Уникальный идентификатор УЛ ЮЛ
+        required: false
+        schema:
+          type: string
+        example: XBI97G
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignRequestQes'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignRequestQesResponse'
+        '400':
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+              example:
+                error: invalid_request
+                error_description: Parameter 'X-Sub' is not valid, Required request header 'X-Sub' for method parameter type String is not present
+        '401':
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+              example:
+                error: invalid_token
+                error_description: The access token provided is expired, revoked, malformed, or invalid for other reasons
+        '403':
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+              example:
+                error: insufficient_scope
+                error_description: The request requires higher privileges than provided by the access token
+        '415':
+          description: Неподдерживаемый тип данных
+        '404':
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        '429':
+          description: Cлишком много запросов в заданный период времени
+        '500':
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+              example:
+                error: internal_error
+                error_description: Internal server error
+        '503':
+          description: Сервер временно недоступен
+components:
+  schemas:
+    ResponseDNcnf:
+      type: string
+      description: Данные DN (Distinguished Name) пользователя в формате .cnf
+    PowerOfAttorneyDocument:
+      type: string
+      format: binary
+      description: Документ доверенности в бинарном формате
+    EnableQesResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Идентификатор заявки
+          example: 63160a37e27edd0c316567a6
+        type:
+          type: string
+          description: Тип заявки
+          example: enableQesSignMethodRequest
+        status:
+          type: string
+          description: Статус заявки
+          example: CREATED
+        createdBy:
+          type: string
+          description: ФИО создателя заявки
+          example: Дмитриев Денис Михайлович
+        createdAt:
+          type: string
+          format: date-time
+          description: Дата создания заявки
+          example: '2022-09-05T14:39:51.197Z'
+    RequestIssueRSACertificate:
+      description: Запрос на создание заявки на выпуск/перевыпуск RSA-сертификата
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+      type: object
+      required:
+      - pkcs10Content
+      properties:
+        tokenSerialNumber:
+          description: Серийный номер USB ключа
+          type: string
+          example: 00a81050
+        pkcs10Content:
+          description: Контект PKCS10
+          type: string
+          example: '-----BEGIN CERTIFICATE REQUEST-----\nMIIC3zCCAccCAQAwgZkxCzAJBgNVBAYTAlJVMRUwEwYDVQQEDAzQldGE0LjQvNC+\n0LIxFTATBgNVBCoMDNCk0LjQu9C40L/QvzE1MDMGA1UEAwws0JXRhNC40LzQvtCy\nINCk0LjQu9C40L/QvyDQkNGA0YXQuNC/0L7QstC40YcxJTAjBgkqhkiG9w0BCQEW\nFlVzZXIxNzZAcG9jaHRvY2hrYS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw\nggEKAoIBAQCibtSH2YP4oxFVgiAvLdtAZpnVDWNZNgAnCEQwNbPIQpavY3OeoI/a\nNchXgwTn2u9yejOCEu8Q+x++RQDXVeSvPciVIzfDJ5Ex2MPzJySro3iPjT+HCITu\n/sddVv3Lnz5koNzOA5RihTQ+toHsvNgI2/aLITBXVM4JtkQ0ezqNsXDFqVr0Xws/\n3xj33BhhDXDrC24ivnDspYwbjevbrc5/L/mFhkHYX5pCJoxcNd5T8JrVUC1qkBIm\nnFA0C5dMAC6qWlglIG7BAkqc4Z/bu0WxEqsi0353BlnD9A/3k4euY5vmVRn2m/6E\ns89K5XrnqRYap5/o6zkQs64n7HLDQ8F3AgMBAAGgADANBgkqhkiG9w0BAQsFAAOC\nAQEASXlft+61y8TeYhXZQbuLdORjXk4yiI4OAecItHg1GcBiscA2OWObXRalLHlP\nsGc/fp5y82wZ24YxgHbyyRGf1DU374Iz5YqEl9IJ6WPsx9j/BpUo8cNPLaBOID2P\nKUHOMNbmy2bpPAi9AiaRXef9Tz3lIlzjW+oBWDoKtLkVmGDY+aTmwm0ASdqzuc/Q\ndFEgJ1JrZtwjDxwDrtAt+FXbwvadWMo9uhKW9DAaPm9XOte8z/ACoNlQ6G6KGPT3\nYQtk+dIjzeB3po9wZklg19xV17H9WCo+p3K85ANyFjkeePB49DIfwv+04a8kOsaY\nG0ocUXmTIgNeVKyDFtFoUF+qeg==\n\n-----END
+            CERTIFICATE REQUEST-----'
+    RequestReissueRSACertificate:
+      description: Запрос на создание заявки на выпуск/перевыпуск RSA-сертификата
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+      type: object
+      required:
+      - pkcs10Content
+      properties:
+        tokenSerialNumber:
+          description: Серийный номер USB ключа
+          type: string
+          example: 00a81050
+        pkcs10Content:
+          description: Контект PKCS10
+          type: string
+          example: '-----BEGIN CERTIFICATE REQUEST-----\nMIIC3zCCAccCAQAwgZkxCzAJBgNVBAYTAlJVMRUwEwYDVQQEDAzQldGE0LjQvNC+\n0LIxFTATBgNVBCoMDNCk0LjQu9C40L/QvzE1MDMGA1UEAwws0JXRhNC40LzQvtCy\nINCk0LjQu9C40L/QvyDQkNGA0YXQuNC/0L7QstC40YcxJTAjBgkqhkiG9w0BCQEW\nFlVzZXIxNzZAcG9jaHRvY2hrYS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw\nggEKAoIBAQCibtSH2YP4oxFVgiAvLdtAZpnVDWNZNgAnCEQwNbPIQpavY3OeoI/a\nNchXgwTn2u9yejOCEu8Q+x++RQDXVeSvPciVIzfDJ5Ex2MPzJySro3iPjT+HCITu\n/sddVv3Lnz5koNzOA5RihTQ+toHsvNgI2/aLITBXVM4JtkQ0ezqNsXDFqVr0Xws/\n3xj33BhhDXDrC24ivnDspYwbjevbrc5/L/mFhkHYX5pCJoxcNd5T8JrVUC1qkBIm\nnFA0C5dMAC6qWlglIG7BAkqc4Z/bu0WxEqsi0353BlnD9A/3k4euY5vmVRn2m/6E\ns89K5XrnqRYap5/o6zkQs64n7HLDQ8F3AgMBAAGgADANBgkqhkiG9w0BAQsFAAOC\nAQEASXlft+61y8TeYhXZQbuLdORjXk4yiI4OAecItHg1GcBiscA2OWObXRalLHlP\nsGc/fp5y82wZ24YxgHbyyRGf1DU374Iz5YqEl9IJ6WPsx9j/BpUo8cNPLaBOID2P\nKUHOMNbmy2bpPAi9AiaRXef9Tz3lIlzjW+oBWDoKtLkVmGDY+aTmwm0ASdqzuc/Q\ndFEgJ1JrZtwjDxwDrtAt+FXbwvadWMo9uhKW9DAaPm9XOte8z/ACoNlQ6G6KGPT3\nYQtk+dIjzeB3po9wZklg19xV17H9WCo+p3K85ANyFjkeePB49DIfwv+04a8kOsaY\nG0ocUXmTIgNeVKyDFtFoUF+qeg==\n\n-----END
+            CERTIFICATE REQUEST-----'
+        revokeCertificates:
+          description: Список сертификатов, которые клиент хочет отозвать.
+          type: array
+          items:
+            type: string
+    ResponseRsaCertificate:
+      description: Ответ на создание заявки на выпуск RSA-сертификата
+      type: object
+      properties:
+        id:
+          description: Идентификатор заявки
+          type: string
+          example: 62550ef50163785f2222707e
+        type:
+          description: Тип заявки
+          type: string
+          enum:
+          - issueRsaCertificate
+          - activationRsaCertificate
+          - currentSignTypeRsa
+          - currentSignTypeQes
+          - revocationRsaCertificate
+          - switchRsaCertificate
+          - reissueRsaCertificate
+        status:
+          description: Статус заявки
+          type: string
+          example: CREATED
+        creator:
+          description: ФИО создателя заявки
+          type: string
+          example: Ефимов Филипп Архипович
+        createdDate:
+          description: Дата создания заявки
+          type: string
+          format: date-time
+    RequestPostOperations:
+      description: Запрос отправки на подпись
+      type: object
+      required:
+      - requestType
+      properties:
+        requestType:
+          description: Тип заявки
+          type: string
+          enum:
+          - issueRsaCertificate
+          - activationRsaCertificate
+          - currentSignTypeRsa
+          - currentSignTypeQes
+          - revocationRsaCertificate
+          - switchRsaCertificate
+          - reissueRsaCertificate
+    ResponsePostOperations:
+      description: Ответ отправки заявки на подпись
+      type: object
+      properties:
+        id:
+          description: Идентификатор операции
+          type: string
+          example: 2629a563-3c82-44a2-a4f5-67b79e44cbea
+        requestId:
+          description: Идентификатор заявки
+          type: string
+          example: 62550ef50163785f2222707e
+        requestType:
+          description: Тип заявки
+          type: string
+          enum:
+          - issueRsaCertificate
+          - activationRsaCertificate
+          - currentSignTypeRsa
+          - currentSignTypeQes
+          - revocationRsaCertificate
+          - switchRsaCertificate
+          - reissueRsaCertificate
+    RequestPutOperations:
+      description: Запрос на подписание заявки
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          description: Одноразовый код
+          type: string
+          example: 11111111
+          pattern: ^(?!\s*$).+
+    ResponsePutOperations:
+      description: Ответ на подписание заявки
+      type: object
+      properties:
+        id:
+          description: Идентификатор операции
+          type: string
+          example: 2629a563-3c82-44a2-a4f5-67b79e44cbea
+        isSigned:
+          description: Признак достаточности подписей под документом
+          type: boolean
+        requestId:
+          description: Идентификатор заявки
+          type: string
+          example: 62550ef50163785f2222707e
+        requestType:
+          description: Тип заявки
+          type: string
+          enum:
+          - issueRsaCertificate
+          - activationRsaCertificate
+          - currentSignTypeRsa
+          - revocationRsaCertificate
+          - switchRsaCertificate
+          - reissueRsaCertificate
+    RequestData:
+      description: Данные заявки
+      type: object
+      properties:
+        requestIssueRsaCertificate:
+          description: Заявка на выпуск RSA-сертификата
+          type: array
+          items:
+            $ref: '#/components/schemas/DataRequestIssueRsaCertificate'
+        requestActivateRsaCertificate:
+          description: Заявка на активацию RSA-сертификата
+          type: array
+          items:
+            $ref: '#/components/schemas/DataRequestActivateRsaCertificate'
+        requestCurrentSignTypeRsa:
+          description: Заявка на изменение основного способа
+          type: array
+          items:
+            $ref: '#/components/schemas/DataRequestCurrentSignTypeRsa'
+        requestCurrentSignTypeQes:
+          description: Заявка на изменение основного способа
+          type: array
+          items:
+            $ref: '#/components/schemas/DataRequestCurrentSignTypeQes'
+        requestSwitchRsaCertificate:
+          description: Заявка на изменение основного способа
+          type: array
+          items:
+            $ref: '#/components/schemas/DataRequestSwitchRsaCertificate'
+        requestRevocationRsaCertificate:
+          description: Заявка на изменение основного способа
+          type: array
+          items:
+            $ref: '#/components/schemas/DataRequestRevocationRsaCertificate'
+        requestReissueRsaCertificate:
+          description: Заявка на изменение основного способа
+          type: array
+          items:
+            $ref: '#/components/schemas/DataRequestReissueRsaCertificate'
+        requestEnableSignTypeQes:
+          description: Заявка на активацию QES-сертификата
+          type: array
+          items:
+            $ref: '#/components/schemas/DataRequestEnableSignTypeQes'
+    DataRequestIssueRsaCertificate:
+      description: Данные заявки на выпуск RSA-сертификата
+      type: object
+      properties:
+        id:
+          description: Идентификатор заявки
+          type: string
+          example: 62550ef50163785f2222707e
+        type:
+          description: Тип заявки
+          type: string
+          enum:
+          - issueRsaCertificate
+        status:
+          description: Статус заявки
+          type: string
+          example: FINISHED
+        creator:
+          description: ФИО создателя заявки
+          type: string
+          example: Сафонов Тихон Ерофеевич
+        createdDate:
+          description: Дата создания заявки
+          type: string
+          format: date-time
+        finishedDate:
+          description: Дата завершения заявки
+          type: string
+          format: date-time
+        results:
+          $ref: '#/components/schemas/ResultsRequestIssueRsaCertificate'
+    DataRequestCurrentSignTypeRsa:
+      description: Данные заявки на выпуск RSA-сертификата
+      type: object
+      properties:
+        id:
+          description: Идентификатор заявки
+          type: string
+          example: 62550ef50163785f2222707e
+        type:
+          description: Тип заявки
+          type: string
+          enum:
+          - currentSignTypeRsa
+        status:
+          description: Статус заявки
+          type: string
+          example: FINISHED
+        creator:
+          description: ФИО создателя заявки
+          type: string
+          example: Сафонов Тихон Ерофеевич
+        createdDate:
+          description: Дата создания заявки
+          type: string
+          format: date-time
+        finishedDate:
+          description: Дата завершения заявки
+          type: string
+          format: date-time
+    DataRequestCurrentSignTypeQes:
+      description: Данные заявки на выпуск RSA-сертификата
+      type: object
+      properties:
+        id:
+          description: Идентификатор заявки
+          type: string
+          example: 62550ef50163785f2222707e
+        type:
+          description: Тип заявки
+          type: string
+          enum:
+          - currentSignTypeQes
+        status:
+          description: Статус заявки
+          type: string
+          example: FINISHED
+        creator:
+          description: ФИО создателя заявки
+          type: string
+          example: Сафонов Тихон Ерофеевич
+        createdDate:
+          description: Дата создания заявки
+          type: string
+          format: date-time
+        finishedDate:
+          description: Дата завершения заявки
+          type: string
+          format: date-time
+    DataRequestActivateRsaCertificate:
+      description: Данные заявки на активацию RSA-сертификата/на изменение основного способа подписи
+      type: object
+      properties:
+        id:
+          description: Идентификатор заявки
+          type: string
+          example: 62550ef50163785f2222707e
+        type:
+          description: Тип заявки
+          type: string
+          enum:
+          - activationRsaCertificate
+        status:
+          description: Статус заявки
+          type: string
+          example: FINISHED
+        creator:
+          description: ФИО создателя заявки
+          type: string
+          example: Сафонов Тихон Ерофеевич
+        createdDate:
+          description: Дата создания заявки
+          type: string
+          format: date-time
+        finishedDate:
+          description: Дата завершения заявки
+          type: string
+          format: date-time
+        results:
+          $ref: '#/components/schemas/ResultsRequestActivateRsaCertificate'
+    DataRequestSwitchRsaCertificate:
+      description: Данные заявки на активацию RSA-сертификата/на изменение основного способа подписи
+      type: object
+      properties:
+        id:
+          description: Идентификатор заявки
+          type: string
+          example: 62550ef50163785f2222707e
+        type:
+          description: Тип заявки
+          type: string
+          enum:
+          - switchRsaCertificate
+        status:
+          description: Статус заявки
+          type: string
+          example: FINISHED
+        creator:
+          description: ФИО создателя заявки
+          type: string
+          example: Сафонов Тихон Ерофеевич
+        createdDate:
+          description: Дата создания заявки
+          type: string
+          format: date-time
+        finishedDate:
+          description: Дата завершения заявки
+          type: string
+          format: date-time
+    DataRequestRevocationRsaCertificate:
+      description: Данные заявки на активацию RSA-сертификата/на изменение основного способа подписи
+      type: object
+      properties:
+        id:
+          description: Идентификатор заявки
+          type: string
+          example: 62550ef50163785f2222707e
+        type:
+          description: Тип заявки
+          type: string
+          enum:
+          - revocationRsaCertificate
+        status:
+          description: Статус заявки
+          type: string
+          example: FINISHED
+        creator:
+          description: ФИО создателя заявки
+          type: string
+          example: Сафонов Тихон Ерофеевич
+        createdDate:
+          description: Дата создания заявки
+          type: string
+          format: date-time
+        finishedDate:
+          description: Дата завершения заявки
+          type: string
+          format: date-time
+    DataRequestReissueRsaCertificate:
+      description: Данные заявки на активацию RSA-сертификата/на изменение основного способа подписи
+      type: object
+      properties:
+        id:
+          description: Идентификатор заявки
+          type: string
+          example: 62550ef50163785f2222707e
+        type:
+          description: Тип заявки
+          type: string
+          enum:
+          - reissueRsaCertificate
+        status:
+          description: Статус заявки
+          type: string
+          example: FINISHED
+        creator:
+          description: ФИО создателя заявки
+          type: string
+          example: Сафонов Тихон Ерофеевич
+        createdDate:
+          description: Дата создания заявки
+          type: string
+          format: date-time
+        finishedDate:
+          description: Дата завершения заявки
+          type: string
+          format: date-time
+        results:
+          $ref: '#/components/schemas/ResultsRequestIssueRsaCertificate'
+    DataRequestEnableSignTypeQes:
+      description: Данные заявки на активацию RSA-сертификата/на изменение основного способа подписи
+      type: object
+      properties:
+        id:
+          description: Идентификатор заявки
+          type: string
+          example: 62550ef50163785f2222707e
+        type:
+          description: Тип заявки
+          type: string
+          enum:
+          - enableQesSignType
+        status:
+          description: Статус заявки
+          type: string
+          example: FINISHED
+        creator:
+          description: ФИО создателя заявки
+          type: string
+          example: Сафонов Тихон Ерофеевич
+        createdDate:
+          description: Дата создания заявки
+          type: string
+          format: date-time
+        finishedDate:
+          description: Дата завершения заявки
+          type: string
+          format: date-time
+        results:
+          $ref: '#/components/schemas/ResultsRequestActivateQesCertificate'
+    ResultsRequestIssueRsaCertificate:
+      description: Результат выполнения заявки на выпуск RSA-сертификата
+      type: object
+      properties:
+        owner:
+          description: Владелец сертфиката
+          type: string
+          example: Ефимов Филипп Архипович
+        notAfter:
+          description: Дата истечения срока действия сертификата (UTC)
+          type: string
+          format: date-time
+        notBefore:
+          description: Дата выпуска сертификата в УЦ (UTC)
+          type: string
+          format: date-time
+        serialNumber:
+          description: Серийный номер сертификата
+          type: string
+          example: 6100035c3cff88cd00f01d734a000100035c3c
+        sendDate:
+          description: Дата отправки
+          type: string
+          format: date-time
+        executionDate:
+          description: Дата исполнения
+          type: string
+          format: date-time
+        thumbprint:
+          description: Отпечаток сертификата
+          type: string
+          example: f738ec7266d1e3f6d6d4557bcbbc43ec188db3cf
+        dn:
+          $ref: '#/components/schemas/Dn'
+        issuedCertificateId:
+          description: Идентификатор сертификата
+          type: string
+          example: 62552f2457595f1652c4b179
+        caRequestId:
+          description: Идентификатор запроса на отзыв в УЦ
+          type: number
+          example: 220220
+    ResultsRequestActivateRsaCertificate:
+      description: Результат выполнения заявки на активацию RSA-сертификата
+      type: object
+      properties:
+        userSignMethodType:
+          description: Тип метода подписания
+          type: string
+          example: RSA
+        userSignMethodStatus:
+          description: Статус метода подписания
+          type: string
+          example: ENABLED
+    ResultsRequestActivateQesCertificate:
+      description: Результат выполнения заявки на активацию RSA-сертификата
+      type: object
+      properties:
+        userSignMethodType:
+          description: Тип метода подписания
+          type: string
+          example: QES
+        userSignMethodStatus:
+          description: Статус метода подписания
+          type: string
+          example: ENABLED
+    Dn:
+      description: Данные о владельце сертификата
+      type: object
+      properties:
+        firstName:
+          description: Имя
+          type: string
+          example: Филипп
+        lastName:
+          description: Фамилия
+          type: string
+          example: Ефимов
+        fullName:
+          description: Полное ФИО
+          type: string
+          example: Ефимов Филипп Архипович
+        country:
+          description: Страна
+          type: string
+          example: RU
+        email:
+          description: Электронная почта
+          type: string
+          example: User176@pochtochka.com
+    RsaCertificates:
+      description: Rsa-сертификаты
+      type: object
+      properties:
+        certificates:
+          items:
+            $ref: '#/components/schemas/DataRSACertificate'
+        actions:
+          $ref: '#/components/schemas/ActionsRSACertificate'
+    RSACertificate:
+      description: RSA-сертификат
+      type: object
+      properties:
+        content:
+          description: Содержимое сертификата
+          type: string
+          example: MIIFzDCCBICgAwIBAgITYQADXDz/iM0A8B1zSgABAANcPDBBBgkqhkiG9w0BAQow\r\nNKAPMA0GCWCGSAFlAwQCAwUAoRwwGgYJKoZIhvcNAQEIMA0GCWCGSAFlAwQCAwUA\r\nogMCAUAwWzELMAkGA1UEBhMCUlUxEjAQBgNVBAoTCUFsZmEtQmFuazELMAkGA1UE\r\nCxMCSVQxKzApBgNVBAMTIkFsZmEtQmFuayBJc3N1aW5nIFN1Ym9yZGluYXRlIENB\r\nIDEwHhcNMjIwNDEyMDczOTI3WhcNMjQwNDEyMDc0OTI3WjCBmTEVMBMGA1UEKgwM\r\n0KTQuNC70LjQv9C/MRUwEwYDVQQEDAzQldGE0LjQvNC+0LIxCzAJBgNVBAYTAlJV\r\nMTUwMwYDVQQDDCzQldGE0LjQvNC+0LIg0KTQuNC70LjQv9C/INCQ0YDRhdC40L/Q\r\nvtCy0LjRhzElMCMGCSqGSIb3DQEJARYWVXNlcjE3NkBwb2NodG9jaGthLmNvbTCC\r\nASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKJu1IfZg/ijEVWCIC8t20Bm\r\nmdUNY1k2ACcIRDA1s8hClq9jc56gj9o1yFeDBOfa73J6M4IS7xD7H75FANdV5K89\r\nyJUjN8MnkTHYw/MnJKujeI+NP4cIhO7+x11W/cufPmSg3M4DlGKFND62gey82Ajb\r\n9oshMFdUzgm2RDR7Oo2xcMWpWvRfCz/fGPfcGGENcOsLbiK+cOyljBuN69utzn8v\r\n+YWGQdhfmkImjFw13lPwmtVQLWqQEiacUDQLl0wALqpaWCUgbsECSpzhn9u7RbES\r\nqyLTfncGWcP0D/eTh65jm+ZVGfab/oSzz0rleuepFhqnn+jrORCzrifscsNDwXcC\r\nAwEAAaOCAeAwggHcMB0GA1UdDgQWBBTbfzj1CFqgIOUtAqiQPszkaMdawzAfBgNV\r\nHSMEGDAWgBTJFzMem6mUoJYYS25xTIHb6XP+ZTCBuwYDVR0fBIGzMIGwMIGtoIGq\r\noIGnhjlodHRwczovL3Rlc3RqbWIuYWxmYWJhbmsucnUvZGlzdHJwb2ludC9BbGZh\r\nLUJhbmtfU0NBMS5jcmyGMGh0dHA6Ly92bGt3czY6OTA4MS9kaXN0cnBvaW50L0Fs\r\nZmEtQmFua19TQ0ExLmNybIY4aHR0cDovL3Rlc3RqbWIuYWxmYWJhbmsucnUvZGlz\r\ndHJwb2ludC9BbGZhLUJhbmtfU0NBMS5jcmwwgdsGCCsGAQUFBwEBBIHOMIHLMEUG\r\nCCsGAQUFBzAChjlodHRwczovL3Rlc3RqbWIuYWxmYWJhbmsucnUvZGlzdHJwb2lu\r\ndC9BbGZhLUJhbmtfU0NBMS5jcnQwPAYIKwYBBQUHMAKGMGh0dHA6Ly92bGt3czY6\r\nOTA4MS9kaXN0cnBvaW50L0FsZmEtQmFua19TQ0ExLmNydDBEBggrBgEFBQcwAoY4\r\naHR0cDovL3Rlc3RqbWIuYWxmYWJhbmsucnUvZGlzdHJwb2ludC9BbGZhLUJhbmtf\r\nU0NBMS5jcnQwQQYJKoZIhvcNAQEKMDSgDzANBglghkgBZQMEAgMFAKEcMBoGCSqG\r\nSIb3DQEBCDANBglghkgBZQMEAgMFAKIDAgFAA4IBAQA7qvezzVUukOu6PusP9Ulr\r\n801fn7lJlEG4suRmmqWTaOUkkwfoOV+AjyN4K9LtF8JF4BE7ovoz+BAXNl6IIaxB\r\nLup0lnIf2UUXvg8XoAZ9SCNnDdmHI05NrONrRg+7DyCv8FpyudFTkFhmkaMojuUH\r\nZN8V27KlW3Q0ijDrOyn9/rIqAIA5JVbvUfRIMR8DXpZsIkf0HAnZN4Zswn0U5U0K\r\n46Ewva4fWvF7u3638Hkv8u5XNU6E1eaJTWxVM+4J8HdnnTDHSDO27VFh9SxCP8E7\r\ncvQhIhfOXz2qESMSnC2bmlGm863E7fMGxNIpikE2D5LO8Z0KiI0qrhZA7p4tye2c\r\n
+        certificate:
+          $ref: '#/components/schemas/DataRSACertificate'
+    DataRSACertificate:
+      description: Данные сертификата
+      type: object
+      properties:
+        id:
+          description: Идентификатор сертификата
+          type: string
+          example: 62552f2457595f1652c4b179
+        serialNumber:
+          description: Серийный номер сертификата
+          type: string
+          example: 6100035c3cff88cd00f01d734a000100035c3c
+        tokenKeyId:
+          description: Идентификатор закрытого ключа на токене
+          type: string
+          example: AlboKey_{BBB5EB5D-2B38-488B-B9E2-5E336DDE3DE9}
+        tokenSerialNumber:
+          description: Серийный номер токена на который загружен сертификат
+          type: string
+          example: 00a81050
+        status:
+          description: Статус сертификата
+          type: string
+          example: CERT_VALID
+        notBefore:
+          description: Дата начала действия сертификата
+          type: string
+          format: date-time
+        notAfter:
+          description: Дата завершения действия сертификата
+          type: string
+          format: date-time
+        owner:
+          description: ФИО владельца сертификата
+          type: string
+          example: Ефимов Филипп Архипович
+        uploadOnToken:
+          description: Признак загрузки сертификата на токен
+          type: boolean
+        expireSoon:
+          description: Признак необходимости перевыпуска сертификата, по причине завершения действия
+          type: boolean
+        actions:
+          $ref: '#/components/schemas/ActionsRSACertificate'
+    ActionsRSACertificate:
+      description: Список всех возможных действий над сертификатом
+      type: array
+      items:
+        $ref: '#/components/schemas/RsaCertificateAction'
+    RsaCertificateAction:
+      type: object
+      properties:
+        type:
+          description: Тип действия
+          type: string
+          example: UPLOAD_ON_TOKEN
+        available:
+          description: Признак доступности действия
+          type: boolean
+    SignSettings:
+      description: Тип основной подписи
+      type: object
+      required:
+      - currentSignType
+      properties:
+        currentSignType:
+          description: Тип основной подписи
+          type: string
+          example: rsa-certificates
+          enum:
+          - rsa-certificates
+          - qes
+    ResponseDN:
+      description: Данные DN(Distinguished Name)
+      type: object
+      properties:
+        dn:
+          description: Данные DN(Distinguished Name)
+          type: string
+          example: emailAddress=teterkina.natalya@gmail.com, CN=Тетеркина Наталья Геннадьевна, C=RU, SN=Тетеркина, GN=Наталья
+    ResponseSignMethods:
+      type: array
+      items:
+        $ref: '#/components/schemas/SignMethodsChannel'
+    SignMethodsChannel:
+      type: object
+      properties:
+        channel:
+          type: string
+          description: Канал
+        signMethods:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignMethod'
+    SignMethod:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Способ подписи
+          enum:
+          - SMS
+          - RSA
+          - QES
+          - PAYCONTROL
+          - MYDSS
+          - GK_NES
+          - GK_QES
+        status:
+          type: string
+          description: Статус способа подписи
+        current:
+          type: boolean
+          description: Признак выбранного основным способом подписи
+        skipAddAllSignMethods:
+          type: boolean
+          description: Признак добавления дополнительных способов подписи
+        resourceGroup:
+          $ref: '#/components/schemas/SignResourceGroup'
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignMethodAction'
+    SignResourceGroup:
+      type: object
+      properties:
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignResource'
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignResourceGroupAction'
+    SignResource:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Идентификатор ресурса
+        type:
+          type: string
+          description: Тип ресурса
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignResourceAction'
+        used:
+          type: boolean
+          description: Признак, является ли ресурс используемым для подписания
+        phoneNumber:
+          type: string
+          description: Номер телефона
+        snilsNumber:
+          type: string
+          description: Номер СНИЛС
+        serialNumber:
+          type: string
+          description: Номер сертификата
+        tokenKeyId:
+          type: string
+          description: Идентификатор закрытого ключа
+        tokenSerialNumber:
+          type: string
+          description: Серийный номер USB-токена
+        status:
+          type: string
+          description: Текущий статус сертификата
+          enum:
+          - CERT_VALID
+          - CERT_REVOKED
+          - CERT_EXPIRED
+          - CERT_INVALID
+          - UNKNOWN
+        notBefore:
+          type: string
+          format: date-time
+          description: Дата выпуска сертификата
+        notAfter:
+          type: string
+          format: date-time
+          description: Дата истечения срока действия сертификата
+        owner:
+          type: string
+          description: Владелец сертификата
+        uploadOnToken:
+          type: boolean
+          description: Признак, загружен ли сертификат на USB-токен
+        expireSoon:
+          type: boolean
+          description: Признак необходимости перевыпуска сертификата
+    SignResourceAction:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Тип действия
+        available:
+          type: boolean
+          description: Признак доступности действия
+    SignResourceGroupAction:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Тип действия
+        available:
+          type: boolean
+          description: Признак использования действия
+    SignMethodAction:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Тип действия
+          enum:
+          - ENABLE
+          - SWITCH_RESOURCE
+          - SET_CURRENT
+          - DISABLE
+        available:
+          type: boolean
+          description: Признак доступности действия
+        code:
+          type: string
+          description: Код причины в случае недоступности действия
+    RegisterPoaRequest:
+      type: object
+      description: Данные для регистрации МЧД
+      required:
+      - poaNumber
+      - issuerInn
+      - confidantInn
+      properties:
+        poaNumber:
+          type: string
+          format: uuid
+          description: Номер доверенности
+          example: 8e08423a-bcc0-4fba-a791-9825cb1a7cb3
+        issuerInn:
+          type: string
+          pattern: ^((\d{10})|(\d{12}))$
+          description: ИНН доверителя
+          example: '4205335615'
+        confidantInn:
+          type: string
+          pattern: ^((\d{10})|(\d{12}))$
+          description: ИНН доверенного лица
+          example: '4205335615'
+    RegisterPoaResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Идентификатор запроса в системе МЧД
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+      required:
+      - id
+    GetPoaStatus:
+      type: object
+      description: Объект предоставляет статус скачивания полной версии машиночитаемой доверенности
+      properties:
+        status:
+          type: string
+          enum:
+          - COMPLETE
+          - PENDING
+          - FAILED
+          - TIMEOUT
+          description: "Статус машиночитаемой доверенности (МЧД). Принимает возможные значения:\n  * `COMPLETE` - Операция завершена;\n  * `PENDING`\
+            \ - Операция выполняется. Идет запрос данных с узла ФНС;\n  * `FAILED` - Ошибка;\n  * `TIMEOUT` - Превышен лимит ожидания\n"
+          example: COMPLETE
+      required:
+      - status
+    SendRequestQes:
+      type: object
+      required:
+      - type
+      properties:
+        type:
+          description: Тип заявки
+          type: string
+    SendRequestQesResponse:
+      type: object
+      required:
+      - id
+      - type
+      - content
+      properties:
+        id:
+          type: string
+          description: Идентификатор заявки
+          example: 63160a37e27edd0c316567a6
+        type:
+          description: Тип заявки
+          type: string
+          enum:
+          - enableQesSignType
+        content:
+          type: string
+          description: Документ на подпись в формате base64
+    SignRequestQes:
+      type: object
+      required:
+      - type
+      - signature
+      properties:
+        type:
+          description: Тип заявки
+          type: string
+        signature:
+          type: string
+          minLength: 1
+          description: Значение электронной подписи, закодированное в base64
+    SignRequestQesResponse:
+      type: object
+      required:
+      - id
+      - type
+      - isSigned
+      properties:
+        id:
+          type: string
+          description: Идентификатор заявки
+          example: 63160a37e27edd0c316567a6
+        type:
+          description: Тип заявки
+          type: string
+          enum:
+          - enableQesSignType
+        isSigned:
+          type: boolean
+          description: Признак достаточности подписей
+          example: true
+    RequestType:
+      type: string
+      description: "Тип заявки. Возможные значения:\n  * `enableQesSignType` - заявка на подключение способа подписи КЭП\n"
+      example: enableQesSignType
+    ErrorBadRequest:
+      description: Неверные входные параметры запроса
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          description: Код ошибки
+          type: string
+          example: invalid_request
+        error_description:
+          description: Сообщение об ошибке
+          type: string
+          example: Authorization header is not present in request headers
+    ErrorUnauthorized:
+      description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          description: Код ошибки
+          type: string
+          example: invalid_token
+        error_description:
+          description: Сообщение об ошибке
+          type: string
+          example: The access token provided is expired, revoked, malformed, or invalid for other reasons
+    ErrorScope:
+      description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          description: Код ошибки
+          type: string
+          example: insufficient_scope
+        error_description:
+          description: Сообщение об ошибке
+          type: string
+          example: The request requires higher privileges than provided by the access token
+    ErrorNotFound:
+      description: Эндпоинт не найден или неактивен
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          description: Код ошибки
+          type: string
+          example: unknown_route
+        error_description:
+          description: Сообщение об ошибке
+          type: string
+          example: Route is not found or not active
+    ErrorConflict:
+      description: Конфликт
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          description: Код ошибки
+          type: string
+          example: conflict
+        error_description:
+          description: Сообщение об ошибке
+          type: string
+          example: Request could not be processed because of conflict in the request
+    ErrorInternal:
+      description: Внутренняя ошибка сервиса при выполнении обработки запроса
+      x-class-extra-annotation: '@lombok.AllArgsConstructor'
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          description: Код ошибки
+          type: string
+          example: internal_error
+        error_description:
+          description: Сообщение об ошибке
+          type: string
+          example: Internal server error
