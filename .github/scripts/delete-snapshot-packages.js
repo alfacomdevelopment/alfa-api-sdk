@@ -42,6 +42,24 @@ module.exports = async ({ github, context, core }) => {
       continue;
     }
 
+    if (snapshotVersions.length === versions.length) {
+      core.info(`Package ${pkg.name}: all versions are SNAPSHOT; deleting package before republishing.`);
+      if (isOrg) {
+        await github.rest.packages.deletePackageForOrg({
+          org: owner,
+          package_type: "maven",
+          package_name: pkg.name,
+        });
+      } else {
+        await github.rest.packages.deletePackageForUser({
+          username: owner,
+          package_type: "maven",
+          package_name: pkg.name,
+        });
+      }
+      continue;
+    }
+
     core.info(`Package ${pkg.name}: deleting ${snapshotVersions.length} SNAPSHOT versions.`);
 
     for (const version of snapshotVersions) {
