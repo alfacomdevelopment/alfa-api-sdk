@@ -14,8 +14,11 @@ module.exports = async ({ github, context, core }) => {
       : github.rest.packages.listPackagesForUser,
     { per_page: 100, ...packageListParams }
   );
+  const packagePrefix = "com.alfa.api.sdk.api-sdk-";
   const repoPackages = packages.filter(
-    (pkg) => pkg.repository && pkg.repository.full_name === repoFull
+    (pkg) =>
+      pkg.repository?.full_name === repoFull ||
+      pkg.name.startsWith(packagePrefix)
   );
 
   core.info(`Found ${repoPackages.length} Maven packages for ${repoFull}.`);
