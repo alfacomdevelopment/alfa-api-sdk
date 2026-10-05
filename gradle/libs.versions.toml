@@ -6,7 +6,7 @@ freefair-lombok = "9.7.0"
 openapi-generator = "7.25.0"
 
 # Libraries
-slf4j = "2.0.19"
+slf4j = "2.0.20"
 lombok = "1.18.48"
 jackson-bom = "2.22.3"
 javax-jaxb-api = "2.3.1"
