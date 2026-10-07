@@ -1,9 +1,15 @@
 package com.alfa.api.sdk.sample.app.signature
 
+import com.alfa.api.sdk.client.ApiHttpClient
+import com.alfa.api.sdk.client.dto.ApiResponse
+import com.alfa.api.sdk.client.dto.Method
 import com.alfa.api.sdk.sample.app.ParentIntegrationTest
+import com.alfa.api.sdk.signature.SignatureApi
 import com.github.tomakehurst.wiremock.client.MappingBuilder
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder
 import com.github.tomakehurst.wiremock.client.WireMock
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -110,6 +116,57 @@ class SignatureControllerTest : ParentIntegrationTest() {
             .uri("/sdk/signature/rsa-certificates/certificate-1/requests/activation")
             .exchange()
             .expectStatus().isOk
+    }
+
+    @Test
+    fun getSignMethodsPassesOptionalChannelAndParsesResponse() {
+        var requestMethod: Method? = null
+        var requestPath: String? = null
+        var requestQuery: Map<String, String>? = null
+        val client = ApiHttpClient { method, path, queryParams, _, _ ->
+            requestMethod = method
+            requestPath = path
+            requestQuery = queryParams
+            ApiResponse().apply {
+                statusCode = 200
+                response = """[{"channel":"BAAS","signMethods":[]}]""".toByteArray()
+            }
+        }
+        val api = SignatureApi(client)
+
+        val methods = api.getSignMethods("BAAS")
+
+        assertEquals(Method.GET, requestMethod)
+        assertEquals("/api/jp/v3/signature/sign-methods", requestPath)
+        assertEquals(mapOf("channel" to "BAAS"), requestQuery)
+        assertEquals("BAAS", methods.single().channel)
+
+        api.getSignMethods()
+
+        assertNull(requestQuery)
+    }
+
+    @Test
+    fun getSignMethodsEndpointPassesChannel() {
+        val signMethodsPath = "/api/jp/v3/signature/sign-methods"
+        val channel = "BAAS"
+        stubJson(
+            WireMock.get(WireMock.urlPathEqualTo(signMethodsPath))
+                .withQueryParam("channel", WireMock.equalTo(channel)),
+            """[{"channel":"BAAS","signMethods":[]}]"""
+        )
+
+        testClient.get()
+            .uri("/sdk/signature/sign-methods?channel=$channel")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$[0].channel").isEqualTo(channel)
+
+        wiremock.verify(
+            WireMock.getRequestedFor(WireMock.urlPathEqualTo(signMethodsPath))
+                .withQueryParam("channel", WireMock.equalTo(channel))
+        )
     }
 
     @Test

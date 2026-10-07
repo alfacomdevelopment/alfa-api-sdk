@@ -19,6 +19,7 @@ import com.alfa.api.sdk.signature.generated.model.RsaCertificates
 import com.alfa.api.sdk.signature.generated.model.SendRequestQes
 import com.alfa.api.sdk.signature.generated.model.SendRequestQesResponse
 import com.alfa.api.sdk.signature.generated.model.SignRequestQes
+import com.alfa.api.sdk.signature.generated.model.SignMethodsChannel
 import com.alfa.api.sdk.signature.generated.model.SignRequestQesResponse
 import com.alfa.api.sdk.signature.generated.model.SignSettings
 import org.springframework.http.HttpHeaders
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -67,6 +69,10 @@ class SignatureController(private val signatureApi: SignatureApi) {
 
     @GetMapping("/rsa-certificates")
     fun getRsaCertificates(): RsaCertificates = signatureApi.getRsaCertificates()
+
+    @GetMapping("/sign-methods")
+    fun getSignMethods(@RequestParam(required = false) channel: String?): List<SignMethodsChannel> =
+        signatureApi.getSignMethods(channel)
 
     @PostMapping("/rsa-certificates/{id}/requests/activation")
     fun activateRsaCertificate(@PathVariable id: String): ResponseRsaCertificate =
