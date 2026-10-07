@@ -22,9 +22,11 @@ import com.alfa.api.sdk.signature.generated.model.RSACertificate;
 import com.alfa.api.sdk.signature.generated.model.RsaCertificates;
 import com.alfa.api.sdk.signature.generated.model.SendRequestQes;
 import com.alfa.api.sdk.signature.generated.model.SendRequestQesResponse;
+import com.alfa.api.sdk.signature.generated.model.SignMethodsChannel;
 import com.alfa.api.sdk.signature.generated.model.SignRequestQes;
 import com.alfa.api.sdk.signature.generated.model.SignRequestQesResponse;
 import com.alfa.api.sdk.signature.generated.model.SignSettings;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -32,7 +34,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -172,6 +176,44 @@ public class SignatureApi {
     public ResponseRsaCertificate activateRsaCertificate(String id) {
         return sendJson(Method.POST, "/rsa-certificates/" + id + "/requests/activation", null,
                 ResponseRsaCertificate.class, "RSA certificate activation request");
+    }
+
+    /**
+     * Retrieves the available signing methods.
+     *
+     * @return available signing methods
+     */
+    public List<SignMethodsChannel> getSignMethods() {
+        return getSignMethods(null);
+    }
+
+    /**
+     * Retrieves the available signing methods, optionally filtered by channel.
+     *
+     * @param channel optional channel: BAAS, WEB, or MOBILE
+     * @return available signing methods
+     */
+    public List<SignMethodsChannel> getSignMethods(String channel) {
+        Map<String, String> queryParams = channel == null ? null : Collections.singletonMap("channel", channel);
+        try {
+            ApiResponse apiResponse = execute(
+                    Method.GET,
+                    "/sign-methods",
+                    queryParams,
+                    headers(HttpHeaders.Accept.APPLICATION_JSON, false),
+                    null,
+                    "sign methods"
+            );
+            return jsonMapper.readValue(
+                    apiResponse.getResponse(),
+                    new TypeReference<List<SignMethodsChannel>>() { }
+            );
+        } catch (SdkException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error while parsing sign methods response: {}", e.getMessage(), e);
+            throw new SdkException("Error occurred while parsing sign methods response", e);
+        }
     }
 
     /**

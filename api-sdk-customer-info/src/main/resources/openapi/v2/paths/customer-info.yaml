@@ -3,51 +3,6 @@ get:
   tags:
     - Customer-info
   summary: "Получение профиля организации"
-  parameters:
-    - name: X-AlfaID-Authorization
-      required: true
-      in: header
-      schema:
-        type: string
-        minLength: 1
-      description: Bearer токен доступа, проставленный api-gateway
-    - name: X-ClientId
-      required: true
-      in: header
-      schema:
-        type: string
-        minLength: 1
-      description: ClientId
-    - name: X-Cus
-      required: false
-      in: header
-      schema:
-        type: string
-      description: cus
-    - name: X-Acus
-      required: false
-      in: header
-      schema:
-        type: string
-      description: acus
-    - name: X-Sub
-      required: false
-      in: header
-      schema:
-        type: string
-      description: sub
-    - name: X-Aclc
-      required: false
-      in: header
-      schema:
-        type: string
-      description: aclc
-    - name: X-Organization-Id-Hash
-      required: false
-      in: header
-      schema:
-        type: string
-      description: X-Organization-Id-Hash
   responses:
     "200":
       description: Успешный результат

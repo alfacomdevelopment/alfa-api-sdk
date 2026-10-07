@@ -7,25 +7,6 @@ paths:
     get:
       summary: Получение DN пользователя
       operationId: getDn
-      parameters:
-      - in: header
-        required: true
-        name: X-AlfaID-Authorization
-        schema:
-          type: string
-          description: Bearer токен доступа, проставленный api-gateway
-      - in: header
-        required: false
-        name: X-Cus
-        schema:
-          type: string
-          description: cus
-      - in: header
-        required: false
-        name: X-Acus
-        schema:
-          type: string
-          description: acus
       tags:
       - SignatureV3
       responses:
@@ -79,25 +60,6 @@ paths:
     get:
       summary: Получение DN пользователя файлом в формате .cnf
       operationId: getDnFile
-      parameters:
-      - in: header
-        required: true
-        name: X-AlfaID-Authorization
-        schema:
-          type: string
-          description: Bearer токен доступа, проставленный api-gateway
-      - in: header
-        required: false
-        name: X-Cus
-        schema:
-          type: string
-          description: cus
-      - in: header
-        required: false
-        name: X-Acus
-        schema:
-          type: string
-          description: acus
       tags:
       - SignatureV3
       responses:
@@ -151,25 +113,6 @@ paths:
     post:
       summary: Заявка на выпуск RSA-сертификата
       operationId: issueRsaCertificate
-      parameters:
-      - in: header
-        required: true
-        name: X-AlfaID-Authorization
-        schema:
-          type: string
-          description: Bearer токен доступа, проставленный api-gateway
-      - in: header
-        required: false
-        name: X-Cus
-        schema:
-          type: string
-          description: cus
-      - in: header
-        required: false
-        name: X-Acus
-        schema:
-          type: string
-          description: acus
       requestBody:
         content:
           application/json:
@@ -229,24 +172,6 @@ paths:
       summary: Отправка заявки на подпись
       operationId: sendRequest
       parameters:
-      - in: header
-        required: true
-        name: X-AlfaID-Authorization
-        schema:
-          type: string
-          description: Bearer токен доступа, проставленный api-gateway
-      - in: header
-        required: false
-        name: X-Cus
-        schema:
-          type: string
-          description: cus
-      - in: header
-        required: false
-        name: X-Acus
-        schema:
-          type: string
-          description: acus
       - name: id
         in: path
         required: true
@@ -313,24 +238,6 @@ paths:
       summary: Подписание заявки c помощью кода из СМС
       operationId: signRequest
       parameters:
-      - in: header
-        required: true
-        name: X-AlfaID-Authorization
-        schema:
-          type: string
-          description: Bearer токен доступа, проставленный api-gateway
-      - in: header
-        required: false
-        name: X-Cus
-        schema:
-          type: string
-          description: cus
-      - in: header
-        required: false
-        name: X-Acus
-        schema:
-          type: string
-          description: acus
       - name: id
         in: path
         required: true
@@ -399,24 +306,6 @@ paths:
       tags:
       - SignatureV3
       parameters:
-      - in: header
-        required: true
-        name: X-AlfaID-Authorization
-        schema:
-          type: string
-          description: Bearer токен доступа, проставленный api-gateway
-      - in: header
-        required: false
-        name: X-Cus
-        schema:
-          type: string
-          description: cus
-      - in: header
-        required: false
-        name: X-Acus
-        schema:
-          type: string
-          description: acus
       - name: id
         in: path
         required: true
@@ -476,24 +365,6 @@ paths:
       summary: Получение RSA-сертификата
       operationId: getRsaCertificate
       parameters:
-      - in: header
-        required: true
-        name: X-AlfaID-Authorization
-        schema:
-          type: string
-          description: Bearer токен доступа, проставленный api-gateway
-      - in: header
-        required: false
-        name: X-Cus
-        schema:
-          type: string
-          description: cus
-      - in: header
-        required: false
-        name: X-Acus
-        schema:
-          type: string
-          description: acus
       - name: id
         in: path
         required: true
@@ -554,25 +425,6 @@ paths:
     get:
       summary: Получение списка RSA-сертификатов
       operationId: getRsaCertificates
-      parameters:
-      - in: header
-        required: true
-        name: X-AlfaID-Authorization
-        schema:
-          type: string
-          description: Bearer токен доступа, проставленный api-gateway
-      - in: header
-        required: false
-        name: X-Cus
-        schema:
-          type: string
-          description: cus
-      - in: header
-        required: false
-        name: X-Acus
-        schema:
-          type: string
-          description: acus
       tags:
       - SignatureV3
       responses:
@@ -627,24 +479,6 @@ paths:
       summary: Заявка на активацию RSA-сертификата
       operationId: activateRsaCertificate
       parameters:
-      - in: header
-        required: true
-        name: X-AlfaID-Authorization
-        schema:
-          type: string
-          description: Bearer токен доступа, проставленный api-gateway
-      - in: header
-        required: false
-        name: X-Cus
-        schema:
-          type: string
-          description: cus
-      - in: header
-        required: false
-        name: X-Acus
-        schema:
-          type: string
-          description: acus
       - name: id
         in: path
         required: true
@@ -706,24 +540,6 @@ paths:
       summary: Заявка на отзыв RSA-сертификата
       operationId: revokeRsaCertificate
       parameters:
-      - in: header
-        required: true
-        name: X-AlfaID-Authorization
-        schema:
-          type: string
-          description: Bearer токен доступа, проставленный api-gateway
-      - in: header
-        required: false
-        name: X-Cus
-        schema:
-          type: string
-          description: cus
-      - in: header
-        required: false
-        name: X-Acus
-        schema:
-          type: string
-          description: acus
       - name: id
         in: path
         required: true
@@ -785,24 +601,6 @@ paths:
       summary: Заявка на переключение RSA-сертификата
       operationId: switchRsaCertificate
       parameters:
-      - in: header
-        required: true
-        name: X-AlfaID-Authorization
-        schema:
-          type: string
-          description: Bearer токен доступа, проставленный api-gateway
-      - in: header
-        required: false
-        name: X-Cus
-        schema:
-          type: string
-          description: cus
-      - in: header
-        required: false
-        name: X-Acus
-        schema:
-          type: string
-          description: acus
       - name: id
         in: path
         required: true
@@ -864,24 +662,6 @@ paths:
       summary: Заявка на перевыпуск RSA-сертификата
       operationId: reissueRsaCertificate
       parameters:
-      - in: header
-        required: true
-        name: X-AlfaID-Authorization
-        schema:
-          type: string
-          description: Bearer токен доступа, проставленный api-gateway
-      - in: header
-        required: false
-        name: X-Cus
-        schema:
-          type: string
-          description: cus
-      - in: header
-        required: false
-        name: X-Acus
-        schema:
-          type: string
-          description: acus
       - name: id
         in: path
         required: true
@@ -943,29 +723,68 @@ paths:
                 $ref: '#/components/schemas/ErrorInternal'
         503:
           description: Сервер временно недоступен
+  /jp/v3/signature/sign-methods:
+    get:
+      summary: Получение способов подписания по каналу
+      operationId: getSignMethods
+      parameters:
+      - name: channel
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - BAAS
+          - WEB
+          - MOBILE
+        description: Канал
+      tags:
+      - SignatureV3
+      responses:
+        '200':
+          description: Успешный результат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseSignMethods'
+        '400':
+          description: Неверные входные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        '401':
+          description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        '403':
+          description: У пользователя нет прав на использование запрашиваемого сервиса, доступ к которому не предусмотрен настройками scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorScope'
+        '404':
+          description: Эндпоинт не найден или неактивен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        '429':
+          description: Слишком много запросов в заданный период времени
+        '500':
+          description: Внутренняя ошибка сервиса при выполнении обработки запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInternal'
+        '503':
+          description: Сервер временно недоступен
   /jp/v3/signature/sign-settings:
     put:
       summary: Заявка на изменение текущего способа подписи
       operationId: changeSignMethod
-      parameters:
-      - in: header
-        required: true
-        name: X-AlfaID-Authorization
-        schema:
-          type: string
-          description: Bearer токен доступа, проставленный api-gateway
-      - in: header
-        required: false
-        name: X-Cus
-        schema:
-          type: string
-          description: cus
-      - in: header
-        required: false
-        name: X-Acus
-        schema:
-          type: string
-          description: acus
       requestBody:
         content:
           application/json:
@@ -1028,20 +847,6 @@ paths:
         schema:
           type: string
         example: 192.168.1.1
-      - in: header
-        name: X-Cus
-        description: Уникальный идентификатор организации (ЮЛ)
-        required: false
-        schema:
-          type: string
-        example: UBM600
-      - in: header
-        name: X-Acus
-        description: Уникальный идентификатор УЛ ЮЛ
-        required: false
-        schema:
-          type: string
-        example: XBI97G
       requestBody:
         required: true
         content:
@@ -1116,20 +921,6 @@ paths:
         schema:
           type: string
         example: 192.168.1.1
-      - in: header
-        name: X-Cus
-        description: Уникальный идентификатор организации (ЮЛ)
-        required: false
-        schema:
-          type: string
-        example: UBM600
-      - in: header
-        name: X-Acus
-        description: Уникальный идентификатор УЛ ЮЛ
-        required: false
-        schema:
-          type: string
-        example: XBI97G
       responses:
         '200':
           description: OK
@@ -1143,9 +934,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorBadRequest'
-              example:
-                error: invalid_request
-                error_description: Parameter 'X-Sub' is not valid, Required request header 'X-Sub' for method parameter type String is not present
         '401':
           description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
           content:
@@ -1204,20 +992,6 @@ paths:
         schema:
           type: string
         example: 192.168.1.1
-      - in: header
-        name: X-Cus
-        description: Уникальный идентификатор организации (ЮЛ)
-        required: false
-        schema:
-          type: string
-        example: UBM600
-      - in: header
-        name: X-Acus
-        description: Уникальный идентификатор УЛ ЮЛ
-        required: false
-        schema:
-          type: string
-        example: XBI97G
       responses:
         200:
           description: OK
@@ -1268,19 +1042,6 @@ paths:
         schema:
           type: string
         example: 192.168.1.1
-      - in: header
-        name: X-Cus
-        description: Уникальный идентификатор организации (ЮЛ)
-        required: false
-        schema:
-          type: string
-        example: UBM600
-      - in: header
-        name: X-Acus
-        description: Уникальный идентификатор УЛ ЮЛ
-        required: false
-        schema:
-          type: string
       responses:
         '200':
           description: Успешный результат
@@ -1345,20 +1106,6 @@ paths:
         schema:
           type: string
         example: 192.168.1.1
-      - in: header
-        name: X-Cus
-        description: Уникальный идентификатор организации (ЮЛ)
-        required: false
-        schema:
-          type: string
-        example: UBM600
-      - in: header
-        name: X-Acus
-        description: Уникальный идентификатор УЛ ЮЛ
-        required: false
-        schema:
-          type: string
-        example: XBI97G
       requestBody:
         content:
           application/json:
@@ -1377,9 +1124,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorBadRequest'
-              example:
-                error: invalid_request
-                error_description: Parameter 'X-Sub' is not valid, Required request header 'X-Sub' for method parameter type String is not present
         '401':
           description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
           content:
@@ -1439,20 +1183,6 @@ paths:
         schema:
           type: string
         example: 192.168.1.1
-      - in: header
-        name: X-Cus
-        description: Уникальный идентификатор организации (ЮЛ)
-        required: false
-        schema:
-          type: string
-        example: UBM600
-      - in: header
-        name: X-Acus
-        description: Уникальный идентификатор УЛ ЮЛ
-        required: false
-        schema:
-          type: string
-        example: XBI97G
       requestBody:
         content:
           application/json:
@@ -1471,9 +1201,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorBadRequest'
-              example:
-                error: invalid_request
-                error_description: Parameter 'X-Sub' is not valid, Required request header 'X-Sub' for method parameter type String is not present
         '401':
           description: Предоставленный токен просрочен, отозван, имеет неправильный формат или недействителен по другим причинам
           content:
