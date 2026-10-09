@@ -1916,6 +1916,7 @@ components:
           - QES
           - PAYCONTROL
           - MYDSS
+          - NES
           - GK_NES
           - GK_QES
         status:
