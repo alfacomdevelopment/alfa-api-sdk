@@ -129,7 +129,7 @@ class SignatureControllerTest : ParentIntegrationTest() {
             requestQuery = queryParams
             ApiResponse().apply {
                 statusCode = 200
-                response = """[{"channel":"BAAS","signMethods":[{"type":"NES"}]}]""".toByteArray()
+                response = """[{"channel":"BAAS","signMethods":[{"type":"NES"},{"type":"ALFATAP"}]}]""".toByteArray()
             }
         }
         val api = SignatureApi(client)
@@ -140,7 +140,7 @@ class SignatureControllerTest : ParentIntegrationTest() {
         assertEquals("/api/jp/v3/signature/sign-methods", requestPath)
         assertEquals(mapOf("channel" to "BAAS"), requestQuery)
         assertEquals("BAAS", methods.single().channel)
-        assertEquals("NES", methods.single().signMethods!!.single().type.toString())
+        assertEquals(listOf("NES", "ALFATAP"), methods.single().signMethods!!.map { it.type.toString() })
 
         api.getSignMethods()
 
@@ -154,7 +154,7 @@ class SignatureControllerTest : ParentIntegrationTest() {
         stubJson(
             WireMock.get(WireMock.urlPathEqualTo(signMethodsPath))
                 .withQueryParam("channel", WireMock.equalTo(channel)),
-            """[{"channel":"BAAS","signMethods":[{"type":"NES"}]}]"""
+            """[{"channel":"BAAS","signMethods":[{"type":"NES"},{"type":"ALFATAP"}]}]"""
         )
 
         testClient.get()
@@ -164,6 +164,7 @@ class SignatureControllerTest : ParentIntegrationTest() {
             .expectBody()
             .jsonPath("$[0].channel").isEqualTo(channel)
             .jsonPath("$[0].signMethods[0].type").isEqualTo("NES")
+            .jsonPath("$[0].signMethods[1].type").isEqualTo("ALFATAP")
 
         wiremock.verify(
             WireMock.getRequestedFor(WireMock.urlPathEqualTo(signMethodsPath))

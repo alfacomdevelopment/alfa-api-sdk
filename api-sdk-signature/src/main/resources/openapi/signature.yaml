@@ -1919,6 +1919,7 @@ components:
           - NES
           - GK_NES
           - GK_QES
+          - ALFATAP
         status:
           type: string
           description: Статус способа подписи
