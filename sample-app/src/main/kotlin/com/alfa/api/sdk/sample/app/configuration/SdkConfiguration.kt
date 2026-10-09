@@ -14,6 +14,7 @@ import com.alfa.api.sdk.customer.info.CustomerInfoApi
 import com.alfa.api.sdk.digital.ruble.DigitalRubleApi
 import com.alfa.api.sdk.sample.app.mapper.SignaturePropertiesMapper
 import com.alfa.api.sdk.sample.app.mapper.SslPropertiesMapper
+import com.alfa.api.sdk.signature.SignatureApi
 import com.alfa.api.sdk.transactions.TransactionsApi
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -52,6 +53,10 @@ class SdkConfiguration(
     @Bean
     fun createDigitalRubleApi(apiHttpClient: ApiHttpClient): DigitalRubleApi =
         DigitalRubleApi(apiHttpClient)
+
+    @Bean
+    fun createSignatureApi(apiHttpClient: ApiHttpClient): SignatureApi =
+        SignatureApi(apiHttpClient)
 
     @Bean
     fun createRsaCmsSignatureService() =

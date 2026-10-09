@@ -6,7 +6,7 @@ Thank you for considering a contribution to Alfa API SDK.
 
 - JDK 21 for building the project.
 - Gradle Wrapper from this repository.
-- Java 8 compatible source and target bytecode for SDK modules.
+- Java 11 compatible source and target bytecode for SDK modules.
 
 ## Local build
 

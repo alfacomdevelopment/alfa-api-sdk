@@ -14,8 +14,11 @@ module.exports = async ({ github, context, core }) => {
       : github.rest.packages.listPackagesForUser,
     { per_page: 100, ...packageListParams }
   );
+  const packagePrefix = "com.alfa.api.sdk.api-sdk-";
   const repoPackages = packages.filter(
-    (pkg) => pkg.repository && pkg.repository.full_name === repoFull
+    (pkg) =>
+      pkg.repository?.full_name === repoFull ||
+      pkg.name.startsWith(packagePrefix)
   );
 
   core.info(`Found ${repoPackages.length} Maven packages for ${repoFull}.`);
@@ -39,27 +42,20 @@ module.exports = async ({ github, context, core }) => {
       continue;
     }
 
-    const allSnapshots = snapshotVersions.length === versions.length;
-    if (allSnapshots) {
-      core.warning(`Package ${pkg.name}: all versions are SNAPSHOT; deleting package.`);
-      try {
-        if (isOrg) {
-          await github.rest.packages.deletePackageForOrg({
-            org: owner,
-            package_type: "maven",
-            package_name: pkg.name,
-          });
-        } else {
-          await github.rest.packages.deletePackageForUser({
-            username: owner,
-            package_type: "maven",
-            package_name: pkg.name,
-          });
-        }
-      } catch (error) {
-        core.warning(
-          `Package ${pkg.name}: failed to delete package after removing versions. ${error.message}`
-        );
+    if (snapshotVersions.length === versions.length) {
+      core.info(`Package ${pkg.name}: all versions are SNAPSHOT; deleting package before republishing.`);
+      if (isOrg) {
+        await github.rest.packages.deletePackageForOrg({
+          org: owner,
+          package_type: "maven",
+          package_name: pkg.name,
+        });
+      } else {
+        await github.rest.packages.deletePackageForUser({
+          username: owner,
+          package_type: "maven",
+          package_name: pkg.name,
+        });
       }
       continue;
     }
@@ -67,26 +63,20 @@ module.exports = async ({ github, context, core }) => {
     core.info(`Package ${pkg.name}: deleting ${snapshotVersions.length} SNAPSHOT versions.`);
 
     for (const version of snapshotVersions) {
-      try {
-        if (isOrg) {
-          await github.rest.packages.deletePackageVersionForOrg({
-            org: owner,
-            package_type: "maven",
-            package_name: pkg.name,
-            package_version_id: version.id,
-          });
-        } else {
-          await github.rest.packages.deletePackageVersionForUser({
-            username: owner,
-            package_type: "maven",
-            package_name: pkg.name,
-            package_version_id: version.id,
-          });
-        }
-      } catch (error) {
-        core.warning(
-          `Package ${pkg.name}: failed to delete version ${version.id} (${version.name}). ${error.message}`
-        );
+      if (isOrg) {
+        await github.rest.packages.deletePackageVersionForOrg({
+          org: owner,
+          package_type: "maven",
+          package_name: pkg.name,
+          package_version_id: version.id,
+        });
+      } else {
+        await github.rest.packages.deletePackageVersionForUser({
+          username: owner,
+          package_type: "maven",
+          package_name: pkg.name,
+          package_version_id: version.id,
+        });
       }
     }
   }
