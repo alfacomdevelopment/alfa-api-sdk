@@ -8,8 +8,8 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 val openApiSpecsDir = layout.projectDirectory.dir("src/main/resources/openapi")
@@ -40,15 +40,17 @@ fun GenerateTask.configureCommon(specFileName: String) {
             "dateLibrary" to "java8",
             "hideGenerationTimestamp" to "true",
             "serializableModel" to "true",
+            "skipOperationExample" to "true",
             "useJakartaEe" to "false"
         )
     )
 }
 
-val openApiGenerateModelsCustomerInfo by tasks.registering(GenerateTask::class) {
+val openApiGenerateModelsCustomerInfo = tasks.register<GenerateTask>("openApiGenerateModelsCustomerInfo") {
     description = "Generate models from сustomer-info-v2.yaml"
     configureCommon("сustomer-info-v2.yaml")
     modelPackage.set("com.alfa.api.sdk.customer.info.v2.generated.model")
+    schemaMappings.set(mapOf("BigDecimal" to "java.math.BigDecimal"))
 }
 
 sourceSets["main"].java.srcDir(openApiOutDir.map { it.dir("src/main/java") })
@@ -57,7 +59,7 @@ tasks.named("compileJava") {
     dependsOn(openApiGenerateModelsCustomerInfo)
 }
 
-val sourcesJar by tasks.registering(Jar::class) {
+val sourcesJar = tasks.register<Jar>("sourcesJar") {
     archiveClassifier.set("sources")
     from(sourceSets["main"].allSource)
 

@@ -7,8 +7,8 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 val delombokSourcesDir = "${layout.buildDirectory.get()}/delombokSources"
@@ -17,7 +17,7 @@ tasks.named<Delombok>("delombok") {
     target.set(file(delombokSourcesDir))
 }
 
-val sourcesJar by tasks.registering(Jar::class) {
+val sourcesJar = tasks.register<Jar>("sourcesJar") {
     archiveClassifier.set("sources")
     from(delombokSourcesDir)
 }

@@ -9,17 +9,15 @@ import com.alfa.api.sdk.client.security.TransportSecurityProvider;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import javax.net.ssl.SSLContext;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -90,8 +88,7 @@ public class ApiSyncHttpClient implements ApiHttpClient {
         long startTime = System.currentTimeMillis();
         log.debug("Sending HTTP request: method={}, path={}", method, path);
         try {
-            HttpURLConnection connection = createConnection(method, path, queryParams, headers, body);
-            ApiResponse response = getResponse(connection);
+            ApiResponse response = sendHttpRequest(method, path, queryParams, headers, body);
             if (Utils.isSuccessfulStatusCode(response.getStatusCode())) {
                 log.debug("HTTP request completed successfully: status={}, durationMs={}",
                         response.getStatusCode(),
@@ -112,81 +109,53 @@ public class ApiSyncHttpClient implements ApiHttpClient {
         }
     }
 
-    private HttpURLConnection createConnection(Method method,
-                                               String path,
-                                               Map<String, String> queryParams,
-                                               Map<String, String> headers,
-                                               byte[] body) throws IOException {
-        URL url = new URL(buildRequestUri(path, queryParams));
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setConnectTimeout(DEFAULT_CONNECT_TIMEOUT_MS);
-        connection.setReadTimeout(DEFAULT_READ_TIMEOUT_MS);
-        if (connection instanceof HttpsURLConnection) {
-            HttpsURLConnection secured = (HttpsURLConnection) connection;
-            if (transportSecurityProvider != null) {
-                secured.setSSLSocketFactory(transportSecurityProvider.getContext().getSocketFactory());
-            }
-        }
-        connection.setRequestMethod(method.name());
+    private ApiResponse sendHttpRequest(Method method,
+                                        String path,
+                                        Map<String, String> queryParams,
+                                        Map<String, String> headers,
+                                        byte[] body) throws Exception {
+        HttpRequest.BodyPublisher bodyPublisher = body == null
+                ? HttpRequest.BodyPublishers.noBody()
+                : HttpRequest.BodyPublishers.ofByteArray(body);
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
+                .uri(URI.create(buildRequestUri(path, queryParams)))
+                .timeout(Duration.ofMillis(DEFAULT_READ_TIMEOUT_MS))
+                .method(method.name(), bodyPublisher);
+
         if (credentialProvider != null) {
-            connection.setRequestProperty("Authorization", credentialProvider.getAuthorization());
+            requestBuilder.header("Authorization", credentialProvider.getAuthorization());
         }
         if (headers != null) {
-            headers.forEach(connection::setRequestProperty);
+            headers.forEach(requestBuilder::header);
             if (log.isDebugEnabled()) {
-                log.debug(
-                        "HTTP request headers: {}",
-                        formatHeaders(connection.getRequestProperties())
-                );
+                log.debug("HTTP request headers: {}", formatHeaders(requestBuilder.build().headers().map()));
             }
         }
-        if (body != null) {
-            connection.setDoOutput(true);
-            try (OutputStream os = connection.getOutputStream()) {
-                os.write(body);
-            }
-        }
-        log.trace("HTTP connection created: url={}, method={}", connection.getURL(), method);
-        return connection;
-    }
 
-    private ApiResponse getResponse(HttpURLConnection connection) throws IOException {
+        HttpResponse<byte[]> response = createHttpClient()
+                .send(requestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
         ApiResponse apiResponse = new ApiResponse();
-        int statusCode = connection.getResponseCode();
-        apiResponse.setStatusCode(statusCode);
-
-        InputStream stream = Utils.isSuccessfulStatusCode(statusCode)
-                ? connection.getInputStream()
-                : connection.getErrorStream();
-
-        if (stream != null) {
-            String content = getResponseContent(stream);
-            apiResponse.setResponse(content.getBytes(StandardCharsets.UTF_8));
-        } else {
-            apiResponse.setResponse(new byte[0]);
-        }
-
+        apiResponse.setStatusCode(response.statusCode());
+        apiResponse.setResponse(response.body());
         if (log.isDebugEnabled()) {
             log.debug("HTTP response received: status={}, contentLength={}",
-                    statusCode,
-                    apiResponse.getResponse().length);
-
-            log.debug(
-                    "HTTP response headers: {}",
-                    formatHeaders(connection.getHeaderFields())
-            );
+                    response.statusCode(), response.body().length);
+            log.debug("HTTP response headers: {}", formatHeaders(response.headers().map()));
         }
-
-        connection.disconnect();
         return apiResponse;
     }
 
-    private String getResponseContent(InputStream responseStream) throws IOException {
-        String content;
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(responseStream, StandardCharsets.UTF_8))) {
-            content = in.lines().collect(Collectors.joining("\n"));
+    private HttpClient createHttpClient() {
+        HttpClient.Builder builder = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofMillis(DEFAULT_CONNECT_TIMEOUT_MS))
+                .version(HttpClient.Version.HTTP_1_1);
+        if (transportSecurityProvider != null) {
+            SSLContext sslContext = transportSecurityProvider.getContext();
+            if (sslContext != null) {
+                builder.sslContext(sslContext);
+            }
         }
-        return content;
+        return builder.build();
     }
 
     @SuppressWarnings({"java:S1075", "MultipleStringLiterals", "ParameterAssignment"})
